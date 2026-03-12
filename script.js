@@ -67,47 +67,54 @@ if (!runtimeCapabilities.canBoot) {
 
 function buildApp() {
     mainContent.innerHTML = `
-    <!-- API Config Panel -->
-    <div class="api-panel" id="apiPanel">
-      <div class="api-header" id="apiHeader">
+    <div class="topbar-right-actions">
+      <div class="api-header api-config-btn" id="apiHeader">
         <span class="api-header-title">API Configuration</span>
         <span class="api-status-label" id="apiStatusLabel">Not configured</span>
-        <span class="api-status-dot" id="apiStatusDot"></span>
-        <svg class="api-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="api-status-dot api-config-dot" id="apiStatusDot"></span>
+        <svg class="api-chevron api-config-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
+    </div>
+
+    <!-- API Config Panel -->
+    <div class="api-panel" id="apiPanel">
       <div class="api-body">
-        <div class="api-row">
-          <span class="api-label">Provider</span>
-          <select id="apiProvider" class="api-select">
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Provider</span>
+          <select id="apiProvider" class="api-select api-provider-select">
             <option value="groq">Groq - whisper-large-v3-turbo (free)</option>
             <option value="openai">OpenAI - whisper-1</option>
           </select>
         </div>
-        <div class="api-row">
-          <span class="api-label">API Key</span>
-          <input type="password" class="api-key-input" id="apiKeyInput" placeholder="Paste your API key here..." autocomplete="off" spellcheck="false">
-          <button class="api-btn-sm" id="apiKeyToggle" title="Show API key">Show</button>
-          <button class="api-btn-sm save-btn" id="apiKeySave">Save</button>
-          <button class="api-btn-sm" id="apiKeyTest">Test</button>
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">API Key</span>
+          <div class="api-key-row">
+            <input type="password" class="api-key-input" id="apiKeyInput" placeholder="Paste your API key here..." autocomplete="off" spellcheck="false">
+            <button class="api-btn-sm api-key-btn" id="apiKeyToggle" title="Show API key">Show</button>
+            <button class="api-btn-sm api-key-btn save" id="apiKeySave">Save</button>
+            <button class="api-btn-sm api-key-btn test" id="apiKeyTest">Test</button>
+          </div>
         </div>
-        <div class="api-row">
-          <span class="api-label">Gemini key</span>
-          <input type="password" class="api-key-input" id="geminiKeyInput" placeholder="Optional for assistant image and PDF analysis" autocomplete="off" spellcheck="false">
-          <button class="api-btn-sm" id="geminiKeyToggle" title="Show Gemini API key">Show</button>
-          <button class="api-btn-sm save-btn" id="geminiKeySave">Save</button>
-          <button class="api-btn-sm" id="geminiKeyTest">Test</button>
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Gemini key</span>
+          <div class="api-key-row">
+            <input type="password" class="api-key-input" id="geminiKeyInput" placeholder="Optional for assistant image and PDF analysis" autocomplete="off" spellcheck="false">
+            <button class="api-btn-sm api-key-btn" id="geminiKeyToggle" title="Show Gemini API key">Show</button>
+            <button class="api-btn-sm api-key-btn save" id="geminiKeySave">Save</button>
+            <button class="api-btn-sm api-key-btn test" id="geminiKeyTest">Test</button>
+          </div>
         </div>
-        <div class="api-row" style="align-items:flex-start;">
-          <span class="api-label">Gemini vault</span>
-          <textarea class="api-key-input" id="geminiKeyVault" rows="3" placeholder="Optional Gemini keys - one per line - used only for assistant image and PDF analysis"></textarea>
-          <button class="api-btn-sm save-btn" id="geminiVaultSave">Save vault</button>
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Gemini vault</span>
+          <textarea class="api-key-input api-vault-textarea" id="geminiKeyVault" rows="3" placeholder="Optional Gemini keys - one per line - used only for assistant image and PDF analysis"></textarea>
+          <button class="api-btn-sm api-save-vault-btn" id="geminiVaultSave">Save vault</button>
         </div>
-        <div class="api-row api-model-row">
-          <span class="api-label">Gemini model</span>
-          <select id="geminiModelSelect" class="api-inline-select api-select" aria-label="Gemini analysis model">
-            <option value="">Loading Gemini models...</option>
-          </select>
-          <div class="api-info-wrap">
+        <div class="api-row api-field-row api-model-row">
+          <span class="api-label api-field-label">Gemini model</span>
+          <div class="api-field-control api-inline-control">
+            <select id="geminiModelSelect" class="api-inline-select api-select api-provider-select" aria-label="Gemini analysis model">
+              <option value="">Loading Gemini models...</option>
+            </select>
             <button class="api-info-btn" type="button" aria-label="Gemini free-tier model info" title="Gemini free-tier model info">i</button>
             <div class="api-info-popover" role="note" aria-label="Gemini free-tier model guide">
               <div class="api-info-title">Gemini Model Guide</div>
@@ -145,58 +152,116 @@ function buildApp() {
             </div>
           </div>
         </div>
-        <div class="api-row" style="align-items:flex-start;">
-          <span class="api-label">Gemini usage</span>
-          <div class="gemini-usage-card" id="geminiUsageCard">
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Gemini usage</span>
+          <div class="gemini-usage-card api-usage-box" id="geminiUsageCard">
             <div class="gemini-usage-head">
-              <div class="gemini-usage-title" id="geminiUsageTitle">App-tracked Gemini usage</div>
-              <button class="api-btn-sm" id="geminiUsageReset" type="button">Reset</button>
+              <div class="gemini-usage-title api-usage-title" id="geminiUsageTitle">App-tracked Gemini usage</div>
+              <button class="api-btn-sm api-usage-reset" id="geminiUsageReset" type="button">Reset</button>
             </div>
-            <div class="gemini-usage-stat">
+            <div class="gemini-usage-stat api-usage-row">
               <span>Minute window</span>
               <span id="geminiUsageMinuteText">0 / 15 used</span>
             </div>
-            <div class="gemini-usage-bar"><span id="geminiUsageMinuteBar"></span></div>
-            <div class="gemini-usage-stat">
+            <div class="gemini-usage-bar api-usage-bar-track"><span class="api-usage-bar-fill" id="geminiUsageMinuteBar"></span></div>
+            <div class="gemini-usage-stat api-usage-row">
               <span>Daily window</span>
               <span id="geminiUsageDayText">0 / 1000 used</span>
             </div>
-            <div class="gemini-usage-bar gemini-usage-bar-day"><span id="geminiUsageDayBar"></span></div>
-            <div class="gemini-usage-note" id="geminiUsageNote">Tracked from this app only. External Gemini usage is not included.</div>
+            <div class="gemini-usage-bar gemini-usage-bar-day api-usage-bar-track"><span class="api-usage-bar-fill" id="geminiUsageDayBar"></span></div>
+            <div class="gemini-usage-note api-usage-note" id="geminiUsageNote">Tracked from this app only. External Gemini usage is not included.</div>
           </div>
         </div>
-        <div class="api-row">
-          <span class="api-label">Audio model</span>
-          <input type="text" class="api-key-input" id="audioModelInput" placeholder="Speech model. Groq translation auto-switches to whisper-large-v3">
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Audio model</span>
+          <input type="text" class="api-key-input api-model-input" id="audioModelInput" placeholder="Speech model. Groq translation auto-switches to whisper-large-v3">
         </div>
-        <div class="api-row api-model-row">
-          <span class="api-label">Chat model</span>
-          <input type="text" class="api-key-input" id="chatModelInput" list="chatModelSuggestions" placeholder="Groq recommendation: openai/gpt-oss-120b">
-          <select id="chatModelSelect" class="api-inline-select api-select">
-            <option value="">Loading models...</option>
-          </select>
+        <div class="api-row api-field-row api-model-row">
+          <span class="api-label api-field-label">Chat model</span>
+          <div class="api-field-control api-chat-control">
+            <input type="text" class="api-key-input api-model-input" id="chatModelInput" list="chatModelSuggestions" placeholder="Groq recommendation: openai/gpt-oss-120b">
+            <select id="chatModelSelect" class="api-inline-select api-select api-provider-select">
+              <option value="">Loading models...</option>
+            </select>
+          </div>
           <datalist id="chatModelSuggestions"></datalist>
         </div>
-        <div class="api-row" style="align-items:flex-start;">
-          <span class="api-label">Key vault</span>
-          <textarea class="api-key-input" id="apiKeyVault" rows="4" placeholder="Optional extra API keys - one per line - stored locally only"></textarea>
-          <button class="api-btn-sm save-btn" id="apiVaultSave">Save vault</button>
+        <div class="api-row api-field-row">
+          <span class="api-label api-field-label">Key vault</span>
+          <textarea class="api-key-input api-vault-textarea" id="apiKeyVault" rows="4" placeholder="Optional extra API keys - one per line - stored locally only"></textarea>
+          <button class="api-btn-sm api-save-vault-btn" id="apiVaultSave">Save vault</button>
         </div>
-        <div class="api-note">
+        <div class="api-note api-info-text">
           Stored only in your browser's localStorage. Never hardcode real keys inside the HTML when sharing this file.<br>
           Get a free Groq key: <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a> |
           OpenAI: <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a> |
           Gemini: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a><br>
-          <span id="apiVaultMeta">No extra keys saved</span><br>
-          <span id="geminiVaultMeta">No keys stored for gemini</span>
+          <span class="api-keys-stored" id="apiVaultMeta">No extra keys saved</span><br>
+          <span class="api-keys-stored" id="geminiVaultMeta">No keys stored for gemini</span>
         </div>
       </div>
     </div>
 
-    <div class="workspace-command-deck">
+    <div class="help-modal-overlay" id="helpModalOverlay" hidden>
+      <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="help-modal-header">
+          <div class="help-modal-title">
+            <span class="help-emoji">🎙️</span>
+            <div>
+              <div class="help-title-text" id="helpModalTitle">How to use Verbatim</div>
+              <div class="help-subtitle">A quick guide for everyone</div>
+            </div>
+          </div>
+          <button class="help-close-btn" id="helpCloseBtn" type="button" aria-label="Close help">✕</button>
+        </div>
+        <div class="help-modal-body">
+          <div class="help-step">
+            <div class="help-step-num">1</div>
+            <div class="help-step-content">
+              <div class="help-step-title">Choose your mode</div>
+              <div class="help-step-desc">Use <strong>LIVE</strong> to transcribe your microphone in real-time. Use <strong>FILE</strong> to upload an audio or video file and transcribe it. Use <strong>QUALITY</strong> for the most accurate transcription using AI.</div>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">2</div>
+            <div class="help-step-content">
+              <div class="help-step-title">Set up your API key</div>
+              <div class="help-step-desc">Click <strong>API CONFIGURATION</strong> in the top right. Get a free API key from groq.com and paste it in. This powers the AI transcription.</div>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">3</div>
+            <div class="help-step-content">
+              <div class="help-step-title">Start transcribing</div>
+              <div class="help-step-desc">In LIVE mode: click the microphone orb and start speaking. In FILE mode: drag and drop your audio file, then click TRANSCRIBE and wait for results.</div>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">4</div>
+            <div class="help-step-content">
+              <div class="help-step-title">Download your transcript</div>
+              <div class="help-step-desc">Go to <strong>Export</strong> in the left menu. Choose your format: TXT for plain text, DOCX for Word, SRT for video subtitles, and more.</div>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">5</div>
+            <div class="help-step-content">
+              <div class="help-step-title">Use AI features</div>
+              <div class="help-step-desc">Go to <strong>AI Output</strong> to get summaries, action items, or ask questions about your transcript. Use <strong>Verba Assistant</strong> to chat with your transcript directly.</div>
+            </div>
+          </div>
+        </div>
+        <div class="help-modal-footer">
+          <div class="help-tip">💡 Tip: Enable <strong>AUTOSAVE</strong> in the topbar so your transcript is never lost.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-command-deck topbar">
       <!-- Controls -->
       <div class="controls">
         <div class="mode-toggle">
+          <span class="mode-pill" aria-hidden="true"></span>
           <button class="mode-btn active" id="modeRealtime" data-mode="realtime"><span class="mode-dot"></span> Live</button>
           <button class="mode-btn" id="modeQuality" data-mode="quality"><span class="mode-dot"></span> Quality</button>
           <button class="mode-btn" id="modeFile" data-mode="file"><span class="mode-dot"></span> File</button>
@@ -266,10 +331,7 @@ function buildApp() {
         <button class="btn-toggle" id="autoCopyBtn" title="Auto-copy after silence"><span class="toggle-dot"></span> Auto-Copy</button>
         <button class="btn-toggle" id="speakerModeToggle" title="Render transcript with speaker labels"><span class="toggle-dot"></span> Speakers</button>
         <button class="btn-toggle" id="autosaveToggle" title="Autosave workspace in browser"><span class="toggle-dot"></span> Autosave</button>
-        <div class="primary-hints">
-          <span class="primary-hint" id="primaryRecordHint"><kbd>Space</kbd> start or stop</span>
-          <span class="primary-hint" id="primaryFileHint"><kbd>Ctrl O</kbd> open a file</span>
-        </div>
+        <div class="topbar-right-spacer" aria-hidden="true"></div>
       </div>
 
       <details class="studio-settings" id="studioSettingsPanel">
@@ -308,69 +370,70 @@ function buildApp() {
         </div>
       </details>
     </div>
-    <div class="workspace-shell" id="workspaceShell">
-      <aside class="workspace-left-rail" id="workspaceSidebar">
+    <div class="workspace-shell app-shell" id="workspaceShell">
+      <aside class="workspace-left-rail sidebar" id="workspaceSidebar">
         <div class="utility-card workspace-sidebar-card" id="workspaceSidebarCard">
           <div class="workspace-sidebar-toolbar">
-            <button class="workspace-sidebar-icon-btn" id="workspaceSidebarCollapseBtn" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <button class="workspace-sidebar-icon-btn sidebar-collapse-btn" id="workspaceSidebarCollapseBtn" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
+              <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M15 18l-6-6 6-6"></path>
               </svg>
             </button>
-            <div class="workspace-sidebar-brand">
-              <span class="utility-card-kicker">Workspace</span>
-              <div class="utility-card-title">Navigation</div>
+            <div class="workspace-sidebar-brand workspace-header">
+              <span class="utility-card-kicker workspace-label">Workspace</span>
+              <div class="utility-card-title workspace-title">Navigation</div>
             </div>
             <button class="micro-btn workspace-sidebar-close" id="workspaceSidebarCloseBtn" type="button" aria-label="Close sidebar">Close</button>
           </div>
           <nav class="workspace-sidebar-nav" aria-label="Workspace sections">
-            <button class="workspace-nav-btn" type="button" data-view="record" title="Record">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="record" title="Record">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"></circle><path d="M12 11v7"></path><path d="M8 21h8"></path><path d="M19 10a7 7 0 0 1-14 0"></path></svg>
               </span>
-              <span class="workspace-nav-label">Record</span>
+              <span class="workspace-nav-label nav-label">Record</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="capture" title="Capture">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="capture" title="Capture">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v10H4z"></path><path d="M8 7V5h8v2"></path></svg>
               </span>
-              <span class="workspace-nav-label">Capture</span>
+              <span class="workspace-nav-label nav-label">Capture</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="transcript" title="Transcript">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="transcript" title="Transcript">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
               </span>
-              <span class="workspace-nav-label">Transcript</span>
+              <span class="workspace-nav-label nav-label">Transcript</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="translation" title="Translation">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="translation" title="Translation">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h6"></path><path d="M8 4v3"></path><path d="M4 12c2.5-1.5 4.5-4.5 5-8"></path><path d="M9 12c-1-1-2-2.5-2.5-4"></path><path d="M14 16l3-8 3 8"></path><path d="M15 14h4"></path></svg>
               </span>
-              <span class="workspace-nav-label">Translation</span>
+              <span class="workspace-nav-label nav-label">Translation</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="ai-output" title="AI Output">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="ai-output" title="AI Output">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.2 5.9-.9L12 3z"></path></svg>
               </span>
-              <span class="workspace-nav-label">AI Output</span>
+              <span class="workspace-nav-label nav-label">AI Output</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="memory" title="Memory">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="memory" title="Memory">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9l3 3v13H6z"></path><path d="M15 4v4h4"></path></svg>
               </span>
-              <span class="workspace-nav-label">Memory</span>
+              <span class="workspace-nav-label nav-label">Memory</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="tools" title="Tools">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <button class="workspace-nav-btn nav-item" type="button" data-view="tools" title="Export">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.2 2.2-3.2-3.2 2.4-2z"></path></svg>
               </span>
-              <span class="workspace-nav-label">Tools</span>
+              <span class="workspace-nav-label nav-label">Export</span>
             </button>
-            <button class="workspace-nav-btn" type="button" data-view="settings" title="Settings">
-              <span class="workspace-nav-icon" aria-hidden="true">
+            <div class="nav-divider" aria-hidden="true"></div>
+            <button class="workspace-nav-btn nav-item" type="button" data-view="settings" title="Settings">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1.1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.4 1z"></path></svg>
               </span>
-              <span class="workspace-nav-label">Settings</span>
+              <span class="workspace-nav-label nav-label">Settings</span>
             </button>
           </nav>
         </div>
@@ -414,17 +477,19 @@ function buildApp() {
             <span>Keyboard quick access</span>
             <svg class="capture-help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="shortcuts-panel" id="shortcutsPanel" hidden>
-            <div class="shortcuts-bar">
-              <div class="shortcut"><kbd>Space</kbd> Start / Stop</div>
-              <div class="shortcut"><kbd>Ctrl+C</kbd> Copy text</div>
-              <div class="shortcut"><kbd>Ctrl+D</kbd> Download</div>
-              <div class="shortcut"><kbd>Ctrl+O</kbd> Open file</div>
-              <div class="shortcut"><kbd>Ctrl+U</kbd> Assistant file</div>
-              <div class="shortcut"><kbd>Ctrl+Enter</kbd> Transcribe file</div>
-              <div class="shortcut"><kbd>Ctrl+Z</kbd> Recover</div>
-            </div>
+        <div class="shortcuts-panel" id="shortcutsPanel" hidden>
+          <div class="shortcuts-bar">
+            <div class="shortcut"><kbd>Ctrl+C</kbd> Copy text</div>
+            <div class="shortcut"><kbd>Ctrl+D</kbd> Download</div>
+            <div class="shortcut"><kbd>Ctrl+O</kbd> Open / upload file</div>
+            <div class="shortcut"><kbd>Ctrl+U</kbd> Assistant file</div>
+            <div class="shortcut"><kbd>Ctrl+Enter</kbd> Transcribe file</div>
+            <div class="shortcut"><kbd>Ctrl+Delete</kbd> Clear transcript</div>
+            <div class="shortcut"><kbd>Ctrl+Shift+Q</kbd> Toggle recording</div>
+            <div class="shortcut"><kbd>Ctrl+Shift+P</kbd> Toggle AI Output panel</div>
+            <div class="shortcut"><kbd>Ctrl+Z</kbd> Recover</div>
           </div>
+        </div>
         </div>
 
         <div class="tool-panel utility-card-ai" id="aiOutputCard">
@@ -482,33 +547,43 @@ function buildApp() {
         </div>
       </aside>
 
-      <div class="workspace-main">
+      <div class="workspace-main main-area">
         <!-- Upload Panel -->
         <div class="upload-panel" id="uploadPanel">
           <div class="upload-header">
-            <span class="upload-title">Audio File</span>
+            <span class="upload-title">Media File</span>
           </div>
           <div class="upload-body">
             <div class="drop-zone" id="dropZone">
-              <input type="file" id="fileInput" accept="audio/*,.mp3,.wav,.m4a,.flac,.ogg,.webm,.mp4,.aac">
+              <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.wav,.m4a,.flac,.ogg,.webm,.mp4,.aac,.mov,.mkv,.avi,.amr,.3gp">
               <div class="drop-zone-icon">UP</div>
-              <div class="drop-zone-text">Drop audio file here or click to browse</div>
-              <div class="drop-zone-sub">MP3 | WAV | M4A | FLAC | OGG | WebM - Max 200MB - Any language</div>
+              <div class="drop-zone-text">Drop audio or video file here or click to browse</div>
+              <div class="drop-zone-sub">MP3 | WAV | M4A | FLAC | OGG | WebM | MP4 | MOV | MKV | AVI | AMR | 3GP - Max 500MB - Any language</div>
             </div>
             <div class="file-info" id="fileInfo">
               <div class="file-info-row">
                 <span class="file-name" id="fileName"></span>
                 <div class="file-meta" id="fileMeta"></div>
-                <button class="file-remove-btn" id="fileRemoveBtn">Remove</button>
+                <button class="file-remove-btn" id="fileRemoveBtn" type="button">Remove</button>
               </div>
-              <audio class="file-audio-player" id="fileAudioPlayer" controls></audio>
               <div class="file-options">
                 <label class="file-option-label"><input type="checkbox" id="optNormalize" checked> Normalize volume</label>
-                <label class="file-option-label"><input type="checkbox" id="optTranslate"> Translate to English</label>
                 <label class="file-option-label"><input type="checkbox" id="optUseCache" checked> Use transcript cache</label>
               </div>
+              <div class="file-language-mode" id="fileLanguageMode">
+                <span class="file-option-heading">Output mode</span>
+                <label class="file-mode-option">
+                  <input type="radio" name="fileLanguageMode" value="preserve" checked>
+                  <span>Preserve original languages</span>
+                </label>
+                <label class="file-mode-option">
+                  <input type="radio" name="fileLanguageMode" value="translate">
+                  <span>Translate everything to English</span>
+                </label>
+                <div class="file-mode-note">Marathi and Hindi stay in native script. English stays English.</div>
+              </div>
               <div class="audio-analysis" id="audioAnalysis"></div>
-              <button class="transcribe-btn" id="transcribeBtn" disabled>
+              <button class="transcribe-btn" id="transcribeBtn" type="button" disabled>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                 Transcribe
               </button>
@@ -526,38 +601,34 @@ function buildApp() {
         <!-- Recording Panel -->
             <div class="rec-panel" id="recPanel">
           <div class="rec-hero">
-            <div class="rec-orb-stage" id="orbTrigger" role="button" tabindex="0" aria-label="Toggle recording from voice orb" aria-pressed="false">
-              <div class="waveform-wrap">
-                <div class="orb-ripple-field" aria-hidden="true">
-                  <span class="orb-ripple-ring ring-a"></span>
-                  <span class="orb-ripple-ring ring-b"></span>
-                  <span class="orb-ripple-ring ring-c"></span>
-                  <span class="orb-ripple-ring ring-d"></span>
-                  <span class="orb-ripple-ring ring-e"></span>
-                  <span class="orb-ripple-ring ring-f"></span>
-                  <span class="orb-ripple-ring ring-g"></span>
+            <div class="orb-panel">
+              <div class="rec-orb-stage orb-stage ready" id="orbTrigger" role="button" tabindex="0" aria-label="Toggle recording from voice orb" aria-pressed="false">
+                <div class="orb-status-bar orb-status-main" id="orbStatusMain">Tap to record</div>
+                <div class="orb-halo" aria-hidden="true"></div>
+                <div class="orb-rings" aria-hidden="true">
+                  <span class="ring orb-ring ring-1"></span>
+                  <span class="ring orb-ring ring-2"></span>
+                  <span class="ring orb-ring ring-3"></span>
                 </div>
-                <canvas id="waveCanvas"></canvas>
-                <div class="orb-runtime">
-                  <div class="orb-status-main" id="orbStatusMain">Tap to record</div>
+                <div class="orb-sphere waveform-wrap idle">
+                  <canvas id="waveCanvas"></canvas>
+                  <div class="waveform-overlay" id="waveOverlay"></div>
+                </div>
+                <div class="orb-waveform" aria-hidden="true">
+                  <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                </div>
+                <div class="orb-runtime sr-only-live">
                   <div class="orb-timer-display" id="orbTimerDisplay">00:00</div>
                 </div>
-                <div class="waveform-overlay" id="waveOverlay"></div>
+                <div class="status-main sr-only-live" id="statusMain">Ready to record</div>
+                <div class="status-sub sr-only-live" id="statusSub">Click orb or press Space</div>
+                <div class="timer-display sr-only-live" id="timerDisplay">00:00</div>
               </div>
-              <div class="orb-signal-strip" aria-hidden="true">
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <div class="status-main sr-only-live" id="statusMain">Ready to record</div>
-              <div class="status-sub sr-only-live" id="statusSub">Click orb or press Space</div>
-              <div class="timer-display sr-only-live" id="timerDisplay">00:00</div>
             </div>
           </div>
           <div class="interim-box">
             <div class="live-dot"></div>
-            <div id="interimText" class="idle-hint">Interim transcription appears here as you speak...</div>
+            <div id="interimText" class="interim-text idle-hint">Interim transcription appears here as you speak...</div>
           </div>
           <div class="autocopy-bar" id="autoCopyBar"><div class="autocopy-fill" id="autoCopyFill"></div></div>
         </div>
@@ -566,7 +637,12 @@ function buildApp() {
         <div class="dual-transcript-grid">
           <div class="transcript-panel" id="transcriptPanelCard">
             <div class="tp-header">
-              <span class="tp-title">Transcript</span>
+              <div class="tp-header-main">
+                <span class="tp-title">Transcript</span>
+              </div>
+              <div class="tp-header-media" id="transcriptHeaderMedia" hidden>
+                <audio class="file-audio-player tp-header-player" id="fileAudioPlayer" controls></audio>
+              </div>
             </div>
             <textarea id="transcript" placeholder="Your verbatim transcription will appear here.&#10;You can edit this text directly." spellcheck="true"></textarea>
             <div class="segments-view" id="segmentsView"></div>
@@ -707,12 +783,7 @@ qdrant => Qdrant"></textarea>
           <textarea id="diagLog" class="diag-log" readonly placeholder="Diagnostics log will appear here."></textarea>
         </div>
 
-        <div class="undo-indicator" id="undoIndicator" style="display:none;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
-          Last text restorable - press <kbd>Ctrl+Z</kbd> to recover
-        </div>
-
-        <div class="workspace-status-bar" id="workspaceStatusBar">
+        <div class="workspace-status-bar statusbar" id="workspaceStatusBar">
           <span class="status-bar-item" id="statusBarRecording">
             <span class="status-bar-dot" id="statusBarRecDot"></span>
             <span id="statusBarRecText">Idle</span>
@@ -768,34 +839,70 @@ qdrant => Qdrant"></textarea>
 
         <div class="utility-card utility-card-actions" id="transcriptToolsCard">
           <div class="utility-card-head">
-            <span class="utility-card-kicker">Utilities</span>
-            <div class="utility-card-title">Transcript tools</div>
+            <span class="utility-card-kicker">Export Transcript</span>
+            <div class="utility-card-title">Choose a format to download your transcript</div>
           </div>
-          <div class="action-bar">
+          <div class="export-grid" id="exportGrid">
+            <article class="export-card" data-format="txt">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">📄</span><span class="export-card-ext">.TXT</span></div>
+              <div class="export-card-name">Plain Text</div>
+              <div class="export-card-desc">Simple unformatted transcript</div>
+              <button class="export-card-btn" type="button" data-format="txt">Download</button>
+            </article>
+            <article class="export-card" data-format="docx">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">📝</span><span class="export-card-ext">.DOCX</span></div>
+              <div class="export-card-name">Word Document</div>
+              <div class="export-card-desc">Formatted doc for Microsoft Word</div>
+              <button class="export-card-btn" type="button" data-format="docx">Download</button>
+            </article>
+            <article class="export-card" data-format="srt">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">🎬</span><span class="export-card-ext">.SRT</span></div>
+              <div class="export-card-name">Subtitles</div>
+              <div class="export-card-desc">Standard subtitle file for video</div>
+              <button class="export-card-btn" type="button" data-format="srt">Download</button>
+            </article>
+            <article class="export-card" data-format="vtt">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">🌐</span><span class="export-card-ext">.VTT</span></div>
+              <div class="export-card-name">WebVTT</div>
+              <div class="export-card-desc">Web-compatible caption format</div>
+              <button class="export-card-btn" type="button" data-format="vtt">Download</button>
+            </article>
+            <article class="export-card" data-format="json">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">📦</span><span class="export-card-ext">.JSON</span></div>
+              <div class="export-card-name">JSON</div>
+              <div class="export-card-desc">Structured data with timestamps</div>
+              <button class="export-card-btn" type="button" data-format="json">Download</button>
+            </article>
+            <article class="export-card" data-format="md">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">✍️</span><span class="export-card-ext">.MD</span></div>
+              <div class="export-card-name">Markdown</div>
+              <div class="export-card-desc">Formatted text for docs and blogs</div>
+              <button class="export-card-btn" type="button" data-format="md">Download</button>
+            </article>
+            <article class="export-card" data-format="csv">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">📊</span><span class="export-card-ext">.CSV</span></div>
+              <div class="export-card-name">Segments CSV</div>
+              <div class="export-card-desc">Tabular data for spreadsheets</div>
+              <button class="export-card-btn" type="button" data-format="csv">Download</button>
+            </article>
+            <article class="export-card" data-format="workspace">
+              <div class="export-card-top"><span class="export-card-icon" aria-hidden="true">💾</span><span class="export-card-ext">.JSON</span></div>
+              <div class="export-card-name">Workspace</div>
+              <div class="export-card-desc">Full workspace backup and restore</div>
+              <button class="export-card-btn" type="button" data-format="workspace">Download</button>
+            </article>
+          </div>
+          <div class="action-bar export-actions">
             <div class="view-toggle">
-              <button class="view-btn active" id="btnRaw" data-view="raw">Plain</button>
-              <button class="view-btn" id="btnSeg" data-view="segments">Timestamped</button>
+              <span class="view-pill" aria-hidden="true"></span>
+              <button class="view-btn active" id="btnRaw" type="button" data-view="raw">Plain</button>
+              <button class="view-btn" id="btnSeg" type="button" data-view="segments">Timestamped</button>
             </div>
-            <button class="btn btn-history" id="historyBtn" title="Copy history">
+            <button class="btn btn-history" id="historyBtn" type="button" title="Transcript history">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               History
             </button>
-            <div class="download-wrap">
-              <button class="btn btn-download" id="downloadBtn" title="Download transcript">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download
-              </button>
-              <div class="download-dropdown" id="downloadDropdown">
-                <button class="download-option" data-format="txt">Plain Text (.txt)</button>
-                <button class="download-option" data-format="srt">Subtitles (.srt)</button>
-                <button class="download-option" data-format="vtt">WebVTT (.vtt)</button>
-                <button class="download-option" data-format="json">JSON (.json)</button>
-                <button class="download-option" data-format="md">Markdown (.md)</button>
-                <button class="download-option" data-format="csv">Segments CSV (.csv)</button>
-                <button class="download-option" data-format="workspace">Workspace (.json)</button>
-              </div>
-            </div>
-            <button class="btn btn-clear" id="clearBtn" title="Clear transcript">
+            <button class="btn btn-clear" id="clearBtn" type="button" title="Clear transcript">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               Clear
             </button>
@@ -805,7 +912,7 @@ qdrant => Qdrant"></textarea>
         <div class="history-panel" id="historyPanel">
           <div class="history-header">
             <span class="history-title">Copy History</span>
-            <button class="history-clear-btn" id="historyClearBtn">Clear history</button>
+            <button class="history-clear-btn" id="historyClearBtn" type="button">Clear history</button>
           </div>
           <div class="history-list" id="historyList">
             <div class="history-empty">No history yet - copied text will appear here</div>
@@ -818,35 +925,35 @@ qdrant => Qdrant"></textarea>
 
     <div class="assistant-shell" id="assistantShell">
       <div class="assistant-panel" id="assistantPanel" hidden>
-        <div class="assistant-header">
-          <div class="assistant-title">
-            <div class="assistant-mini-bot" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>
-            <div class="assistant-heading">
-              <div class="assistant-name">Verba Assistant</div>
-              <div class="assistant-sub" id="assistantRuntimeMeta">General + workspace help - grounded in current Verba state</div>
+        <div class="assistant-header verba-header">
+          <div class="assistant-title verba-title verba-header-left">
+            <div class="assistant-mini-bot verba-avatar verba-avatar-img" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>
+            <div class="assistant-heading verba-title-block">
+              <div class="assistant-name verba-name">Verba</div>
+              <div class="assistant-sub verba-name-sub" id="assistantRuntimeMeta">Assistant</div>
             </div>
           </div>
-          <div class="assistant-actions">
-            <button class="assistant-icon-btn" id="assistantQuickNewBtn" title="New chat" aria-label="New chat">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <div class="assistant-actions verba-controls verba-header-controls">
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantQuickNewBtn" title="New chat" aria-label="New chat" data-action="new">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantHistoryBtn" title="Conversation history" aria-label="Conversation history">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"></path><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path><path d="M12 7v5l3 3"></path></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantHistoryBtn" title="Conversation history" aria-label="Conversation history" data-action="history">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12,6 12,12 16,14"></polyline></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantCopyLastBtn" title="Copy last assistant answer" aria-label="Copy last assistant answer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantCopyLastBtn" title="Copy last assistant answer" aria-label="Copy last assistant answer" data-action="copy">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantClearBtn" title="Clear assistant thread" aria-label="Clear assistant thread">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantClearBtn" title="Clear assistant thread" aria-label="Clear assistant thread" data-action="delete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3,6 5,6 21,6"></polyline><path d="M19,6l-1,14a2 2 0 01-2 2H8a2 2 0 01-2-2L5,6"></path><path d="M10,11v6M14,11v6"></path><path d="M9,6V4a1 1 0 011-1h4a1 1 0 011 1v2"></path></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantMinBtn" title="Minimize assistant" aria-label="Minimize assistant">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantMinBtn" title="Minimize assistant" aria-label="Minimize assistant" data-action="minimize">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantMaxBtn" title="Expand assistant" aria-label="Expand assistant">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn" id="assistantMaxBtn" title="Expand assistant" aria-label="Expand assistant" data-action="expand">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15,3 21,3 21,9"></polyline><polyline points="9,21 3,21 3,15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
             </button>
-            <button class="assistant-icon-btn" id="assistantCloseBtn" title="Close assistant" aria-label="Close assistant">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+            <button class="assistant-icon-btn verba-ctrl-btn vctrl-btn vctrl-close close" id="assistantCloseBtn" title="Close assistant" aria-label="Close assistant" data-action="close">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </div>
         </div>
@@ -857,19 +964,19 @@ qdrant => Qdrant"></textarea>
           </div>
           <div class="assistant-history-list" id="assistantHistoryList"></div>
         </div>
-        <div class="assistant-toolbar" id="assistantQuickPrompts">
-          <button class="assistant-chip" data-prompt="How do Live, Quality, and File differ?">Modes</button>
-          <button class="assistant-chip" data-prompt="How does translate-to-English work in this app?">Translate</button>
-          <button class="assistant-chip" data-prompt="What does Auto-Copy do and when does it trigger?">Auto-Copy</button>
-          <button class="assistant-chip" data-prompt="How do exports and workspace save work?">Export + Save</button>
+        <div class="assistant-toolbar verba-tabs" id="assistantQuickPrompts">
+          <button class="assistant-chip verba-tab" data-prompt="How do Live, Quality, and File differ?">Modes</button>
+          <button class="assistant-chip verba-tab" data-prompt="How does translate-to-English work in this app?">Translate</button>
+          <button class="assistant-chip verba-tab" data-prompt="What does Auto-Copy do and when does it trigger?">Auto-Copy</button>
+          <button class="assistant-chip verba-tab" data-prompt="How do exports and workspace save work?">Export + Save</button>
         </div>
         <div class="assistant-empty" id="assistantEmpty">
           Ask about modes, language selection, provider setup, imported memory, exports, AI Output, presets, or the current runtime state.
         </div>
         <div class="assistant-messages" id="assistantMessages"></div>
-        <div class="assistant-footer">
+        <div class="assistant-footer verba-input-area">
           <div class="assistant-input-wrap" id="assistantInputWrap">
-            <textarea class="assistant-input" id="assistantInput" placeholder="Ask anything. Example: What does Quality mode do, or explain ML in simple terms."></textarea>
+            <textarea class="assistant-input verba-textarea" id="assistantInput" placeholder="Ask anything. Example: What does Quality mode do, or explain ML in simple terms."></textarea>
             <div class="assistant-attachment-preview" id="assistantAttachmentPreview" hidden>
               <div class="assistant-attachment-pill">
                 <span class="assistant-attachment-kind" id="assistantAttachmentKind">Image</span>
@@ -882,19 +989,18 @@ qdrant => Qdrant"></textarea>
                 </button>
               </div>
             </div>
-            <div class="assistant-footer-row">
-              <div class="assistant-meta" id="assistantModelMeta">Groq-first assistant</div>
-              <select id="assistantModelSelect" class="assistant-model-select" aria-label="Assistant model">
+            <div class="assistant-footer-row verba-input-row verba-input-bottom">
+              <select id="assistantModelSelect" class="assistant-model-select verba-model-select verba-model-dropdown" aria-label="Assistant model">
                 <option value="">Loading models...</option>
               </select>
               <input type="file" id="assistantFileInput" hidden multiple accept="image/png,image/jpeg,image/webp,application/pdf,.pdf,text/plain,.txt,text/markdown,.md,text/csv,.csv,application/json,.json">
-              <button class="assistant-attach-btn" id="assistantAttachBtn" type="button" aria-label="Add photos and files" title="Add photos and files">
+              <button class="assistant-attach-btn verba-attach-btn" id="assistantAttachBtn" type="button" aria-label="Add photos and files" title="Add photos and files">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.9-9.9a4 4 0 1 1 5.66 5.66l-10 10a2 2 0 0 1-2.83-2.83l8.84-8.84"></path>
                 </svg>
                 <span class="assistant-attach-label">Add photos & files</span>
               </button>
-              <button class="assistant-mic-btn" id="assistantMicBtn" type="button" aria-label="Start voice input" title="Voice input (English)">
+              <button class="assistant-mic-btn verba-mic-btn" id="assistantMicBtn" type="button" aria-label="Start voice input" title="Voice input (English)">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 1 1-6 0V6a3 3 0 0 1 3-3z"></path>
                   <path d="M19 11a7 7 0 0 1-14 0"></path>
@@ -902,20 +1008,21 @@ qdrant => Qdrant"></textarea>
                   <path d="M8 21h8"></path>
                 </svg>
               </button>
-              <button class="assistant-send" id="assistantSend" aria-label="Send assistant message">
+              <button class="assistant-send verba-send-btn" id="assistantSend" aria-label="Send assistant message">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </button>
             </div>
+            <div class="assistant-meta" id="assistantModelMeta">Groq-first assistant</div>
           </div>
           <div class="assistant-note">Uses the assistant model you pick below for chat. Image, PDF, and file analysis can route through the Gemini model set in API Configuration.</div>
         </div>
       </div>
-      <div class="assistant-dock">
+      <div class="assistant-dock bottom-actions">
         <button class="btn btn-copy" id="copyBtn" title="Copy all text">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy
         </button>
-        <button class="assistant-launcher" id="assistantLauncher" aria-label="Open Verba Assistant" title="Open Verba Assistant">
+        <button class="assistant-launcher verba-mascot" id="assistantLauncher" aria-label="Open Verba Assistant" title="Open Verba Assistant">
           <span class="assistant-unread" id="assistantUnread">0</span>
           <span class="assistant-launcher-label">Verba Assistant</span>
           <div class="robot-3d" aria-hidden="true">
@@ -935,11 +1042,28 @@ qdrant => Qdrant"></textarea>
         </button>
       </div>
     </div>
+    <button class="help-fab" id="helpFabBtn" type="button" title="How to use Verbatim">
+      <span class="help-fab-icon">?</span>
+      <span class="help-fab-label">Help</span>
+    </button>
   `;
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // STATE
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    function safeLocalStorageSet(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
+                console.warn('localStorage quota exceeded for key:', key);
+                if (typeof toast === 'function') {
+                    toast('Storage full — oldest session data may not be saved.', 'warning');
+                }
+            }
+        }
+    }
+
     let state = {
         mode: 'realtime',
         captureSource: localStorage.getItem('vt_capture_source') || 'mic',
@@ -978,6 +1102,7 @@ qdrant => Qdrant"></textarea>
         // File mode
         uploadedFile: null,
         uploadedAudioBuffer: null,
+        uploadedFileUrl: '',
         audioAnalysis: null,
         isProcessing: false,
         abortController: null,
@@ -1111,6 +1236,8 @@ qdrant => Qdrant"></textarea>
     const REALTIME_FINAL_COMMIT_DELAY_MS = 180;
     const LIVE_FALLBACK_MIN_BUFFER_MS = 1800;
     const LIVE_RELIABILITY_THRESHOLD = 0.46;
+    const MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024;
+    const DIRECT_MEDIA_UPLOAD_MAX_BYTES = 24 * 1024 * 1024;
     let translationFlushTimer = null;
     const MEMORY_IMPORT_PROMPT = [
         "Export all of my stored memories and any context you've learned about me from past conversations. Preserve my words verbatim where possible, especially for instructions and preferences.",
@@ -1149,8 +1276,6 @@ qdrant => Qdrant"></textarea>
     const micOuter = $('micOuter');
     const statusMain = $('statusMain');
     const statusSub = $('statusSub');
-    const primaryRecordHint = $('primaryRecordHint');
-    const primaryFileHint = $('primaryFileHint');
     const interimEl = $('interimText');
     const timerEl = $('timerDisplay');
     const orbStatusMain = $('orbStatusMain');
@@ -1220,7 +1345,6 @@ qdrant => Qdrant"></textarea>
     const waveOverlay = $('waveOverlay');
     const orbTrigger = $('orbTrigger');
     const waveformWrap = orbTrigger?.querySelector('.waveform-wrap');
-    const undoIndicator = $('undoIndicator');
     const autoCopyBtn = $('autoCopyBtn');
     const autoCopyBar = $('autoCopyBar');
     const autoCopyFill = $('autoCopyFill');
@@ -1236,6 +1360,10 @@ qdrant => Qdrant"></textarea>
     const fileName = $('fileName');
     const fileMeta = $('fileMeta');
     const fileAudioPlayer = $('fileAudioPlayer');
+    const transcriptHeaderMedia = $('transcriptHeaderMedia');
+    const topDownloadMenu = $('topDownloadMenu');
+    const topDownloadBtn = $('topDownloadBtn');
+    const topDownloadDropdown = $('topDownloadDropdown');
     const transcribeBtn = $('transcribeBtn');
     const progressWrap = $('progressWrap');
     const progressFill = $('progressFill');
@@ -1243,6 +1371,9 @@ qdrant => Qdrant"></textarea>
     const progressCancel = $('progressCancel');
     const audioAnalysisEl = $('audioAnalysis');
     const detectedLangBadge = $('detectedLangBadge');
+    const helpBtn = $('helpFabBtn');
+    const helpModalOverlay = $('helpModalOverlay');
+    const helpCloseBtn = $('helpCloseBtn');
     const apiPanel = $('apiPanel');
     const apiHeader = $('apiHeader');
     const apiNote = apiPanel.querySelector('.api-note');
@@ -1265,8 +1396,8 @@ qdrant => Qdrant"></textarea>
     const apiProvider = $('apiProvider');
     const apiStatusDot = $('apiStatusDot');
     const apiStatusLabel = $('apiStatusLabel');
-    const downloadBtn = $('downloadBtn');
-    const downloadDropdown = $('downloadDropdown');
+    const exportCardButtons = Array.from(document.querySelectorAll('.export-card-btn'));
+    const fileLanguageModeInputs = Array.from(document.querySelectorAll('input[name="fileLanguageMode"]'));
     const presetSelect = $('presetSelect');
     const speakerModeToggle = $('speakerModeToggle');
     const autosaveToggle = $('autosaveToggle');
@@ -1406,19 +1537,6 @@ qdrant => Qdrant"></textarea>
         return isTouchPrimary() ? 'Speak now - tap the orb to stop' : 'Speak now - tap the orb or press Space to stop';
     }
 
-    function syncPrimaryHints() {
-        if (primaryRecordHint) {
-            primaryRecordHint.innerHTML = isTouchPrimary()
-                ? 'Tap orb to record'
-                : '<kbd>Space</kbd> start or stop';
-        }
-        if (primaryFileHint) {
-            primaryFileHint.innerHTML = isTouchPrimary()
-                ? 'Tap to open a file'
-                : '<kbd>Ctrl O</kbd> open a file';
-        }
-    }
-
     function isCompactSidebarViewport() {
         return !!(window.matchMedia && window.matchMedia('(max-width: 899px)').matches);
     }
@@ -1443,7 +1561,7 @@ qdrant => Qdrant"></textarea>
         };
 
         const viewStage = document.createElement('div');
-        viewStage.className = 'workspace-view-stage';
+        viewStage.className = 'workspace-view-stage page-content';
         viewStage.id = 'workspaceViewStage';
 
         const views = {
@@ -1501,7 +1619,6 @@ qdrant => Qdrant"></textarea>
         if (diagnosticsPanel) views.settings.body.appendChild(diagnosticsPanel);
         if (transcriptToolsCard) views.tools.body.appendChild(transcriptToolsCard);
         if (historyPanel) views.tools.body.appendChild(historyPanel);
-        if (undoIndicator) views.tools.body.appendChild(undoIndicator);
         if (assistantDock) {
             if (copyBtn) assistantDock.appendChild(copyBtn);
             if (historyBtn) assistantDock.appendChild(historyBtn);
@@ -1529,6 +1646,89 @@ qdrant => Qdrant"></textarea>
         syncRecordTranslationSplit();
     }
 
+    function syncSlidingPill(containerSelector, activeSelector, pillSelector) {
+        try {
+            const container = document.querySelector(containerSelector);
+            const active = container?.querySelector(activeSelector);
+            const pill = container?.querySelector(pillSelector);
+            if (!container || !active || !pill) return;
+            pill.style.width = `${active.offsetWidth}px`;
+            pill.style.transform = `translateX(${active.offsetLeft}px)`;
+        } catch (err) {
+            console.warn('Sliding pill sync failed', err);
+        }
+    }
+
+    function syncInteractiveChrome() {
+        syncSlidingPill('.mode-toggle', '.mode-btn.active', '.mode-pill');
+        syncSlidingPill('.view-toggle', '.view-btn.active', '.view-pill');
+    }
+
+    function animateWorkspaceViewStage() {
+        const stage = $('workspaceViewStage');
+        if (!stage || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+        stage.classList.remove('page-enter');
+        void stage.offsetWidth;
+        stage.classList.add('page-enter');
+        clearTimeout(animateWorkspaceViewStage._timer);
+        animateWorkspaceViewStage._timer = setTimeout(() => stage.classList.remove('page-enter'), 180);
+    }
+
+    function formatCounterLabel(value, unit) {
+        return `${value} ${unit}${value === 1 ? '' : 's'}`;
+    }
+
+    function animateCount(el, nextValue, formatter) {
+        if (!el) return;
+        const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const currentValue = Number(el.dataset.countValue || 0);
+        if (reducedMotion || currentValue === nextValue) {
+            el.dataset.countValue = String(nextValue);
+            el.textContent = formatter(nextValue);
+            return;
+        }
+        const start = performance.now();
+        const duration = 260;
+        const delta = nextValue - currentValue;
+        el.classList.remove('is-flashing');
+        void el.offsetWidth;
+        el.classList.add('is-flashing');
+        const tick = (now) => {
+            const progress = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const value = Math.round(currentValue + delta * eased);
+            el.textContent = formatter(value);
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                el.dataset.countValue = String(nextValue);
+            }
+        };
+        requestAnimationFrame(tick);
+    }
+
+    function lucideIconMarkup(name) {
+        const icons = {
+            record: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"></path><path d="M19 10a7 7 0 0 1-14 0"></path><path d="M12 19v3"></path><path d="M8 22h8"></path></svg>',
+            capture: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7Z"></path><path d="m22 8-6 4 6 4V8Z"></path></svg>',
+            transcript: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h16"></path></svg>',
+            translation: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"></path></svg>',
+            'ai-output': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.8L19 9.7l-4 3.2 1.2 5.1L12 15.8 7.8 18l1.2-5.1-4-3.2 5.1-1.9L12 3Z"></path></svg>',
+            memory: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v14c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"></path></svg>',
+            tools: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M4 21h16"></path><path d="M4 17h16"></path></svg>',
+            settings: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M2 14h4"></path><path d="M10 8h4"></path><path d="M18 16h4"></path></svg>'
+        };
+        return icons[name] || icons.transcript;
+    }
+
+    function applyWorkspaceNavIcons() {
+        workspaceNavButtons.forEach((btn) => {
+            const iconWrap = btn.querySelector('.workspace-nav-icon');
+            if (!iconWrap) return;
+            iconWrap.innerHTML = lucideIconMarkup(btn.dataset.view || 'transcript');
+        });
+    }
+
     function syncRecordTranslationSplit() {
         const recordTranscriptHost = $('recordTranscriptHost');
         if (!recordTranscriptHost || !translationPanel) return;
@@ -1554,7 +1754,7 @@ qdrant => Qdrant"></textarea>
         }
     }
 
-    function setWorkspaceView(view, { persist = true, closeMobile = true } = {}) {
+    function setWorkspaceView(view, { persist = true, closeMobile = true, animate = true } = {}) {
         const allowed = new Set(['record', 'capture', 'transcript', 'translation', 'ai-output', 'memory', 'tools', 'settings']);
         state.workspaceView = allowed.has(view) ? view : 'transcript';
         if (persist) localStorage.setItem('vt_workspace_view', state.workspaceView);
@@ -1572,15 +1772,66 @@ qdrant => Qdrant"></textarea>
         if (state.workspaceView === 'ai-output') setAiOutputOpen(true);
         if (state.workspaceView === 'settings' && studioSettingsPanel) studioSettingsPanel.open = true;
         syncWorkspaceViewUi();
+        syncInteractiveChrome();
+        if (animate) animateWorkspaceViewStage();
         if (closeMobile && isCompactSidebarViewport()) setSidebarMobileOpen(false);
     }
 
+    function navigateToWorkspaceView(view) {
+        try {
+            const stage = $('workspaceViewStage');
+            if (!stage || state.workspaceView === view || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+                setWorkspaceView(view);
+                return;
+            }
+            clearTimeout(navigateToWorkspaceView._timer);
+            stage.classList.remove('page-enter');
+            stage.classList.add('page-exit');
+            navigateToWorkspaceView._timer = setTimeout(() => {
+                stage.classList.remove('page-exit');
+                setWorkspaceView(view, { animate: false });
+                stage.classList.add('page-enter');
+                clearTimeout(animateWorkspaceViewStage._timer);
+                animateWorkspaceViewStage._timer = setTimeout(() => stage.classList.remove('page-enter'), 180);
+            }, 130);
+        } catch (err) {
+            console.warn('Workspace navigation transition failed', err);
+            setWorkspaceView(view);
+        }
+    }
+
+    function setApiPanelOpen(isOpen) {
+        const open = !!isOpen;
+        apiPanel?.classList.toggle('open', open);
+        apiHeader?.classList.toggle('open', open);
+    }
+
+    function openHelpModal() {
+        if (!helpModalOverlay) return;
+        helpModalOverlay.hidden = false;
+        helpModalOverlay.classList.remove('is-closing');
+        helpModalOverlay.classList.add('is-open');
+    }
+
+    function closeHelpModal() {
+        if (!helpModalOverlay || helpModalOverlay.hidden) return;
+        helpModalOverlay.classList.remove('is-open');
+        helpModalOverlay.classList.add('is-closing');
+        setTimeout(() => {
+            helpModalOverlay.hidden = true;
+            helpModalOverlay.classList.remove('is-closing');
+        }, 150);
+    }
+
     function syncSidebarUi() {
-        const width = Math.min(360, Math.max(240, Number(state.sidebarWidth) || 280));
+        const width = 220;
         state.sidebarWidth = width;
+        const collapsedWidth = 48;
         document.documentElement.style.setProperty('--workspace-sidebar-width', `${width}px`);
+        document.documentElement.style.setProperty('--workspace-sidebar-collapsed-width', `${collapsedWidth}px`);
         document.body.classList.toggle('sidebar-collapsed', !isCompactSidebarViewport() && !!state.sidebarCollapsed);
         document.body.classList.toggle('sidebar-mobile-open', !!state.sidebarMobileOpen && isCompactSidebarViewport());
+        workspaceSidebar?.classList.toggle('collapsed', !isCompactSidebarViewport() && !!state.sidebarCollapsed);
         if (workspaceSidebarBackdrop) workspaceSidebarBackdrop.hidden = !(!!state.sidebarMobileOpen && isCompactSidebarViewport());
         if (workspaceSidebarBtn) {
             const expanded = isCompactSidebarViewport() ? !!state.sidebarMobileOpen : !state.sidebarCollapsed;
@@ -1600,7 +1851,7 @@ qdrant => Qdrant"></textarea>
         if (sidebarCollapseBtn) {
             sidebarCollapseBtn.textContent = isCompactSidebarViewport()
                 ? (state.sidebarMobileOpen ? 'Close sidebar' : 'Open sidebar')
-                : (state.sidebarCollapsed ? 'Open sidebar' : 'Hide sidebar');
+                : (state.sidebarCollapsed ? 'Open sidebar' : 'Collapse sidebar');
         }
         if (workspaceSidebarCollapseBtn) {
             workspaceSidebarCollapseBtn.setAttribute('aria-label', isCompactSidebarViewport()
@@ -1611,14 +1862,14 @@ qdrant => Qdrant"></textarea>
                 : (state.sidebarCollapsed ? 'Open sidebar' : 'Collapse sidebar');
             workspaceSidebarCollapseBtn.classList.toggle('is-collapsed', !isCompactSidebarViewport() && !!state.sidebarCollapsed);
         }
-        if (sidebarWidthRange) sidebarWidthRange.disabled = !!state.sidebarCollapsed || isCompactSidebarViewport();
+        if (sidebarWidthRange) sidebarWidthRange.disabled = true;
         if (workspaceSidebarSettings) workspaceSidebarSettings.open = !state.sidebarCollapsed && !isCompactSidebarViewport();
         if (workspaceShell) workspaceShell.classList.toggle('sidebar-is-hidden', false);
     }
 
     function setSidebarCollapsed(collapsed) {
         state.sidebarCollapsed = !!collapsed;
-        localStorage.setItem('vt_sidebar_collapsed', state.sidebarCollapsed ? '1' : '0');
+        safeLocalStorageSet('vt_sidebar_collapsed', state.sidebarCollapsed ? '1' : '0');
         syncSidebarUi();
     }
 
@@ -1628,8 +1879,8 @@ qdrant => Qdrant"></textarea>
     }
 
     function setSidebarWidth(width) {
-        state.sidebarWidth = Math.min(360, Math.max(240, Number(width) || 272));
-        localStorage.setItem('vt_sidebar_width', String(state.sidebarWidth));
+        state.sidebarWidth = 220;
+        localStorage.setItem('vt_sidebar_width', '220');
         syncSidebarUi();
     }
 
@@ -2091,7 +2342,6 @@ qdrant => Qdrant"></textarea>
 
     function renderCaptureUi() {
         if (!captureSourceSelect) return;
-        syncPrimaryHints();
         captureSourceSelect.value = state.captureSource;
         if (captureSourceSelect.options[1]) {
             captureSourceSelect.options[1].disabled = !runtimeCapabilities.supportsTabOrScreenCapture;
@@ -2531,6 +2781,20 @@ qdrant => Qdrant"></textarea>
         return sel.dataset.wlang || null;
     }
 
+    function getUploadedFileLanguageMode() {
+        return document.querySelector('input[name="fileLanguageMode"]:checked')?.value === 'translate' ? 'translate' : 'preserve';
+    }
+
+    function shouldTranslateUploadedFile() {
+        return getUploadedFileLanguageMode() === 'translate';
+    }
+
+    function syncUploadedFileLanguageModeUi() {
+        fileLanguageModeInputs.forEach((input) => {
+            input.closest('.file-mode-option')?.classList.toggle('selected', input.checked);
+        });
+    }
+
     function normalizeLanguageCode(code = '') {
         return String(code || '').trim().toLowerCase().split(/[-_]/)[0] || '';
     }
@@ -2623,10 +2887,10 @@ qdrant => Qdrant"></textarea>
             purpose: options.translate ? 'translate-audio' : 'transcribe-audio',
             buildBody: () => {
                 const fd = new FormData();
-                fd.append('file', blob, 'audio.wav');
+                fd.append('file', blob, options.filename || 'audio.wav');
                 fd.append('model', getEffectiveAudioModel({ translate: !!options.translate }));
                 fd.append('response_format', 'verbose_json');
-                fd.append('timestamp_granularities[]', 'segment');
+                if (!options.translate) fd.append('timestamp_granularities[]', 'segment');
                 if (options.language) fd.append('language', options.language);
                 if (options.prompt) fd.append('prompt', options.prompt);
                 return fd;
@@ -2700,14 +2964,30 @@ qdrant => Qdrant"></textarea>
         return { text: applyGlossaryToText(allText), segments: allSegments, language: detectedLang, duration: totalDuration };
     }
 
-    async function transcribeBlobThroughPipeline(blob, options = {}) {
+    async function decodeMediaToAudioBuffer(blob) {
         const arrayBuf = await blob.arrayBuffer();
         const tempCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let decoded;
         try {
-            decoded = await tempCtx.decodeAudioData(arrayBuf);
+            return await tempCtx.decodeAudioData(arrayBuf);
         } finally {
             Promise.resolve(tempCtx.close()).catch(() => { });
+        }
+    }
+
+    async function transcribeBlobThroughPipeline(blob, options = {}) {
+        let decoded;
+        try {
+            decoded = await decodeMediaToAudioBuffer(blob);
+        } catch (err) {
+            if (blob.size > DIRECT_MEDIA_UPLOAD_MAX_BYTES) {
+                throw new Error('This media format could not be decoded locally. Use MP3, WAV, M4A, MP4, or WebM, or upload a clip under 24MB for direct media transcription.');
+            }
+            return transcribeBlob(blob, {
+                language: options.language === undefined ? getWhisperLang() : options.language,
+                translate: !!options.translate,
+                signal: state.abortController?.signal,
+                filename: options.filename || blob.name || 'media-upload'
+            });
         }
         const analysis = analyzeAudio(decoded);
         const processed = await processAudioBuffer(decoded, analysis, options.normalize !== false);
@@ -2772,11 +3052,42 @@ qdrant => Qdrant"></textarea>
         return matches / Math.max(a.length, b.length);
     }
 
+    async function finalizeUploadedFileResult(result, options = {}) {
+        const normalizedSegments = normalizeResultSegmentsForDisplay(result);
+        const initialSpread = getLanguageSpreadFromSegments(normalizedSegments);
+        let finalSegments = normalizedSegments;
+        let repairMeta = { applied: false, repairedCount: 0, spread: initialSpread };
+        if (!options.translate) {
+            repairMeta = await repairMultilingualResultSegments(result, normalizedSegments, options);
+            finalSegments = repairMeta.segments || normalizedSegments;
+        }
+        const finalText = finalSegments.length
+            ? buildTranscriptTextFromSegments(finalSegments)
+            : cleanTranscriptLocal(result.text || '');
+        updateDiagnostics({
+            multilingualRepair: !options.translate && shouldRunMultilingualRepair(result, normalizedSegments, options) ? 'considered' : 'skipped',
+            multilingualRepairApplied: !!repairMeta.applied,
+            multilingualRepairSegments: Number(repairMeta.repairedCount || 0),
+            multilingualLanguageSpread: Object.keys(repairMeta.spread || initialSpread || {}).join(', ') || 'unknown'
+        }, !options.translate && repairMeta.applied
+            ? `Multilingual repair updated ${repairMeta.repairedCount || 0} segment(s)`
+            : (!options.translate ? 'Multilingual preserve-original review complete' : 'Translate-to-English flow complete'));
+        return {
+            ...result,
+            text: finalText,
+            segments: finalSegments.map(seg => ({
+                ...seg,
+                text: seg.text,
+                language: seg.lang || seg.rawLanguage || result.language || ''
+            }))
+        };
+    }
+
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // FILE PROCESSING
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     async function processUploadedFile() {
-        if (!state.uploadedFile || !state.apiKey) return;
+        if (!state.uploadedFile || !getProviderKeys().length) return;
         if (state.isProcessing) return;
 
         state.isProcessing = true;
@@ -2791,7 +3102,7 @@ qdrant => Qdrant"></textarea>
             setProgress(-1, 'Decoding audio...');
             const arrayBuf = await state.uploadedFile.arrayBuffer();
             state.fileHash = await hashArrayBuffer(arrayBuf);
-            const translate = $('optTranslate').checked;
+            const translate = shouldTranslateUploadedFile();
             const useCache = $('optUseCache').checked;
             const doNormalize = $('optNormalize').checked;
             const wLang = getWhisperLang();
@@ -2814,7 +3125,8 @@ qdrant => Qdrant"></textarea>
                 : 'File loaded');
             const cached = useCache ? readTranscriptCache(state.cacheKey) : null;
             if (cached) {
-                displayFileResult(cached);
+                const finalizedCached = await finalizeUploadedFileResult(cached, { translate, selectedLanguage: wLang });
+                displayFileResult(finalizedCached);
                 setCacheStatus('Cache hit - reused previous transcript');
                 updateDiagnostics({ cacheHit: true }, 'Transcript cache hit');
                 setCacheStatus('Cache hit - reused previous transcript');
@@ -2823,52 +3135,70 @@ qdrant => Qdrant"></textarea>
             }
             setCacheStatus('Cache miss - transcribing');
             setCacheStatus(useCache ? 'Cache miss - transcribing' : 'Cache bypassed - transcribing');
-            const tempCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const decoded = await tempCtx.decodeAudioData(arrayBuf);
-            tempCtx.close();
+            let analysis = null;
+            let result;
+            let usedDirectMediaUpload = false;
+            try {
+                const decoded = await decodeMediaToAudioBuffer(state.uploadedFile);
 
-            // Step 2: Analyze
-            setProgress(-1, 'Analyzing audio...');
-            const analysis = analyzeAudio(decoded);
-            state.audioAnalysis = analysis;
-            showAnalysis(analysis);
+                // Step 2: Analyze
+                setProgress(-1, 'Analyzing audio...');
+                analysis = analyzeAudio(decoded);
+                state.audioAnalysis = analysis;
+                showAnalysis(analysis);
 
-            // Step 3: Preprocess
-            setProgress(-1, 'Preprocessing audio...');
-            const processed = await processAudioBuffer(decoded, analysis, doNormalize);
+                // Step 3: Preprocess
+                setProgress(-1, 'Preprocessing audio...');
+                const processed = await processAudioBuffer(decoded, analysis, doNormalize);
 
-            // Step 4: Resample
-            setProgress(-1, 'Resampling to 16kHz...');
-            const resampled = await resampleTo16k(processed);
+                // Step 4: Resample
+                setProgress(-1, 'Resampling to 16kHz...');
+                const resampled = await resampleTo16k(processed);
 
-            // Step 5: Chunk
-            setProgress(-1, 'Preparing chunks...');
-            const maxChunkBytes = 24 * 1024 * 1024;
-            const chunks = chunkWavBlob(resampled, maxChunkBytes);
+                // Step 5: Chunk
+                setProgress(-1, 'Preparing chunks...');
+                const maxChunkBytes = 24 * 1024 * 1024;
+                const chunks = chunkWavBlob(resampled, maxChunkBytes);
 
-            // Step 6: Transcribe
-            setProgress(-1, translate ? 'Preparing English translation...' : 'Preparing transcription...');
-            const result = await transcribeChunks(chunks, {
-                language: wLang,
-                translate
-            }, (prog) => {
-                const pct = Math.round((prog.current / prog.total) * 100);
-                setProgress(pct, `${translate ? 'Translating' : 'Transcribing'} chunk ${prog.current}/${prog.total}...`);
-            }, state.cacheKey);
+                // Step 6: Transcribe
+                setProgress(-1, translate ? 'Preparing English translation...' : 'Preparing transcription...');
+                result = await transcribeChunks(chunks, {
+                    language: wLang,
+                    translate
+                }, (prog) => {
+                    const pct = Math.round((prog.current / prog.total) * 100);
+                    setProgress(pct, `${translate ? 'Translating' : 'Transcribing'} chunk ${prog.current}/${prog.total}...`);
+                }, state.cacheKey);
+            } catch (decodeError) {
+                if (state.uploadedFile.size > DIRECT_MEDIA_UPLOAD_MAX_BYTES) throw decodeError;
+                usedDirectMediaUpload = true;
+                state.audioAnalysis = null;
+                audioAnalysisEl.classList.remove('visible');
+                setProgress(-1, translate ? 'Uploading media for English translation...' : 'Uploading media for transcription...');
+                updateDiagnostics({ mediaFallback: 'direct-upload' }, 'Local decode unavailable - using direct media upload');
+                result = await transcribeBlob(state.uploadedFile, {
+                    language: wLang,
+                    translate,
+                    signal: state.abortController?.signal,
+                    filename: state.uploadedFile.name
+                });
+            }
             let finalResult = result;
-            if (shouldRetryUploadedFileTranscription(result, analysis, { language: wLang }) && !translate) {
+            if (!usedDirectMediaUpload && shouldRetryUploadedFileTranscription(result, analysis, { language: wLang }) && !translate) {
                 setProgress(-1, 'Refining transcript for mixed language or difficult audio...');
                 updateDiagnostics({ detectedLanguage: result.language || '', retries: 1 }, 'Uploaded file triggered adaptive retry with auto language');
                 const retried = await transcribeBlobThroughPipeline(state.uploadedFile, {
                     language: null,
                     normalize: true,
-                    translate: false
+                    translate: false,
+                    filename: state.uploadedFile.name
                 });
                 if (preferRetriedTranscript(result, retried)) {
                     finalResult = retried;
                     toast('Adaptive retry improved transcript quality', 'success', 3200);
                 }
             }
+            finalResult = await finalizeUploadedFileResult(finalResult, { translate, selectedLanguage: wLang });
             if (useCache) {
                 saveTranscriptCache(state.cacheKey, finalResult);
                 setCacheStatus('Transcript cached locally');
@@ -2903,22 +3233,19 @@ qdrant => Qdrant"></textarea>
     }
 
     function displayFileResult(result) {
+        const preparedSegments = normalizeResultSegmentsForDisplay(result);
         state.segments = [];
         segView.innerHTML = '';
-        transcript.value = cleanTranscriptLocal(result.text || '');
+        transcript.value = preparedSegments.length
+            ? buildTranscriptTextFromSegments(preparedSegments)
+            : cleanTranscriptLocal(result.text || '');
         state.confirmedText = transcript.value;
         state.audioDurationSec = result.duration || state.audioDurationSec || 0;
-        if (result.segments) {
-            result.segments.forEach((seg, idx) => {
-                const conf = seg.avg_logprob ? Math.exp(seg.avg_logprob) : (seg.confidence || 0.9);
+        if (preparedSegments.length) {
+            preparedSegments.forEach((seg, idx) => {
                 state.segments.push(normalizeSegment({
-                    text: seg.text?.trim() || '',
-                    conf,
-                    time: formatTimestamp(seg.start),
-                    lang: seg.language || result.language,
-                    startSec: seg.start,
-                    endSec: seg.end,
-                    speaker: state.preset === 'meeting' || state.preset === 'interview' ? (idx % 2 === 0 ? 'Speaker A' : 'Speaker B') : ''
+                    ...seg,
+                    speaker: seg.speaker || (state.preset === 'meeting' || state.preset === 'interview' ? (idx % 2 === 0 ? 'Speaker A' : 'Speaker B') : '')
                 }, idx));
             });
             renderSegments();
@@ -2927,6 +3254,7 @@ qdrant => Qdrant"></textarea>
             updateStats();
         }
         transcript.scrollTop = 0;
+        refreshTopDownloadAction();
         queueTranslationBackfill({ immediate: true });
         scheduleWorkspaceSave();
     }
@@ -3018,6 +3346,76 @@ qdrant => Qdrant"></textarea>
         const s = Math.floor(seconds % 60);
         const ms = Math.floor((seconds % 1) * 1000);
         return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+    }
+
+    function getSubtitleTextForSegment(seg) {
+        if (!seg) return '';
+        const translated = getTranslationResultForSegment(seg)?.translatedText || '';
+        const baseText = shouldTranslateUploadedFile() && translated ? translated : (seg.text || '');
+        const line = state.speakerMode && seg.speaker ? `${seg.speaker}: ${baseText}` : baseText;
+        return cleanTranscriptLocal(line).replace(/\n+/g, ' ').trim();
+    }
+
+    function getExportTranscriptText() {
+        const translated = cleanTranscriptLocal(translatedTranscript?.value || '');
+        if (shouldTranslateUploadedFile() && translated) return translated;
+        return cleanTranscriptLocal(transcript.value || '');
+    }
+
+    function getSubtitleDownloadName(ext = 'srt') {
+        const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+        const sourceName = String(state.uploadedFile?.name || 'subtitle').replace(/\.[^.]+$/, '').replace(/[^\w.-]+/g, '_');
+        return `${sourceName || 'subtitle'}-${ts}.${ext}`;
+    }
+
+    function getDocumentDownloadName(ext = 'txt') {
+        const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+        const sourceName = String(state.uploadedFile?.name || 'transcript').replace(/\.[^.]+$/, '').replace(/[^\w.-]+/g, '_');
+        return `${sourceName || 'transcript'}-${ts}.${ext}`;
+    }
+
+    function canExportFormat(format = '') {
+        const hasContent =
+            (typeof getExportTranscriptText === 'function' && getExportTranscriptText().trim().length > 0)
+            || (state?.segments?.length > 0)
+            || (state?.transcript?.trim?.().length > 0)
+            || (transcript?.value?.trim?.().length > 0);
+
+        if (!hasContent) {
+            toast('No transcript to export. Record or transcribe first.');
+            return false;
+        }
+        return true;
+    }
+
+    function downloadTranscriptFormat(format = '') {
+        if (!canExportFormat(format)) {
+            toast(format === 'srt' || format === 'vtt'
+                ? 'No subtitle segments available yet'
+                : 'Nothing to download yet', 'warning');
+            return false;
+        }
+        if (format === 'txt') {
+            downloadFile(getExportTranscriptText(), getDocumentDownloadName('txt'), 'text/plain;charset=utf-8');
+        } else if (format === 'docx') {
+            downloadBlob(generateDocxBlob(), getDocumentDownloadName('docx'));
+        } else if (format === 'srt') {
+            downloadFile(generateSRT(), getSubtitleDownloadName('srt'), 'text/plain;charset=utf-8');
+        } else if (format === 'vtt') {
+            downloadFile(generateVTT(), getSubtitleDownloadName('vtt'), 'text/vtt;charset=utf-8');
+        } else if (format === 'json') {
+            downloadFile(generateJSON(), getDocumentDownloadName('json'), 'application/json;charset=utf-8');
+        } else if (format === 'md') {
+            downloadFile(generateMarkdown(), getDocumentDownloadName('md'), 'text/markdown;charset=utf-8');
+        } else if (format === 'csv') {
+            downloadFile(generateCSV(), getDocumentDownloadName('csv'), 'text/csv;charset=utf-8');
+        } else if (format === 'workspace') {
+            downloadFile(generateWorkspaceJSON(), `workspace-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.json`, 'application/json;charset=utf-8');
+        } else {
+            return false;
+        }
+        toast(`Downloaded as ${format.toUpperCase()}`, 'success');
+        return true;
     }
 
     function normalizeUiText(text = '') {
@@ -3514,17 +3912,28 @@ qdrant => Qdrant"></textarea>
         resetTranslationSession({ keepSettings: true });
         updateStats();
         scheduleWorkspaceSave();
+
+        /* Clear AI output panel */
+        const aiOutputEl = document.getElementById('aiOutput')
+            || document.querySelector('[id*="aiOutput"], [id*="ai-output"]');
+        if (aiOutputEl) aiOutputEl.value = '';
+
+        /* Clear state if it exists */
+        if (typeof state !== 'undefined' && state.aiOutput !== undefined) {
+            state.aiOutput = '';
+        }
     }
 
     function updateStats() {
         const raw = transcript.value.trim();
         const words = raw ? raw.split(/\s+/).filter(Boolean).length : 0;
         const chars = raw.length;
-        wordPill.textContent = words + ' word' + (words !== 1 ? 's' : '');
-        charPill.textContent = chars + ' char' + (chars !== 1 ? 's' : '');
+        animateCount(wordPill, words, (value) => formatCounterLabel(value, 'word'));
+        animateCount(charPill, chars, (value) => formatCounterLabel(value, 'char'));
         wordPill.classList.toggle('active', words > 0);
         charPill.classList.toggle('active', chars > 0);
         sessionStorage.setItem('vt_ai_output', aiOutput?.value || '');
+        refreshExportCards();
         syncStatusBar();
     }
 
@@ -3541,14 +3950,15 @@ qdrant => Qdrant"></textarea>
         // Recording state
         const isRec = !!state.isRecording;
         recDot.classList.toggle('recording', isRec);
-        if (recText) recText.textContent = isRec ? 'Recording' : 'Idle';
+        recDot.classList.toggle('processing', !!state.isProcessing && !isRec);
+        if (recText) recText.textContent = isRec ? 'Recording' : (state.isProcessing ? 'Processing' : 'Idle');
 
         // Word / char counts
         const raw = transcript ? transcript.value.trim() : '';
         const wc = raw ? raw.split(/\s+/).filter(Boolean).length : 0;
         const cc = raw.length;
-        if (sbWords) sbWords.textContent = wc + ' words';
-        if (sbChars) sbChars.textContent = cc + ' chars';
+        animateCount(sbWords, wc, (value) => `${value} words`);
+        animateCount(sbChars, cc, (value) => `${value} chars`);
 
         // Language
         if (sbLang) {
@@ -3560,12 +3970,17 @@ qdrant => Qdrant"></textarea>
         if (sbMode) {
             const modeMap = { realtime: 'LIVE', quality: 'QUALITY', file: 'FILE' };
             sbMode.innerHTML = '<strong>' + (modeMap[state.mode] || 'LIVE') + '</strong>';
+            sbMode.classList.remove('is-flashing');
+            void sbMode.offsetWidth;
+            sbMode.classList.add('is-flashing');
         }
 
         // Autosave
         if (sbAutosave) {
             const autosaveOn = state.autosaveEnabled;
-            sbAutosave.textContent = autosaveOn ? 'Autosave on' : 'Autosave off';
+            sbAutosave.textContent = autosaveOn ? (state.isProcessing ? 'Saving...' : 'Autosave on') : 'Autosave off';
+            sbAutosave.classList.toggle('is-on', autosaveOn);
+            sbAutosave.classList.toggle('is-saving', autosaveOn && !!state.isProcessing);
         }
     }
 
@@ -3584,6 +3999,7 @@ qdrant => Qdrant"></textarea>
         segView.style.display = (v === 'segments') ? 'block' : 'none';
         if (translatedTranscript) translatedTranscript.style.display = (v === 'raw') ? 'block' : 'none';
         if (translatedSegmentsView) translatedSegmentsView.style.display = (v === 'segments') ? 'block' : 'none';
+        syncInteractiveChrome();
     }
 
     $('btnRaw').addEventListener('click', () => switchView('raw'));
@@ -3648,7 +4064,6 @@ qdrant => Qdrant"></textarea>
     function saveUndo(text) {
         state.undoBuffer = text;
         sessionStorage.setItem('vt_undo', text);
-        undoIndicator.style.display = text ? 'flex' : 'none';
     }
 
     function addToHistory(text) {
@@ -3691,7 +4106,6 @@ qdrant => Qdrant"></textarea>
         });
     }
 
-    if (state.undoBuffer) undoIndicator.style.display = 'flex';
     renderHistory();
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -3701,7 +4115,7 @@ qdrant => Qdrant"></textarea>
         return state.segments.map((seg, i) => {
             const startSec = seg.startSec || 0;
             const endSec = seg.endSec || (startSec + 5);
-            const line = state.speakerMode && seg.speaker ? `${seg.speaker}: ${seg.text}` : seg.text;
+            const line = getSubtitleTextForSegment(seg);
             return `${i + 1}\n${formatTimestampFull(startSec)} --> ${formatTimestampFull(endSec)}\n${line}\n`;
         }).join('\n');
     }
@@ -3711,7 +4125,7 @@ qdrant => Qdrant"></textarea>
         state.segments.forEach((seg) => {
             const startSec = seg.startSec || 0;
             const endSec = seg.endSec || (startSec + 5);
-            const line = state.speakerMode && seg.speaker ? `${seg.speaker}: ${seg.text}` : seg.text;
+            const line = getSubtitleTextForSegment(seg);
             vtt += `${formatTimestampVTT(startSec)} --> ${formatTimestampVTT(endSec)}\n${line}\n\n`;
         });
         return vtt;
@@ -3735,10 +4149,15 @@ qdrant => Qdrant"></textarea>
                 start: s.startSec || 0,
                 end: s.endSec || 0,
                 text: s.text,
+                rawText: s.rawText || s.originalText || '',
                 confidence: s.conf,
                 language: s.lang || '',
+                rawLanguage: s.rawLanguage || '',
                 speaker: s.speaker || '',
                 locked: !!s.locked,
+                correctionStatus: s.correctionStatus || '',
+                qualityScore: s.qualityScore || 0,
+                qualityFlags: s.qualityFlags || [],
                 translation: getTranslationResultForSegment(s)?.translatedText || '',
                 sentiment: getTranslationResultForSegment(s)?.sentiment || '',
                 tone: getTranslationResultForSegment(s)?.tone || ''
@@ -3786,8 +4205,7 @@ qdrant => Qdrant"></textarea>
         return JSON.stringify(getWorkspacePayload(), null, 2);
     }
 
-    function downloadFile(content, filename, mime) {
-        const blob = new Blob([content], { type: mime });
+    function downloadBlob(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -3796,12 +4214,186 @@ qdrant => Qdrant"></textarea>
         URL.revokeObjectURL(url);
     }
 
+    function downloadFile(content, filename, mime) {
+        downloadBlob(new Blob([content], { type: mime }), filename);
+    }
+
+    function refreshTopDownloadAction() {
+        if (!topDownloadBtn) return;
+        const translateMode = shouldTranslateUploadedFile();
+        const hasTranscript = !!getExportTranscriptText().trim();
+        const hasSubtitles = !!state.segments.length;
+        const canDownload = hasTranscript || hasSubtitles;
+        if (topDownloadDropdown && !canDownload) topDownloadDropdown.classList.remove('open');
+        topDownloadBtn.setAttribute('aria-disabled', String(!canDownload));
+        topDownloadBtn.setAttribute('aria-expanded', 'false');
+        topDownloadBtn.classList.toggle('is-disabled', !canDownload);
+        topDownloadBtn.title = translateMode
+            ? 'Download synced English subtitles or transcript files'
+            : 'Download subtitle or transcript files';
+        topDownloadBtn.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        `;
+    }
+
+    function refreshExportCards() {
+        if (!exportCardButtons.length) return;
+        const hasTranscript = !!getExportTranscriptText().trim();
+        exportCardButtons.forEach((button) => {
+            const card = button.closest('.export-card');
+            const disabled = !hasTranscript;
+            button.disabled = disabled;
+            card?.classList.toggle('is-disabled', disabled);
+            if (disabled) {
+                button.textContent = 'Download';
+                card?.classList.remove('is-downloaded');
+            }
+        });
+    }
+
+    function escapeXml(text = '') {
+        return String(text || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
+    }
+
+    function getDocxParagraphXml(text = '') {
+        const lines = String(text || '').replace(/\r\n/g, '\n').split('\n');
+        if (!lines.length) lines.push('');
+        return lines.map((line) => `<w:p><w:r><w:t xml:space="preserve">${escapeXml(line)}</w:t></w:r></w:p>`).join('');
+    }
+
+    function buildDocxXmlDocument(text = '') {
+        return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 wp14">
+  <w:body>
+    ${getDocxParagraphXml(text)}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+      <w:cols w:space="720"/>
+      <w:docGrid w:linePitch="360"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+    }
+
+    function buildStoredZip(files) {
+        const encoder = new TextEncoder();
+        const table = new Uint32Array(256);
+        for (let i = 0; i < 256; i++) {
+            let value = i;
+            for (let j = 0; j < 8; j++) value = (value & 1) ? (0xEDB88320 ^ (value >>> 1)) : (value >>> 1);
+            table[i] = value >>> 0;
+        }
+        const crc32 = (bytes) => {
+            let crc = 0xFFFFFFFF;
+            for (let i = 0; i < bytes.length; i++) crc = table[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+            return (crc ^ 0xFFFFFFFF) >>> 0;
+        };
+        const now = new Date();
+        const dosTime = ((now.getHours() & 0x1F) << 11) | ((now.getMinutes() & 0x3F) << 5) | (Math.floor(now.getSeconds() / 2) & 0x1F);
+        const dosDate = (((Math.max(1980, now.getFullYear()) - 1980) & 0x7F) << 9) | (((now.getMonth() + 1) & 0x0F) << 5) | (now.getDate() & 0x1F);
+        const locals = [];
+        const centrals = [];
+        let offset = 0;
+
+        files.forEach((file) => {
+            const nameBytes = encoder.encode(file.name);
+            const dataBytes = encoder.encode(file.content);
+            const crc = crc32(dataBytes);
+
+            const localHeader = new ArrayBuffer(30 + nameBytes.length);
+            const localView = new DataView(localHeader);
+            localView.setUint32(0, 0x04034b50, true);
+            localView.setUint16(4, 20, true);
+            localView.setUint16(6, 0, true);
+            localView.setUint16(8, 0, true);
+            localView.setUint16(10, dosTime, true);
+            localView.setUint16(12, dosDate, true);
+            localView.setUint32(14, crc, true);
+            localView.setUint32(18, dataBytes.length, true);
+            localView.setUint32(22, dataBytes.length, true);
+            localView.setUint16(26, nameBytes.length, true);
+            localView.setUint16(28, 0, true);
+            new Uint8Array(localHeader, 30).set(nameBytes);
+            locals.push(localHeader, dataBytes);
+
+            const centralHeader = new ArrayBuffer(46 + nameBytes.length);
+            const centralView = new DataView(centralHeader);
+            centralView.setUint32(0, 0x02014b50, true);
+            centralView.setUint16(4, 20, true);
+            centralView.setUint16(6, 20, true);
+            centralView.setUint16(8, 0, true);
+            centralView.setUint16(10, 0, true);
+            centralView.setUint16(12, dosTime, true);
+            centralView.setUint16(14, dosDate, true);
+            centralView.setUint32(16, crc, true);
+            centralView.setUint32(20, dataBytes.length, true);
+            centralView.setUint32(24, dataBytes.length, true);
+            centralView.setUint16(28, nameBytes.length, true);
+            centralView.setUint16(30, 0, true);
+            centralView.setUint16(32, 0, true);
+            centralView.setUint16(34, 0, true);
+            centralView.setUint16(36, 0, true);
+            centralView.setUint32(38, 0, true);
+            centralView.setUint32(42, offset, true);
+            new Uint8Array(centralHeader, 46).set(nameBytes);
+            centrals.push(centralHeader);
+
+            offset += localHeader.byteLength + dataBytes.byteLength;
+        });
+
+        const centralSize = centrals.reduce((sum, part) => sum + part.byteLength, 0);
+        const end = new ArrayBuffer(22);
+        const endView = new DataView(end);
+        endView.setUint32(0, 0x06054b50, true);
+        endView.setUint16(8, files.length, true);
+        endView.setUint16(10, files.length, true);
+        endView.setUint32(12, centralSize, true);
+        endView.setUint32(16, offset, true);
+        endView.setUint16(20, 0, true);
+
+        return new Blob([...locals, ...centrals, end], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    }
+
+    function generateDocxBlob() {
+        return buildStoredZip([
+            {
+                name: '[Content_Types].xml',
+                content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`
+            },
+            {
+                name: '_rels/.rels',
+                content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`
+            },
+            {
+                name: 'word/document.xml',
+                content: buildDocxXmlDocument(getExportTranscriptText())
+            }
+        ]);
+    }
+
     function updateTranscribeBtn() {
         const hasFile = !!state.uploadedFile;
         const hasKey = getProviderKeys().length > 0;
         transcribeBtn.disabled = !hasFile || !hasKey || state.isProcessing;
         if (!hasKey && hasFile) {
             transcribeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> API key required';
+        } else if (!state.isProcessing) {
+            transcribeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg> Transcribe';
         }
     }
 
@@ -4399,7 +4991,11 @@ qdrant => Qdrant"></textarea>
             reliability: Number.isFinite(seg.reliability) ? seg.reliability : 1,
             correctionStatus: String(seg.correctionStatus || ''),
             originalText: String(seg.originalText || ''),
-            correctedAt: String(seg.correctedAt || '')
+            correctedAt: String(seg.correctedAt || ''),
+            rawText: String(seg.rawText || seg.originalText || seg.text || ''),
+            rawLanguage: String(seg.rawLanguage || seg.lang || seg.language || ''),
+            qualityScore: Number.isFinite(seg.qualityScore) ? seg.qualityScore : 1,
+            qualityFlags: Array.isArray(seg.qualityFlags) ? seg.qualityFlags.map(String).filter(Boolean) : []
         };
     }
 
@@ -5012,6 +5608,298 @@ qdrant => Qdrant"></textarea>
         return false;
     }
 
+    function containsDevanagari(text = '') {
+        return /[\u0900-\u097F]/.test(String(text || ''));
+    }
+
+    function containsLatin(text = '') {
+        return /[A-Za-z]/.test(String(text || ''));
+    }
+
+    function isPunctuationOnlySegment(text = '') {
+        const value = String(text || '').trim();
+        if (!value) return true;
+        return !/[\p{L}\p{N}]/u.test(value);
+    }
+
+    function countMeaningfulWords(text = '') {
+        return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    function looksLikeIndicLanguage(code = '') {
+        return ['hi', 'mr', 'ta', 'te', 'bn', 'gu', 'kn', 'ml', 'pa', 'ur'].includes(normalizeLanguageCode(code));
+    }
+
+    function looksLikeScriptMismatch(text = '', language = '') {
+        const lang = normalizeLanguageCode(language);
+        const value = String(text || '').trim();
+        if (!value) return false;
+        if (!looksLikeIndicLanguage(lang)) return false;
+        if (containsDevanagari(value)) return false;
+        return containsLatin(value);
+    }
+
+    function countRepeatedTokens(text = '') {
+        const words = String(text || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+        if (!words.length) return 0;
+        let repeated = 0;
+        for (let i = 1; i < words.length; i++) {
+            if (words[i] === words[i - 1]) repeated += 1;
+        }
+        return repeated;
+    }
+
+    function assessTranscriptSegmentQuality(segment = {}, context = {}) {
+        const text = String(segment.text || '').trim();
+        const words = countMeaningfulWords(text);
+        const flags = [];
+        let score = typeof segment.conf === 'number' ? Math.max(0, Math.min(1, segment.conf)) : 0.85;
+
+        if (isPunctuationOnlySegment(text)) {
+            flags.push('punctuation_only');
+            score -= 0.8;
+        }
+        if (isLikelyGarbledText(text)) {
+            flags.push('garbled_text');
+            score -= 0.34;
+        }
+        if (looksLikeScriptMismatch(text, segment.lang || context.detectedLanguage || '')) {
+            flags.push('script_mismatch');
+            score -= 0.26;
+        }
+        if (words <= 2) {
+            flags.push('very_short');
+            score -= 0.12;
+        }
+        if (countRepeatedTokens(text) >= 2) {
+            flags.push('repeated_tokens');
+            score -= 0.18;
+        }
+        if (typeof segment.conf === 'number' && segment.conf < 0.72) {
+            flags.push('low_confidence');
+            score -= 0.16;
+        }
+        if (context.previousText && text && text.toLowerCase() === String(context.previousText || '').trim().toLowerCase()) {
+            flags.push('duplicate_neighbor');
+            score -= 0.24;
+        }
+
+        return {
+            score: Math.max(0, Math.min(1, Number(score.toFixed(3)))),
+            flags
+        };
+    }
+
+    function mergeSegmentTexts(a = '', b = '') {
+        const left = String(a || '').trim();
+        const right = String(b || '').trim();
+        if (!left) return right;
+        if (!right) return left;
+        if (left.toLowerCase() === right.toLowerCase()) return left;
+        return `${left} ${right}`.replace(/\s+/g, ' ').trim();
+    }
+
+    function normalizeResultSegmentsForDisplay(result = {}) {
+        const sourceSegments = Array.isArray(result.segments) ? result.segments : [];
+        if (!sourceSegments.length) return [];
+        const normalized = [];
+        sourceSegments.forEach((seg, idx) => {
+            const rawText = String(seg?.text || '').trim();
+            const lang = String(seg?.language || result.language || '').trim();
+            const next = normalizeSegment({
+                id: seg.id || '',
+                text: rawText,
+                originalText: rawText,
+                rawText,
+                rawLanguage: lang,
+                conf: seg.avg_logprob ? Math.exp(seg.avg_logprob) : (seg.confidence || 0.9),
+                time: formatTimestamp(seg.start || 0),
+                lang,
+                startSec: seg.start,
+                endSec: seg.end,
+                source: 'file'
+            }, idx);
+            const quality = assessTranscriptSegmentQuality(next, {
+                detectedLanguage: result.language || '',
+                previousText: normalized[normalized.length - 1]?.text || ''
+            });
+            next.qualityScore = quality.score;
+            next.qualityFlags = quality.flags;
+            if (quality.flags.includes('punctuation_only')) return;
+            if (quality.flags.includes('duplicate_neighbor') && normalized.length) {
+                normalized[normalized.length - 1].endSec = next.endSec || normalized[normalized.length - 1].endSec;
+                return;
+            }
+            if (quality.flags.includes('garbled_text') && quality.flags.includes('very_short') && normalized.length) {
+                const prev = normalized[normalized.length - 1];
+                if ((next.startSec - prev.endSec) <= 1.2 || !Number.isFinite(prev.endSec)) {
+                    prev.endSec = next.endSec || prev.endSec;
+                    return;
+                }
+            }
+            normalized.push(next);
+        });
+        return normalized;
+    }
+
+    function getLanguageSpreadFromSegments(segments = []) {
+        const counts = {};
+        (segments || []).forEach(seg => {
+            const code = normalizeLanguageCode(seg?.lang || seg?.rawLanguage || '');
+            if (!code) return;
+            counts[code] = (counts[code] || 0) + 1;
+        });
+        return counts;
+    }
+
+    function buildTranscriptTextFromSegments(segments = []) {
+        return cleanTranscriptLocal((segments || []).map(seg => {
+            const speaker = state.speakerMode && seg.speaker ? `${seg.speaker}: ` : '';
+            return `${speaker}${seg.text || ''}`.trim();
+        }).filter(Boolean).join('\n\n'));
+    }
+
+    function shouldRunMultilingualRepair(result = {}, segments = [], options = {}) {
+        if (options.translate) return false;
+        if (!segments.length) return false;
+        if (!getProviderKeys().length) return false;
+        const spread = getLanguageSpreadFromSegments(segments);
+        const suspicious = segments.filter(seg => (seg.qualityFlags || []).some(flag => ['garbled_text', 'script_mismatch', 'duplicate_neighbor', 'low_confidence'].includes(flag)));
+        const scriptMismatchCount = segments.filter(seg => (seg.qualityFlags || []).includes('script_mismatch')).length;
+        const mixed = Object.keys(spread).length > 1;
+        const suspiciousRatio = suspicious.length / Math.max(segments.length, 1);
+        return mixed || scriptMismatchCount > 0 || suspicious.length >= 2 || suspiciousRatio >= 0.18;
+    }
+
+    function buildMultilingualRepairPrompt(batch = [], allSegments = [], meta = {}) {
+        return [
+            'You repair multilingual speech-to-text transcript segments for preserve-original mode.',
+            'This recording may switch between Marathi, Hindi, and English within the same discussion.',
+            'Keep Marathi and Hindi in Devanagari script whenever recoverable.',
+            'Keep English technical terms, URLs, domain names, acronyms, and product terms in English.',
+            'Do not translate everything into English.',
+            'Preserve meaning and timing alignment. Only rewrite the segment text, not the timestamps.',
+            'If a segment is only punctuation/noise and should disappear, set "drop": true.',
+            'Return JSON only in the form {"items":[{"id":"...", "text":"...", "language":"...", "drop":false}]}',
+            meta.exampleHint ? `Regression note: ${meta.exampleHint}` : ''
+        ].filter(Boolean).join('\n');
+    }
+
+    function parseMultilingualRepairResponse(text = '') {
+        const payload = extractJsonPayload(text);
+        if (payload) {
+            if (Array.isArray(payload.items)) return payload.items;
+            if (Array.isArray(payload.results)) return payload.results;
+            if (Array.isArray(payload)) return payload;
+        }
+        return [];
+    }
+
+    async function requestMultilingualRepairBatch(batch = [], allSegments = []) {
+        const model = getCorrectionModel();
+        const response = await providerRequest({
+            url: getChatEndpoint(),
+            responseType: 'json',
+            purpose: 'multilingual-transcript-repair',
+            buildBody: () => JSON.stringify({
+                model,
+                temperature: 0.08,
+                messages: [
+                    {
+                        role: 'system',
+                        // Regression target: mixed Marathi/Hindi/English audio must not collapse into English-only drift,
+                        // repeated filler fragments, or lost Devanagari script during preserve-original transcription.
+                        content: buildMultilingualRepairPrompt(batch, allSegments, {
+                            exampleHint: 'Previous failures included English-only drift, loss of Marathi/Hindi script, gibberish fragments, and repeated lines.'
+                        })
+                    },
+                    {
+                        role: 'user',
+                        content: JSON.stringify({
+                            detectedLanguage: state.detectedLanguage || '',
+                            selectedLanguage: getWhisperLang() || 'auto',
+                            transcriptContext: buildTranscriptTextFromSegments(allSegments.slice(0, 40)).slice(0, 9000),
+                            items: batch.map(item => {
+                                const idx = allSegments.findIndex(seg => seg.id === item.id);
+                                const prev = idx > 0 ? allSegments[idx - 1] : null;
+                                const next = idx >= 0 && idx < allSegments.length - 1 ? allSegments[idx + 1] : null;
+                                return {
+                                    id: item.id,
+                                    languageHint: item.lang || item.rawLanguage || '',
+                                    start: item.startSec || 0,
+                                    end: item.endSec || 0,
+                                    text: item.rawText || item.originalText || item.text,
+                                    previous: prev ? (prev.text || prev.rawText || '') : '',
+                                    next: next ? (next.text || next.rawText || '') : '',
+                                    qualityFlags: item.qualityFlags || []
+                                };
+                            })
+                        })
+                    }
+                ]
+            }),
+            maxRetries: 1
+        });
+        return {
+            model,
+            items: parseMultilingualRepairResponse(normalizeAssistantText(response?.choices?.[0]?.message?.content || ''))
+        };
+    }
+
+    async function repairMultilingualResultSegments(result = {}, segments = [], options = {}) {
+        if (!shouldRunMultilingualRepair(result, segments, options)) return { segments, applied: false, spread: getLanguageSpreadFromSegments(segments) };
+        const candidates = segments.filter(seg => (seg.qualityFlags || []).some(flag => ['garbled_text', 'script_mismatch', 'low_confidence'].includes(flag)));
+        if (!candidates.length) return { segments, applied: false, spread: getLanguageSpreadFromSegments(segments) };
+        const repaired = segments.map(seg => ({ ...seg }));
+        const byId = new Map(repaired.map(seg => [seg.id, seg]));
+        const chunks = [];
+        for (let i = 0; i < candidates.length; i += 8) chunks.push(candidates.slice(i, i + 8));
+        let appliedCount = 0;
+        for (const chunk of chunks) {
+            try {
+                const response = await requestMultilingualRepairBatch(chunk, repaired);
+                (response.items || []).forEach(item => {
+                    const segment = byId.get(String(item?.id || ''));
+                    if (!segment) return;
+                    if (item?.drop) {
+                        segment._drop = true;
+                        appliedCount += 1;
+                        return;
+                    }
+                    const nextText = cleanTranscriptLocal(String(item?.text || '').trim());
+                    if (!nextText) return;
+                    if (nextText !== segment.text) {
+                        segment.originalText = segment.originalText || segment.text;
+                        segment.text = nextText;
+                        segment.source = 'corrected';
+                        segment.correctionStatus = 'done';
+                        segment.correctedAt = new Date().toISOString();
+                        segment.lang = String(item?.language || segment.lang || '').trim() || segment.lang;
+                        segment.qualityFlags = (segment.qualityFlags || []).filter(flag => !['garbled_text', 'script_mismatch', 'low_confidence'].includes(flag));
+                        appliedCount += 1;
+                    }
+                });
+            } catch (err) {
+                updateDiagnostics({ multilingualRepairError: err.message || 'unknown' }, 'Multilingual repair batch failed');
+            }
+        }
+        const cleaned = repaired.filter(seg => !seg._drop);
+        cleaned.forEach((seg, idx) => {
+            const quality = assessTranscriptSegmentQuality(seg, {
+                detectedLanguage: result.language || '',
+                previousText: cleaned[idx - 1]?.text || ''
+            });
+            seg.qualityScore = quality.score;
+            seg.qualityFlags = quality.flags;
+        });
+        return {
+            segments: cleaned,
+            applied: appliedCount > 0,
+            repairedCount: appliedCount,
+            spread: getLanguageSpreadFromSegments(cleaned)
+        };
+    }
+
     function getCorrectionCacheKey(segment) {
         return [
             state.apiProvider,
@@ -5278,7 +6166,8 @@ qdrant => Qdrant"></textarea>
 
     function writeWorkspaceToStorage() {
         const payload = getWorkspacePayload();
-        localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(payload));
+        const serialized = JSON.stringify(payload);
+        safeLocalStorageSet(WORKSPACE_STORAGE_KEY, serialized);
         workspaceStatus.textContent = `Saved ${new Date().toLocaleTimeString()}`;
     }
 
@@ -5290,6 +6179,7 @@ qdrant => Qdrant"></textarea>
 
     function buildTranscriptCacheKey(hash, options = {}) {
         return [
+            'mlr2',
             hash,
             state.apiProvider || 'unknown',
             options.translate ? 'translate' : 'transcribe',
@@ -5686,12 +6576,12 @@ Preferred answer style:
             `output_style=${state.outputStyle || 'default'}`,
             `recording=${state.isRecording ? 'active' : 'idle'}`,
             `normalize=${$('optNormalize')?.checked ? 'on' : 'off'}`,
-            `translate_to_english=${$('optTranslate')?.checked ? 'on' : 'off'}`,
+            `file_language_mode=${getUploadedFileLanguageMode()}`,
             `transcript_cache=${$('optUseCache')?.checked ? 'on' : 'off'}`,
             `detected_language=${state.detectedLanguage || 'unknown'}`,
             `segments=${String(state.segments?.length || 0)}`,
             `cache=${state.diagnostics?.cacheHit ? 'hit' : (state.cacheKey ? 'ready' : 'idle')}`,
-            `audio_model=${getEffectiveAudioModel({ translate: !!$('optTranslate')?.checked })}`,
+            `audio_model=${getEffectiveAudioModel({ translate: shouldTranslateUploadedFile() })}`,
             `chat_model=${getActiveChatModel()}`,
             `assistant_model=${getActiveAssistantModel()}`
         ].join('\n');
@@ -6124,6 +7014,7 @@ Preferred answer style:
         if (assistantSend) {
             assistantSend.disabled = !!state.assistant.isSending || (!draftValue && !pendingAttachments.length);
             assistantSend.classList.toggle('loading', !!state.assistant.isSending);
+            assistantSend.classList.toggle('sending', !!state.assistant.isSending);
             assistantSend.setAttribute(
                 'aria-label',
                 state.assistant.isSending
@@ -6267,36 +7158,33 @@ Preferred answer style:
         const msgs = Array.isArray(state.assistant.messages) ? state.assistant.messages : [];
         const messageMarkup = msgs.map(msg => {
             const role = msg.role === 'user' ? 'user' : 'assistant';
+            const rawContent = String(msg.content || '');
+            const isError = role === 'assistant' && /^Assistant error:/i.test(rawContent.trim());
             const displayText = role === 'assistant'
-                ? renderAssistantResponseHtml(msg.content || '')
-                : assistantEscapedHtml(String(msg.content || ''));
+                ? renderAssistantResponseHtml(rawContent || '')
+                : assistantEscapedHtml(rawContent);
             const attachments = normalizeAssistantAttachmentList(msg.attachments || msg.attachment);
             const attachmentMarkup = attachments.length
-                ? attachments.map(attachment => `<div class="assistant-message-attachment"><span class="assistant-message-attachment-kind">${escapeHtml(attachment.kind === 'pdf' ? 'PDF' : (attachment.kind === 'text' ? 'File' : 'Image'))}</span><span class="assistant-message-attachment-name">${escapeHtml(describeAssistantAttachment(attachment))}</span></div>`).join('')
+                ? attachments.map(attachment => `<div class="assistant-message-attachment verba-attachment-chip"><span class="assistant-message-attachment-kind">${escapeHtml(attachment.kind === 'pdf' ? 'PDF' : (attachment.kind === 'text' ? 'File' : 'Image'))}</span><span class="assistant-message-attachment-name">${escapeHtml(describeAssistantAttachment(attachment))}</span></div>`).join('')
                 : '';
+            if (role === 'user') {
+                return `
+      <div class="assistant-message user verba-msg-user">
+        <div class="assistant-bubble msg-bubble">${attachmentMarkup}${displayText}</div>
+      </div>`;
+            }
             return `
-      <div class="assistant-message ${role}">
-        ${role === 'assistant' ? `<div class="assistant-avatar-dot" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>` : ''}
-        <div class="assistant-bubble">${attachmentMarkup}${displayText}</div>
+      <div class="assistant-message assistant verba-msg-assistant${isError ? ' error' : ''}">
+        <div class="assistant-avatar-dot msg-avatar" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>
+        <div class="assistant-bubble msg-bubble">${attachmentMarkup}${displayText}</div>
       </div>`;
         }).join('');
-        const thinkingMarkup = state.assistant.isSending
-            ? `
-      <div class="assistant-message assistant assistant-thinking" aria-live="polite" aria-label="Assistant is generating a response">
-        <div class="assistant-avatar-dot" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>
-        <div class="assistant-bubble assistant-thinking-bubble">
-          <div class="assistant-thinking-label">Generating response...</div>
-          <div class="assistant-thinking-dots" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-      </div>`
-            : '';
-        assistantMessages.innerHTML = messageMarkup + thinkingMarkup;
+        assistantMessages.innerHTML = messageMarkup;
         assistantEmpty.style.display = msgs.length ? 'none' : '';
-        assistantMessages.scrollTop = assistantMessages.scrollHeight;
+        hideTypingIndicator();
+        if (state.assistant.isSending) showTypingIndicator();
+        animateAssistantMessageEdges(msgs);
+        smoothScrollChat();
         const unread = Number(state.assistant.unread || 0);
         assistantUnread.textContent = unread > 9 ? '9+' : String(unread);
         assistantUnread.classList.toggle('visible', unread > 0);
@@ -6313,21 +7201,103 @@ Preferred answer style:
         if (assistantMaxBtn) assistantMaxBtn.setAttribute('aria-label', state.assistant.maximized ? 'Restore assistant' : 'Expand assistant');
     }
 
+    function smoothScrollChat() {
+        const chat = assistantMessages;
+        if (!chat) return;
+        const target = chat.scrollHeight;
+        const start = chat.scrollTop;
+        const diff = target - start;
+        if (diff <= 0) return;
+        const duration = Math.min(400, diff * 0.5);
+        let startTime = null;
+        const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            chat.scrollTop = start + diff * easeOutCubic(progress);
+            if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    function showTypingIndicator() {
+        const chat = assistantMessages;
+        if (!chat || document.getElementById('verba-typing')) return;
+        const el = document.createElement('div');
+        el.id = 'verba-typing';
+        el.className = 'verba-typing-row';
+        el.innerHTML = `
+      <div class="assistant-avatar-dot msg-avatar verba-typing-avatar" aria-hidden="true">${getAssistantRobotBadgeMarkup()}</div>
+      <div class="verba-typing-bubble">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>`;
+        chat.appendChild(el);
+        smoothScrollChat();
+    }
+
+    function hideTypingIndicator() {
+        document.getElementById('verba-typing')?.remove();
+    }
+
+    function animateAssistantMessageEdges(msgs) {
+        if (!assistantMessages) return;
+        const userMessages = assistantMessages.querySelectorAll('.assistant-message.user');
+        const assistantRows = assistantMessages.querySelectorAll('.assistant-message.assistant');
+        const lastMsg = msgs[msgs.length - 1];
+        if (lastMsg?.role === 'user') {
+            const lastUser = userMessages[userMessages.length - 1];
+            if (lastUser) lastUser.style.animation = 'msgSlideRight 280ms cubic-bezier(0.34,1.56,0.64,1) forwards';
+        }
+        if (lastMsg?.role === 'assistant') {
+            const lastAssistant = assistantRows[assistantRows.length - 1];
+            if (lastAssistant) {
+                lastAssistant.style.animation = 'msgSlideLeft 280ms cubic-bezier(0.34,1.56,0.64,1) forwards';
+                const avatar = lastAssistant.querySelector('.msg-avatar');
+                if (avatar) avatar.style.animation = 'msgSlideLeft 280ms 40ms cubic-bezier(0.34,1.56,0.64,1) both';
+            }
+        }
+    }
+
     function setAssistantOpen(isOpen) {
+        if (!isOpen) {
+            if (state.assistant.isListening && assistantRecognition) {
+                try { assistantRecognition.stop(); } catch (e) { }
+            }
+            state._assistantScrollObserver?.disconnect();
+            state._assistantScrollObserver = null;
+            state.assistant.maximized = false;
+            if (assistantPanel && !assistantPanel.hidden) {
+                assistantPanel.classList.remove('verba-panel-open');
+                assistantPanel.classList.add('verba-panel-closing');
+                setTimeout(() => {
+                    assistantPanel.classList.remove('verba-panel-closing');
+                    state.assistant.isOpen = false;
+                    state.assistant.minimized = true;
+                    persistAssistantUi();
+                    renderAssistantMessages();
+                }, 200);
+                return;
+            }
+        }
         state.assistant.isOpen = !!isOpen;
         state.assistant.minimized = !isOpen;
-        if (!isOpen && state.assistant.isListening && assistantRecognition) {
-            try { assistantRecognition.stop(); } catch (e) { }
-        }
-        if (!isOpen) {
-            state.assistant.maximized = false;
-        }
         if (isOpen) {
             state.assistant.unread = 0;
-            setTimeout(() => assistantInput.focus(), 60);
         }
         persistAssistantUi();
         renderAssistantMessages();
+        if (isOpen && assistantPanel) {
+            assistantPanel.classList.remove('verba-panel-closing');
+            assistantPanel.classList.remove('verba-panel-open');
+            requestAnimationFrame(() => {
+                assistantPanel.classList.add('verba-panel-open');
+                setTimeout(() => assistantPanel.classList.remove('verba-panel-open'), 350);
+            });
+            setTimeout(() => assistantInput.focus(), 60);
+        }
     }
 
     function toggleAssistantMaximized(force) {
@@ -6807,6 +7777,7 @@ Preferred answer style:
         state.assistant.isSending = true;
         renderAssistantComposer();
         assistantModelMeta.textContent = `${getAssistantProviderLabel(provider)} | thinking...`;
+        showTypingIndicator();
         try {
             let preparedAttachment = [];
             if (pendingAttachment.length) {
@@ -6845,12 +7816,15 @@ Preferred answer style:
                 });
                 out = normalizeAssistantResponsePayload(result?.choices?.[0]?.message?.content || '');
             }
+            hideTypingIndicator();
             pushAssistantMessage('assistant', out || 'I could not generate a grounded answer for that app question.');
             updateDiagnostics({ provider, chatModel: model }, 'assistant reply ready');
             if (!state.assistant.isOpen) state.assistant.unread = Math.min(9, Number(state.assistant.unread || 0) + 1);
         } catch (err) {
+            hideTypingIndicator();
             pushAssistantMessage('assistant', `Assistant error: ${err.message || 'request failed'}`);
         } finally {
+            hideTypingIndicator();
             state.assistant.isSending = false;
             persistAssistantUi();
             renderAssistantMessages();
@@ -7066,12 +8040,26 @@ Preferred answer style:
         toast('Assistant thread cleared', 'info');
     });
     assistantCopyLastBtn?.addEventListener('click', () => {
-        const reply = getLastAssistantReply();
-        if (!reply) {
-            toast('No assistant answer yet', 'warning');
+        const messages = state?.assistant?.messages || [];
+        const fullChat = messages
+            .filter(m => m.role !== 'system')
+            .map(m => {
+                const role = m.role === 'user' ? 'You' : 'Verba';
+                return `${role}:\n${m.content || m.text || ''}`;
+            })
+            .join('\n\n---\n\n');
+
+        if (!fullChat.trim()) {
+            toast('Nothing to copy');
             return;
         }
-        copyToClipboard(reply, () => toast('Assistant answer copied', 'success'));
+
+        navigator.clipboard.writeText(fullChat)
+            .then(() => toast('Full chat copied'))
+            .catch(() => {
+                if (typeof legacyCopy === 'function') legacyCopy(fullChat, () => toast('Full chat copied'));
+                else toast('Copy failed');
+            });
     });
     document.querySelectorAll('#assistantQuickPrompts .assistant-chip').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -7114,6 +8102,19 @@ Preferred answer style:
         toast(state.autoCopyEnabled ? `Auto-copy on - fires after ${AUTO_COPY_DELAY / 1000}s silence` : 'Auto-copy off', 'info');
     });
 
+    syncUploadedFileLanguageModeUi();
+    refreshTopDownloadAction();
+    refreshExportCards();
+    fileLanguageModeInputs.forEach((input) => {
+        input.addEventListener('change', () => {
+            syncUploadedFileLanguageModeUi();
+            refreshTopDownloadAction();
+            refreshExportCards();
+            const mode = getUploadedFileLanguageMode();
+            updateDiagnostics({ fileLanguageMode: mode }, `Uploaded file mode set to ${mode === 'translate' ? 'translate to English' : 'preserve originals'}`);
+        });
+    });
+
     // Copy button
     $('copyBtn').addEventListener('click', () => {
         const text = transcript.value.trim();
@@ -7129,46 +8130,53 @@ Preferred answer style:
         });
     });
 
-    // Download button with dropdown
-    downloadBtn.addEventListener('click', (e) => {
+    topDownloadBtn?.addEventListener('click', (e) => {
+        if (topDownloadBtn.classList.contains('is-disabled')) {
+            e.stopPropagation();
+            topDownloadDropdown?.classList.remove('open');
+            topDownloadBtn.setAttribute('aria-expanded', 'false');
+            toast('Nothing to download yet', 'warning');
+            return;
+        }
         e.stopPropagation();
-        const text = transcript.value.trim();
-        if (!text) { toast('Nothing to download yet', 'warning'); return; }
-        downloadDropdown.classList.toggle('open');
+        const nextOpen = !topDownloadDropdown?.classList.contains('open');
+        topDownloadDropdown?.classList.toggle('open', nextOpen);
+        topDownloadBtn.setAttribute('aria-expanded', String(!!nextOpen));
     });
 
-    document.querySelectorAll('.download-option').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            downloadDropdown.classList.remove('open');
-            const format = btn.dataset.format;
-            const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    topDownloadMenu?.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
 
-            if (format === 'txt') {
-                downloadFile(transcript.value, `transcript-${ts}.txt`, 'text/plain;charset=utf-8');
-            } else if (format === 'srt') {
-                if (!state.segments.length) { toast('No segments for SRT - use timestamped view', 'warning'); return; }
-                downloadFile(generateSRT(), `transcript-${ts}.srt`, 'text/plain;charset=utf-8');
-            } else if (format === 'vtt') {
-                if (!state.segments.length) { toast('No segments for VTT - use timestamped view', 'warning'); return; }
-                downloadFile(generateVTT(), `transcript-${ts}.vtt`, 'text/vtt;charset=utf-8');
-            } else if (format === 'json') {
-                downloadFile(generateJSON(), `transcript-${ts}.json`, 'application/json;charset=utf-8');
-            } else if (format === 'md') {
-                downloadFile(generateMarkdown(), `transcript-${ts}.md`, 'text/markdown;charset=utf-8');
-            } else if (format === 'csv') {
-                if (!state.segments.length) { toast('No segments available for CSV export', 'warning'); return; }
-                downloadFile(generateCSV(), `transcript-${ts}.csv`, 'text/csv;charset=utf-8');
-            } else if (format === 'workspace') {
-                downloadFile(generateWorkspaceJSON(), `workspace-${ts}.json`, 'application/json;charset=utf-8');
-            }
-            toast(`Downloaded as ${format.toUpperCase()}`, 'success');
+    topDownloadDropdown?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.download-option');
+        if (!btn) return;
+        e.stopPropagation();
+        topDownloadDropdown.classList.remove('open');
+        topDownloadBtn.setAttribute('aria-expanded', 'false');
+        downloadTranscriptFormat(btn.dataset.format);
+    });
+
+    exportCardButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            if (button.disabled) return;
+            const format = button.dataset.format;
+            const success = downloadTranscriptFormat(format);
+            if (!success) return;
+            const card = button.closest('.export-card');
+            card?.classList.add('is-downloaded');
+            button.textContent = 'Downloaded';
+            setTimeout(() => {
+                card?.classList.remove('is-downloaded');
+                if (!button.disabled) button.textContent = 'Download';
+            }, 1400);
         });
     });
 
     // Close dropdown on outside click
     document.addEventListener('click', () => {
-        downloadDropdown.classList.remove('open');
+        topDownloadDropdown?.classList.remove('open');
+        topDownloadBtn?.setAttribute('aria-expanded', 'false');
     });
 
     // Clear button
@@ -7199,12 +8207,18 @@ Preferred answer style:
     transcript.addEventListener('input', () => {
         state.confirmedText = transcript.value;
         updateStats();
+        refreshExportCards();
         scheduleWorkspaceSave();
     });
 
     // â”€â”€â”€ API Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     apiHeader.addEventListener('click', () => {
-        apiPanel.classList.toggle('open');
+        setApiPanelOpen(!apiPanel.classList.contains('open'));
+    });
+    helpBtn?.addEventListener('click', () => openHelpModal());
+    helpCloseBtn?.addEventListener('click', () => closeHelpModal());
+    helpModalOverlay?.addEventListener('click', (e) => {
+        if (e.target === helpModalOverlay) closeHelpModal();
     });
 
     // Load saved values
@@ -7272,7 +8286,7 @@ Preferred answer style:
 
     $('apiKeySave').addEventListener('click', () => {
         state.apiKey = apiKeyInput.value.trim();
-        localStorage.setItem('vt_api_key', state.apiKey);
+        safeLocalStorageSet('vt_api_key', state.apiKey);
         const providerKeys = (state.providerKeys[state.apiProvider] || []).filter(Boolean).filter(key => key !== state.apiKey);
         state.providerKeys[state.apiProvider] = state.apiKey ? [state.apiKey, ...providerKeys] : providerKeys;
         persistProviderStore();
@@ -7478,25 +8492,30 @@ Preferred answer style:
         if (file) handleFileSelect(file);
     });
 
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
     fileInput.addEventListener('change', () => {
         if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
     });
 
     function handleFileSelect(file) {
         // Validate
-        if (file.size > 200 * 1024 * 1024) {
-            toast('File too large - max 200MB', 'error');
+        if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+            toast('File too large - max 500MB', 'error');
             return;
         }
 
-        const audioTypes = ['audio/', 'video/mp4'];
-        const isAudio = audioTypes.some(t => file.type.startsWith(t)) || /\.(mp3|wav|m4a|flac|ogg|webm|mp4|aac|wma|opus)$/i.test(file.name);
-        if (!isAudio) {
-            toast('Please upload an audio file', 'error');
+        const mediaTypes = ['audio/', 'video/'];
+        const isMedia = mediaTypes.some(t => file.type.startsWith(t)) || /\.(mp3|wav|m4a|flac|ogg|webm|mp4|aac|wma|opus|mov|mkv|avi|amr|3gp)$/i.test(file.name);
+        if (!isMedia) {
+            toast('Please upload a supported audio or video file', 'error');
             return;
         }
 
         state.uploadedFile = file;
+        if (state.uploadedFileUrl) URL.revokeObjectURL(state.uploadedFileUrl);
         state.fileHash = '';
         state.cacheKey = '';
 
@@ -7506,7 +8525,9 @@ Preferred answer style:
 
         // Set audio player
         const url = URL.createObjectURL(file);
+        state.uploadedFileUrl = url;
         fileAudioPlayer.src = url;
+        if (transcriptHeaderMedia) transcriptHeaderMedia.hidden = false;
         fileAudioPlayer.onloadedmetadata = () => {
             const dur = fileAudioPlayer.duration;
             fileMeta.innerHTML += `<span>${fmtTime(dur * 1000)}</span>`;
@@ -7515,6 +8536,7 @@ Preferred answer style:
         dropZone.style.display = 'none';
         fileInfo.classList.add('visible');
         audioAnalysisEl.classList.remove('visible');
+        refreshTopDownloadAction();
         setCacheStatus('Ready for new file');
         updateTranscribeBtn();
         scheduleWorkspaceSave();
@@ -7523,14 +8545,18 @@ Preferred answer style:
     $('fileRemoveBtn').addEventListener('click', () => {
         state.uploadedFile = null;
         state.uploadedAudioBuffer = null;
+        if (state.uploadedFileUrl) URL.revokeObjectURL(state.uploadedFileUrl);
+        state.uploadedFileUrl = '';
         state.audioAnalysis = null;
         state.fileHash = '';
         state.cacheKey = '';
         fileInput.value = '';
         fileAudioPlayer.src = '';
+        if (transcriptHeaderMedia) transcriptHeaderMedia.hidden = true;
         fileInfo.classList.remove('visible');
         audioAnalysisEl.classList.remove('visible');
         dropZone.style.display = '';
+        refreshTopDownloadAction();
         updateTranscribeBtn();
     });
 
@@ -7586,7 +8612,7 @@ Preferred answer style:
 
     autosaveToggle.addEventListener('click', () => {
         state.autosaveEnabled = !state.autosaveEnabled;
-        localStorage.setItem('vt_autosave', state.autosaveEnabled ? '1' : '0');
+        safeLocalStorageSet('vt_autosave', state.autosaveEnabled ? '1' : '0');
         autosaveToggle.classList.toggle('on', state.autosaveEnabled);
         if (state.autosaveEnabled) writeWorkspaceToStorage();
         toast(state.autosaveEnabled ? 'Workspace autosave enabled' : 'Workspace autosave disabled', 'info');
@@ -7772,25 +8798,43 @@ Preferred answer style:
         scheduleWorkspaceSave();
     });
 
-    workspaceSidebarBtn?.addEventListener('click', () => {
-        if (isCompactSidebarViewport()) setSidebarMobileOpen(!state.sidebarMobileOpen);
-        else setSidebarCollapsed(!state.sidebarCollapsed);
-    });
+    const handleSidebarToggle = (forceMobileOpen = null) => {
+        try {
+            if (isCompactSidebarViewport()) {
+                if (typeof forceMobileOpen === 'boolean') setSidebarMobileOpen(forceMobileOpen);
+                else setSidebarMobileOpen(!state.sidebarMobileOpen);
+                return;
+            }
+            setSidebarCollapsed(!state.sidebarCollapsed);
+        } catch (err) {
+            console.warn('Sidebar toggle failed', err);
+        }
+    };
 
-    workspaceSidebarFab?.addEventListener('click', () => setSidebarMobileOpen(true));
-    workspaceSidebarCloseBtn?.addEventListener('click', () => setSidebarMobileOpen(false));
-    workspaceSidebarCollapseBtn?.addEventListener('click', () => {
-        if (isCompactSidebarViewport()) setSidebarMobileOpen(false);
-        else setSidebarCollapsed(!state.sidebarCollapsed);
+    workspaceSidebarBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSidebarToggle();
+    });
+    workspaceSidebarFab?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSidebarToggle(true);
+    });
+    workspaceSidebarCloseBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSidebarToggle(false);
+    });
+    workspaceSidebarCollapseBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSidebarToggle(isCompactSidebarViewport() ? false : null);
     });
     workspaceSidebarBackdrop?.addEventListener('click', () => setSidebarMobileOpen(false));
-    sidebarCollapseBtn?.addEventListener('click', () => {
-        if (isCompactSidebarViewport()) setSidebarMobileOpen(!state.sidebarMobileOpen);
-        else setSidebarCollapsed(!state.sidebarCollapsed);
+    sidebarCollapseBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSidebarToggle();
     });
     sidebarResetBtn?.addEventListener('click', () => setSidebarWidth(280));
     sidebarWidthRange?.addEventListener('input', (e) => setSidebarWidth(e.target.value));
-    workspaceNavButtons.forEach((btn) => btn.addEventListener('click', () => setWorkspaceView(btn.dataset.view || 'transcript')));
+    workspaceNavButtons.forEach((btn) => btn.addEventListener('click', () => navigateToWorkspaceView(btn.dataset.view || 'transcript')));
 
     function syncAiOutputExpandUi() {
         const expanded = aiOutput?.classList.contains('is-expanded');
@@ -7924,6 +8968,8 @@ Preferred answer style:
             ['Detected lang', state.detectedLanguage || state.diagnostics.detectedLanguage || 'UNKNOWN'],
             ['Translate', state.diagnostics.translationEnabled ? `ON -> ${translationTargetLabelFor(state.diagnostics.translationTarget || 'en')}` : 'OFF'],
             ['Translate busy', state.diagnostics.translationBusy ? 'YES' : 'NO'],
+            ['Multilingual repair', state.diagnostics.multilingualRepairApplied ? `YES (${state.diagnostics.multilingualRepairSegments || 0})` : (state.diagnostics.multilingualRepair || 'NO')],
+            ['Language spread', state.diagnostics.multilingualLanguageSpread || 'unknown'],
             ['Segments', String(state.segments?.length || 0)],
             ['Duration', state.audioDurationSec ? `${state.audioDurationSec.toFixed(1)}s` : 'UNKNOWN'],
             ['Retries', String(state.diagnostics.retries || 0)],
@@ -8082,6 +9128,7 @@ Preferred answer style:
         document.querySelectorAll('.mode-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.mode === nextMode);
         });
+        syncInteractiveChrome();
 
         uploadPanel.classList.toggle('visible', nextMode === 'file');
         recPanel.style.display = nextMode === 'file' ? 'none' : '';
@@ -8117,7 +9164,7 @@ Preferred answer style:
         if (state.mode === 'quality') {
             if (!state.apiKey) {
                 toast('API key required for Quality mode', 'warning');
-                apiPanel.classList.add('open');
+                setApiPanelOpen(true);
                 return;
             }
             startQualityRecording();
@@ -8323,6 +9370,11 @@ Preferred answer style:
 
         // Escape: cancel / clear interim
         if (e.code === 'Escape') {
+            if (helpModalOverlay && !helpModalOverlay.hidden) {
+                e.preventDefault();
+                closeHelpModal();
+                return;
+            }
             if (state.sidebarMobileOpen) {
                 e.preventDefault();
                 setSidebarMobileOpen(false);
@@ -8337,7 +9389,6 @@ Preferred answer style:
                 state.abortController.abort();
             }
             interimEl.textContent = '';
-            downloadDropdown.classList.remove('open');
         }
 
         // Ctrl+C: copy (when not in textarea)
@@ -8420,9 +9471,84 @@ Preferred answer style:
         ensureCanvasSize();
         drawOrbFrame(state.visualLevel || 0, state.isRecording);
     }
+
+    function initUiEffects() {
+        if (initUiEffects._done) return;
+        initUiEffects._done = true;
+
+        try {
+            document.addEventListener('mousedown', (e) => {
+                const target = e.target.closest('button, .workspace-nav-btn, .pill-btn, .btn-toggle, .mode-btn, .view-btn, .export-card-btn');
+                if (!target) return;
+                const rect = target.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                ripple.style.width = `${size}px`;
+                ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - (size / 2)}px`;
+                ripple.style.top = `${e.clientY - rect.top - (size / 2)}px`;
+                const existing = target.querySelector('.ripple-effect');
+                if (existing) existing.remove();
+                target.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 500);
+            });
+        } catch (err) {
+            console.warn('Ripple binding failed', err);
+        }
+
+        try {
+            document.addEventListener('mousemove', (e) => {
+                const card = e.target.closest('.export-card');
+                if (!card) return;
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+            }, { passive: true });
+        } catch (err) {
+            console.warn('Export spotlight binding failed', err);
+        }
+
+        try {
+            assistantLauncher?.addEventListener('click', () => {
+                assistantLauncher.classList.remove('is-bouncing');
+                void assistantLauncher.offsetWidth;
+                assistantLauncher.classList.add('is-bouncing');
+                const existing = document.getElementById('mascotWaveTip');
+                if (existing) existing.remove();
+                const tip = document.createElement('div');
+                tip.id = 'mascotWaveTip';
+                tip.className = 'mascot-wave-tip';
+                tip.textContent = 'Hey there!';
+                document.body.appendChild(tip);
+                setTimeout(() => tip.remove(), 2000);
+            });
+        } catch (err) {
+            console.warn('Mascot polish failed', err);
+        }
+
+        try {
+            window.addEventListener('resize', syncInteractiveChrome, { passive: true });
+            syncInteractiveChrome();
+        } catch (err) {
+            console.warn('Interactive chrome sync failed', err);
+        }
+
+        try {
+            if (assistantMessages) {
+                state._assistantScrollObserver?.disconnect();
+                state._assistantScrollObserver = new MutationObserver(() => {
+                    smoothScrollChat();
+                });
+                state._assistantScrollObserver.observe(assistantMessages, { childList: true, subtree: true });
+            }
+        } catch (err) {
+            console.warn('Assistant scroll observer failed', err);
+        }
+    }
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('resize', syncPrimaryHints);
     window.addEventListener('resize', () => {
         if (!isCompactSidebarViewport()) state.sidebarMobileOpen = false;
         syncSidebarUi();
@@ -8430,6 +9556,11 @@ Preferred answer style:
 
     // â”€â”€â”€ Init State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     buildWorkspaceViews();
+    applyWorkspaceNavIcons();
+    document.body.classList.add('app-shell-mounted');
+    requestAnimationFrame(() => document.body.classList.add('app-ready'));
+    initUiEffects();
+    setApiPanelOpen(apiPanel?.classList.contains('open'));
     syncSidebarUi();
     setWorkspaceView(state.workspaceView || 'transcript', { persist: false, closeMobile: false });
     punctBtn.classList.toggle('on', state.smartPunctEnabled);
@@ -8455,4 +9586,7 @@ Preferred answer style:
     renderAssistantMessages();
     setAssistantOpen(!!state.assistant.ui.isOpen);
     updateDiagnostics(state.diagnostics || {}, 'Ready');
+    const syncScrollChrome = () => document.body.classList.toggle('is-scrolled', window.scrollY > 8);
+    syncScrollChrome();
+    window.addEventListener('scroll', syncScrollChrome, { passive: true });
 }
