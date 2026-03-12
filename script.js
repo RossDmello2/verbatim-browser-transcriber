@@ -260,77 +260,102 @@ function buildApp() {
     <div class="workspace-command-deck topbar">
       <!-- Controls -->
       <div class="controls">
-        <div class="mode-toggle">
+        <button class="workspace-sidebar-btn topbar-menu-btn" id="workspaceSidebarBtn" type="button" aria-expanded="false" aria-controls="workspaceSidebar" aria-label="Open navigation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="17" x2="20" y2="17"></line>
+          </svg>
+          <span class="topbar-menu-label">Sidebar</span>
+        </button>
+        <div class="app-brand" aria-label="Verbatim">
+          <div class="app-brand-icon">V</div>
+          <span class="app-brand-name">Verbatim</span>
+        </div>
+        <div class="mode-toggle mode-switcher">
           <span class="mode-pill" aria-hidden="true"></span>
-          <button class="mode-btn active" id="modeRealtime" data-mode="realtime"><span class="mode-dot"></span> Live</button>
-          <button class="mode-btn" id="modeQuality" data-mode="quality"><span class="mode-dot"></span> Quality</button>
-          <button class="mode-btn" id="modeFile" data-mode="file"><span class="mode-dot"></span> File</button>
+          <button class="mode-btn mode-seg-btn active" id="modeRealtime" data-mode="realtime"><span class="mode-dot"></span> Live</button>
+          <button class="mode-btn mode-seg-btn" id="modeQuality" data-mode="quality"><span class="mode-dot"></span> Quality</button>
+          <button class="mode-btn mode-seg-btn" id="modeFile" data-mode="file"><span class="mode-dot"></span> File</button>
         </div>
-        <div class="lang-wrap">
-          <span class="lang-label">Lang</span>
-          <select id="langSelect">
-            <option value="auto">Auto-detect</option>
-            <optgroup label="English">
-              <option value="en-IN" data-wlang="en">English - India</option>
-              <option value="en-US" data-wlang="en">English - US</option>
-              <option value="en-GB" data-wlang="en">English - UK</option>
-              <option value="en-AU" data-wlang="en">English - AU</option>
-            </optgroup>
-            <optgroup label="Indian Languages">
-              <option value="hi-IN" data-wlang="hi">Hindi</option>
-              <option value="ta-IN" data-wlang="ta">Tamil</option>
-              <option value="te-IN" data-wlang="te">Telugu</option>
-              <option value="mr-IN" data-wlang="mr">Marathi</option>
-              <option value="bn-IN" data-wlang="bn">Bengali</option>
-              <option value="gu-IN" data-wlang="gu">Gujarati</option>
-              <option value="kn-IN" data-wlang="kn">Kannada</option>
-              <option value="ml-IN" data-wlang="ml">Malayalam</option>
-              <option value="pa-IN" data-wlang="pa">Punjabi</option>
-              <option value="ur-PK" data-wlang="ur">Urdu</option>
-            </optgroup>
-            <optgroup label="Other Languages">
-              <option value="es-ES" data-wlang="es">Spanish</option>
-              <option value="fr-FR" data-wlang="fr">French</option>
-              <option value="de-DE" data-wlang="de">German</option>
-              <option value="ja-JP" data-wlang="ja">Japanese</option>
-              <option value="zh-CN" data-wlang="zh">Mandarin</option>
-              <option value="ar-SA" data-wlang="ar">Arabic</option>
-              <option value="pt-BR" data-wlang="pt">Portuguese</option>
-              <option value="ko-KR" data-wlang="ko">Korean</option>
-              <option value="ru-RU" data-wlang="ru">Russian</option>
-            </optgroup>
-          </select>
+        <button class="topbar-controls-btn topbar-menu-btn" id="topbarControlsBtn" type="button" aria-expanded="false" aria-controls="topbarMobileDrawer" aria-label="Open controls">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+            <circle cx="9" cy="6" r="2"></circle>
+            <circle cx="15" cy="12" r="2"></circle>
+            <circle cx="11" cy="18" r="2"></circle>
+          </svg>
+          <span class="topbar-menu-label">Controls</span>
+        </button>
+        <div class="topbar-secondary-controls topbar-mobile-drawer" id="topbarMobileDrawer">
+          <div class="lang-wrap">
+            <span class="lang-label">Lang</span>
+            <select id="langSelect" class="lang-select">
+              <option value="auto">Auto-detect</option>
+              <optgroup label="English">
+                <option value="en-IN" data-wlang="en">English - India</option>
+                <option value="en-US" data-wlang="en">English - US</option>
+                <option value="en-GB" data-wlang="en">English - UK</option>
+                <option value="en-AU" data-wlang="en">English - AU</option>
+              </optgroup>
+              <optgroup label="Indian Languages">
+                <option value="hi-IN" data-wlang="hi">Hindi</option>
+                <option value="ta-IN" data-wlang="ta">Tamil</option>
+                <option value="te-IN" data-wlang="te">Telugu</option>
+                <option value="mr-IN" data-wlang="mr">Marathi</option>
+                <option value="bn-IN" data-wlang="bn">Bengali</option>
+                <option value="gu-IN" data-wlang="gu">Gujarati</option>
+                <option value="kn-IN" data-wlang="kn">Kannada</option>
+                <option value="ml-IN" data-wlang="ml">Malayalam</option>
+                <option value="pa-IN" data-wlang="pa">Punjabi</option>
+                <option value="ur-PK" data-wlang="ur">Urdu</option>
+              </optgroup>
+              <optgroup label="Other Languages">
+                <option value="es-ES" data-wlang="es">Spanish</option>
+                <option value="fr-FR" data-wlang="fr">French</option>
+                <option value="de-DE" data-wlang="de">German</option>
+                <option value="ja-JP" data-wlang="ja">Japanese</option>
+                <option value="zh-CN" data-wlang="zh">Mandarin</option>
+                <option value="ar-SA" data-wlang="ar">Arabic</option>
+                <option value="pt-BR" data-wlang="pt">Portuguese</option>
+                <option value="ko-KR" data-wlang="ko">Korean</option>
+                <option value="ru-RU" data-wlang="ru">Russian</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="lang-wrap translator-wrap">
+            <span class="lang-label">Target</span>
+            <select id="translationTargetSelect" class="target-select">
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="ta">Tamil</option>
+              <option value="te">Telugu</option>
+              <option value="mr">Marathi</option>
+              <option value="bn">Bengali</option>
+              <option value="gu">Gujarati</option>
+              <option value="kn">Kannada</option>
+              <option value="ml">Malayalam</option>
+              <option value="pa">Punjabi</option>
+              <option value="ur">Urdu</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="ja">Japanese</option>
+              <option value="zh">Mandarin</option>
+              <option value="ar">Arabic</option>
+              <option value="pt">Portuguese</option>
+              <option value="ko">Korean</option>
+              <option value="ru">Russian</option>
+            </select>
+          </div>
+          <button class="btn-toggle toggle-btn" id="liveTranslateToggle" title="Translate finalized segments with sentiment"><span class="toggle-dot"></span><span class="btn-label">Live Translate</span></button>
+          <button class="btn-toggle toggle-btn" id="punctBtn" title="Smart punctuation"><span class="toggle-dot"></span><span class="btn-label">Punct</span></button>
+          <button class="btn-toggle toggle-btn" id="autoCopyBtn" title="Auto-copy after silence"><span class="toggle-dot"></span><span class="btn-label">Auto-Copy</span></button>
+          <button class="btn-toggle toggle-btn" id="speakerModeToggle" title="Render transcript with speaker labels"><span class="toggle-dot"></span><span class="btn-label">Speakers</span></button>
+          <button class="btn-toggle toggle-btn" id="autosaveToggle" title="Autosave workspace in browser"><span class="toggle-dot"></span><span class="btn-label">Autosave</span></button>
         </div>
-        <div class="lang-wrap translator-wrap">
-          <span class="lang-label">Target</span>
-          <select id="translationTargetSelect">
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="ta">Tamil</option>
-            <option value="te">Telugu</option>
-            <option value="mr">Marathi</option>
-            <option value="bn">Bengali</option>
-            <option value="gu">Gujarati</option>
-            <option value="kn">Kannada</option>
-            <option value="ml">Malayalam</option>
-            <option value="pa">Punjabi</option>
-            <option value="ur">Urdu</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="ja">Japanese</option>
-            <option value="zh">Mandarin</option>
-            <option value="ar">Arabic</option>
-            <option value="pt">Portuguese</option>
-            <option value="ko">Korean</option>
-            <option value="ru">Russian</option>
-          </select>
-        </div>
-        <button class="btn-toggle" id="liveTranslateToggle" title="Translate finalized segments with sentiment"><span class="toggle-dot"></span> Live Translate</button>
-        <button class="btn-toggle" id="punctBtn" title="Smart punctuation"><span class="toggle-dot"></span> Punct</button>
-        <button class="btn-toggle" id="autoCopyBtn" title="Auto-copy after silence"><span class="toggle-dot"></span> Auto-Copy</button>
-        <button class="btn-toggle" id="speakerModeToggle" title="Render transcript with speaker labels"><span class="toggle-dot"></span> Speakers</button>
-        <button class="btn-toggle" id="autosaveToggle" title="Autosave workspace in browser"><span class="toggle-dot"></span> Autosave</button>
         <div class="topbar-right-spacer" aria-hidden="true"></div>
       </div>
 
@@ -1307,6 +1332,8 @@ qdrant => Qdrant"></textarea>
     const workspaceSidebarBtn = $('workspaceSidebarBtn');
     const workspaceSidebarFab = $('workspaceSidebarFab');
     const workspaceSidebarBackdrop = $('workspaceSidebarBackdrop');
+    const topbarControlsBtn = $('topbarControlsBtn');
+    const topbarMobileDrawer = $('topbarMobileDrawer');
     const workspaceSidebarCloseBtn = $('workspaceSidebarCloseBtn');
     const workspaceSidebarCollapseBtn = $('workspaceSidebarCollapseBtn');
     const workspaceSidebarSettings = $('workspaceSidebarSettings');
@@ -1538,7 +1565,14 @@ qdrant => Qdrant"></textarea>
     }
 
     function isCompactSidebarViewport() {
-        return !!(window.matchMedia && window.matchMedia('(max-width: 899px)').matches);
+        return !!(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    }
+
+    function setTopbarMobileDrawerOpen(open) {
+        const next = !!open && isCompactSidebarViewport();
+        topbarMobileDrawer?.classList.toggle('open', next);
+        topbarControlsBtn?.classList.toggle('is-open', next);
+        topbarControlsBtn?.setAttribute('aria-expanded', next ? 'true' : 'false');
     }
 
     function buildWorkspaceViews() {
@@ -1836,13 +1870,13 @@ qdrant => Qdrant"></textarea>
         if (workspaceSidebarBtn) {
             const expanded = isCompactSidebarViewport() ? !!state.sidebarMobileOpen : !state.sidebarCollapsed;
             workspaceSidebarBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-            workspaceSidebarBtn.innerHTML = `<span class="toggle-dot"></span> ${isCompactSidebarViewport()
-                ? (state.sidebarMobileOpen ? 'Close sidebar' : 'Sidebar')
-                : (state.sidebarCollapsed ? 'Open sidebar' : 'Close sidebar')}`;
+            const label = isCompactSidebarViewport()
+                ? (state.sidebarMobileOpen ? 'Close navigation' : 'Navigation')
+                : (state.sidebarCollapsed ? 'Open sidebar' : 'Close sidebar');
+            workspaceSidebarBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg><span class="topbar-menu-label">${label}</span>`;
         }
         if (workspaceSidebarFab) {
-            const showFab = isCompactSidebarViewport() && !state.sidebarMobileOpen;
-            workspaceSidebarFab.hidden = !showFab;
+            workspaceSidebarFab.hidden = true;
             workspaceSidebarFab.setAttribute('aria-expanded', state.sidebarMobileOpen ? 'true' : 'false');
         }
         if (workspaceSidebarCloseBtn) workspaceSidebarCloseBtn.hidden = !isCompactSidebarViewport();
@@ -1875,6 +1909,7 @@ qdrant => Qdrant"></textarea>
 
     function setSidebarMobileOpen(open) {
         state.sidebarMobileOpen = !!open;
+        if (state.sidebarMobileOpen) setTopbarMobileDrawerOpen(false);
         syncSidebarUi();
     }
 
@@ -8815,6 +8850,11 @@ Preferred answer style:
         e.stopPropagation();
         handleSidebarToggle();
     });
+    topbarControlsBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setTopbarMobileDrawerOpen(!topbarMobileDrawer?.classList.contains('open'));
+    });
     workspaceSidebarFab?.addEventListener('click', (e) => {
         e.stopPropagation();
         handleSidebarToggle(true);
@@ -8828,6 +8868,11 @@ Preferred answer style:
         handleSidebarToggle(isCompactSidebarViewport() ? false : null);
     });
     workspaceSidebarBackdrop?.addEventListener('click', () => setSidebarMobileOpen(false));
+    document.addEventListener('click', (e) => {
+        if (!isCompactSidebarViewport() || !topbarMobileDrawer?.classList.contains('open')) return;
+        if (topbarMobileDrawer.contains(e.target) || topbarControlsBtn?.contains(e.target)) return;
+        setTopbarMobileDrawerOpen(false);
+    });
     sidebarCollapseBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
         handleSidebarToggle();
@@ -9375,6 +9420,11 @@ Preferred answer style:
                 closeHelpModal();
                 return;
             }
+            if (topbarMobileDrawer?.classList.contains('open')) {
+                e.preventDefault();
+                setTopbarMobileDrawerOpen(false);
+                return;
+            }
             if (state.sidebarMobileOpen) {
                 e.preventDefault();
                 setSidebarMobileOpen(false);
@@ -9550,7 +9600,10 @@ Preferred answer style:
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('resize', () => {
-        if (!isCompactSidebarViewport()) state.sidebarMobileOpen = false;
+        if (!isCompactSidebarViewport()) {
+            state.sidebarMobileOpen = false;
+            setTopbarMobileDrawerOpen(false);
+        }
         syncSidebarUi();
     });
 
@@ -9561,6 +9614,7 @@ Preferred answer style:
     requestAnimationFrame(() => document.body.classList.add('app-ready'));
     initUiEffects();
     setApiPanelOpen(apiPanel?.classList.contains('open'));
+    setTopbarMobileDrawerOpen(false);
     syncSidebarUi();
     setWorkspaceView(state.workspaceView || 'transcript', { persist: false, closeMobile: false });
     punctBtn.classList.toggle('on', state.smartPunctEnabled);
