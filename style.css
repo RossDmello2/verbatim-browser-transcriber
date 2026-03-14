@@ -4580,17 +4580,20 @@ select:focus,
     flex-direction: column;
 }
 
-#orbTrigger {
+#orbTrigger,
+#captureOrbStage {
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#orbTrigger:hover {
+#orbTrigger:hover,
+#captureOrbStage:hover {
     transform: translateY(-2px);
     box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.14), 0 24px 52px rgba(15, 23, 42, 0.1);
 }
 
-#orbTrigger:focus-visible {
+#orbTrigger:focus-visible,
+#captureOrbStage:focus-visible {
     outline: 2px solid rgba(96, 165, 250, 0.78);
     outline-offset: 4px;
 }
@@ -12168,7 +12171,10 @@ body.sidebar-collapsed .sidebar-collapse-btn .chevron,
 
 #orbTrigger,
 #orbTrigger:hover,
-#orbTrigger:focus-visible {
+#orbTrigger:focus-visible,
+#captureOrbStage,
+#captureOrbStage:hover,
+#captureOrbStage:focus-visible {
     transform: none !important;
     box-shadow: none !important;
 }
@@ -14014,4 +14020,53 @@ body {
         transform: none;
         box-shadow: none;
     }
+}
+
+.capture-page-inner,
+#captureView > *:first-child,
+.capture-setup-card {
+    margin-bottom: 16px;
+}
+
+.workspace-view[data-workspace-view="capture"] .workspace-view-body,
+#captureView,
+[data-view="capture"],
+.capture-page,
+[class*="capture-view"] {
+    overflow-y: auto;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+#captureSupportCard {
+    margin-bottom: 16px;
+}
+
+body:not(.sidebar-collapsed) .workspace-sidebar-nav .workspace-nav-btn.nav-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    min-height: 44px;
+    padding: 0 14px;
+    gap: 10px;
+}
+
+body:not(.sidebar-collapsed) .workspace-sidebar-nav .workspace-nav-btn.nav-item .workspace-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+body:not(.sidebar-collapsed) .workspace-sidebar-nav .workspace-nav-btn.nav-item .workspace-nav-label {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 1.2;
+    white-space: nowrap;
 }

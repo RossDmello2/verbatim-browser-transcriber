@@ -1264,7 +1264,7 @@ qdrant => Qdrant"></textarea>
     const MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024;
     const DIRECT_MEDIA_UPLOAD_MAX_BYTES = 24 * 1024 * 1024;
     let translationFlushTimer = null;
-    const MEMORY_IMPORT_PROMPT = [
+    const LEGACY_MEMORY_IMPORT_PROMPT = [
         "Export all of my stored memories and any context you've learned about me from past conversations. Preserve my words verbatim where possible, especially for instructions and preferences.",
         "",
         "## Categories (output in this order):",
@@ -1293,6 +1293,113 @@ qdrant => Qdrant"></textarea>
     ].join('\n');
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    const MEMORY_IMPORT_PROMPT_V2 = [
+        "Prepare a durable user-memory export for cross-platform import.",
+        "",
+        "STEP 1 - INSPECT",
+        "Examine everything currently accessible:",
+        "- Stable or saved memory and user profile context",
+        "- Custom instructions and system-level configuration",
+        "- Project instructions and project files if this is a project workspace",
+        "- Recurring patterns from conversation history",
+        "",
+        "STEP 2 - CLASSIFY EVERY FACT",
+        "PORTABLE - About the user as a person: identity, career, skills, preferences, constraints, goals. Relevant in any workspace.",
+        "CONTEXTUAL - About this workspace's purpose, operating modes, file structure, progress state, or task-specific directives. Relevant only in a workspace with a similar purpose.",
+        "EPHEMERAL - One-off requests, transient mistakes, temporary runtime state, or short-lived conversation details. Discard these entirely.",
+        "",
+        "Keep only durable facts. Deduplicate repeated facts. Prefer atomic one-line facts over long paragraphs.",
+        "",
+        "STEP 3 - FORMAT",
+        "Return exactly one fenced code block using the structure below.",
+        "",
+        "Per-line format: - [YYYY-MM-DD] fact",
+        "Use [unknown] if the date cannot be determined.",
+        "Sort oldest-known items first within each section.",
+        "If a section would be empty, write: - [unknown] None captured yet.",
+        "Omit a section only if it is structurally irrelevant, for example omit Open Loops if no concrete state exists.",
+        "",
+        "SECTION STRUCTURE:",
+        "",
+        "## Meta",
+        "Export date, source platform, format version \"v2\", count of portable facts, count of contextual facts.",
+        "",
+        "## PORTABLE CORE (always import)",
+        "## Identity",
+        "## Career & Education",
+        "## Technical Profile",
+        "## Projects & Achievements",
+        "## Active Goals",
+        "## Communication Preferences",
+        "## Hard Constraints",
+        "## Terminology",
+        "",
+        "## CONTEXTUAL (import into similar workspaces)",
+        "## Workspace Purpose & Scope",
+        "## Workspace Directives",
+        "## Progress & State",
+        "## Open Loops",
+        "",
+        "STEP 4 - COMPLETION CHECK",
+        "After the code block, output exactly one line:",
+        "Export-complete: yes|no - N portable, M contextual"
+    ].join('\n');
+
+    const MEMORY_IMPORT_PROMPT = [
+        "Prepare a durable user-memory export for cross-platform import.",
+        "",
+        "STEP 1 - INSPECT",
+        "Examine everything you can currently access:",
+        "- Saved or persistent memory entries",
+        "- Custom instructions or system-level user configuration",
+        "- Project instructions and project knowledge files if this is a project workspace",
+        "Do not attempt to recall past conversations you cannot see.",
+        "If you have access to nothing, say so in Meta and produce empty sections.",
+        "",
+        "STEP 2 - CLASSIFY EVERY FACT",
+        "PORTABLE - About the user as a person: identity, career, skills, preferences, constraints, goals. Relevant in any workspace.",
+        "CONTEXTUAL - About this workspace's purpose, operating modes, file structure, progress state, or task-specific directives. Relevant only in a similar-purpose workspace.",
+        "EPHEMERAL - One-off requests, transient mistakes, runtime states, and short-lived details. Discard these entirely.",
+        "",
+        "Keep only durable facts. Deduplicate. One atomic fact per line. Do not embellish or infer unsupported facts.",
+        "",
+        "STEP 3 - FORMAT",
+        "Return exactly one fenced code block.",
+        "Per-line format: - [YYYY-MM-DD] fact",
+        "Use [unknown] when the date cannot be determined.",
+        "Oldest items first within each section.",
+        "Empty sections get: - [unknown] None captured yet.",
+        "",
+        "SECTION ORDER - every heading is ##, no nesting:",
+        "",
+        "## Meta",
+        "- [YYYY-MM-DD] Export date",
+        "- [unknown] Source platform: <platform>",
+        "- [unknown] Workspace name: <name or [unknown]>",
+        "- [unknown] Format version: v3",
+        "- [unknown] Portable fact count: <N>",
+        "- [unknown] Contextual fact count: <M>",
+        "- [unknown] Portable sections: Identity, Career & Education, Technical Profile, Projects & Achievements, Active Goals, Communication Preferences, Hard Constraints, Terminology",
+        "- [unknown] Contextual sections: Workspace Purpose & Scope, Workspace Directives, Progress & State, Open Loops",
+        "",
+        "## Identity",
+        "## Career & Education",
+        "## Technical Profile",
+        "## Projects & Achievements",
+        "## Active Goals",
+        "## Communication Preferences",
+        "## Hard Constraints",
+        "## Terminology",
+        "## Workspace Purpose & Scope",
+        "## Workspace Directives",
+        "## Progress & State",
+        "## Open Loops",
+        "",
+        "STEP 4 - COMPLETION CHECK",
+        "After the code block, output exactly one line:",
+        "Export-complete: yes|no - N portable, M contextual"
+    ].join('\n');
+
     // ELEMENTS
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     const $ = id => document.getElementById(id);
@@ -1351,6 +1458,15 @@ qdrant => Qdrant"></textarea>
     const captureHelpPanel = $('captureHelpPanel');
     const captureHelpTip = $('captureHelpTip');
     const captureHelpCopy = $('captureHelpCopy');
+    const captureRecOrbCard = $('captureRecOrbCard');
+    const captureOrbStage = $('captureOrbStage');
+    const captureOrbStatus = $('captureOrbStatus');
+    const captureOrbTimerDisplay = $('captureOrbTimerDisplay');
+    const captureStatusMain = $('captureStatusMain');
+    const captureStatusSub = $('captureStatusSub');
+    const captureTimerDisplay = $('captureTimerDisplay');
+    const captureInterimEl = $('captureInterimEl');
+    const captureTranscriptHost = $('captureTranscriptHost');
     const shortcutsCard = $('shortcutsCard');
     const shortcutsToggle = $('shortcutsToggle');
     const shortcutsPanel = $('shortcutsPanel');
@@ -1624,6 +1740,47 @@ qdrant => Qdrant"></textarea>
         const transcriptStandaloneHost = document.createElement('div');
         transcriptStandaloneHost.className = 'workspace-transcript-standalone';
         transcriptStandaloneHost.id = 'transcriptStandaloneHost';
+        const captureLiveSplit = document.createElement('div');
+        captureLiveSplit.className = 'capture-live-split workspace-record-split';
+        captureLiveSplit.id = 'captureLiveSplit';
+        captureLiveSplit.innerHTML = `
+          <div class="workspace-record-stage">
+            <div class="rec-panel" id="captureRecOrbCard">
+              <div class="rec-hero">
+                <div class="orb-panel">
+                  <div class="rec-orb-stage orb-stage ready" id="captureOrbStage" role="button" tabindex="0" aria-label="Toggle recording from capture orb" aria-pressed="false">
+                    <div class="orb-status-bar orb-status-main" id="captureOrbStatus">READY TO CAPTURE</div>
+                    <div class="orb-halo" id="captureOrbHalo" aria-hidden="true"></div>
+                    <div class="orb-rings" id="captureOrbRings" aria-hidden="true">
+                      <span class="ring orb-ring ring-1"></span>
+                      <span class="ring orb-ring ring-2"></span>
+                      <span class="ring orb-ring ring-3"></span>
+                    </div>
+                    <div class="orb-sphere waveform-wrap idle" id="captureOrbSphere">
+                      <canvas id="captureWaveCanvas"></canvas>
+                      <div class="waveform-overlay" id="captureWaveOverlay"></div>
+                    </div>
+                    <div class="orb-waveform" id="captureOrbWaveform" aria-hidden="true">
+                      <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                    </div>
+                    <div class="orb-runtime sr-only-live">
+                      <div class="orb-timer-display" id="captureOrbTimerDisplay">00:00</div>
+                    </div>
+                    <div class="status-main sr-only-live" id="captureStatusMain">Ready to capture</div>
+                    <div class="status-sub sr-only-live" id="captureStatusSub">Use the selected source to capture</div>
+                    <div class="timer-display sr-only-live" id="captureTimerDisplay">00:00</div>
+                  </div>
+                </div>
+              </div>
+              <div class="interim-box">
+                <div class="live-dot"></div>
+                <div id="captureInterimEl" class="interim-text idle-hint">Captured audio transcription appears here...</div>
+              </div>
+              <div class="autocopy-bar" id="captureAutoCopyBar"><div class="autocopy-fill" id="captureAutoCopyFill"></div></div>
+            </div>
+          </div>
+          <div class="workspace-record-transcript" id="captureTranscriptHost"></div>
+        `;
 
         const transcriptViewBar = document.createElement('div');
         transcriptViewBar.className = 'utility-card workspace-transcript-toolbar';
@@ -1646,6 +1803,7 @@ qdrant => Qdrant"></textarea>
         views.transcript.body.appendChild(transcriptStandaloneHost);
         if (translationPanel) views.translation.body.appendChild(translationPanel);
         if (captureSupportCard) views.capture.body.appendChild(captureSupportCard);
+        views.capture.body.appendChild(captureLiveSplit);
         if (shortcutsCard) views.settings.body.appendChild(shortcutsCard);
         if (aiOutputCard) views['ai-output'].body.appendChild(aiOutputCard);
         if (memoryPanel) views.memory.body.appendChild(memoryPanel);
@@ -1794,11 +1952,14 @@ qdrant => Qdrant"></textarea>
         if (persist) localStorage.setItem('vt_workspace_view', state.workspaceView);
         const recordStageHost = $('recordStageHost');
         const recordTranscriptHost = $('recordTranscriptHost');
+        const captureTranscriptHost = $('captureTranscriptHost');
         const transcriptStandaloneHost = $('transcriptStandaloneHost');
         const transcriptViewToolbar = $('transcriptViewToolbar');
         if (state.workspaceView === 'transcript') {
             if (transcriptStandaloneHost && transcriptViewToolbar) transcriptStandaloneHost.appendChild(transcriptViewToolbar);
             if (transcriptStandaloneHost && transcriptPanelCard) transcriptStandaloneHost.appendChild(transcriptPanelCard);
+        } else if (state.workspaceView === 'capture') {
+            if (captureTranscriptHost && transcriptPanelCard) captureTranscriptHost.appendChild(transcriptPanelCard);
         } else {
             if (recordTranscriptHost && transcriptViewToolbar) recordTranscriptHost.appendChild(transcriptViewToolbar);
             if (recordTranscriptHost && transcriptPanelCard) recordTranscriptHost.appendChild(transcriptPanelCard);
@@ -2005,19 +2166,21 @@ qdrant => Qdrant"></textarea>
             meta: { ...meta },
             queuedAt: Date.now()
         };
-        state.realtimeCommitTimer = setTimeout(() => {
-            const pending = state.realtimePendingSegment;
-            state.realtimePendingSegment = null;
-            state.realtimeCommitTimer = null;
-            if (!pending?.text) return;
-            addSegment(pending.text, pending.conf, pending.meta.time, pending.meta.lang, pending.meta);
-            state.confirmedText = transcript.value;
-            state.lastInterimText = '';
-            state.lastInterimAlternatives = [];
-            interimEl.textContent = '';
-            interimEl.classList.remove('idle-hint');
-            state.lastEndTime = Date.now();
-        }, REALTIME_FINAL_COMMIT_DELAY_MS);
+            state.realtimeCommitTimer = setTimeout(() => {
+                const pending = state.realtimePendingSegment;
+                state.realtimePendingSegment = null;
+                state.realtimeCommitTimer = null;
+                if (!pending?.text) return;
+                addSegment(pending.text, pending.conf, pending.meta.time, pending.meta.lang, pending.meta);
+                state.confirmedText = transcript.value;
+                state.lastInterimText = '';
+                state.lastInterimAlternatives = [];
+                interimEl.textContent = '';
+                interimEl.classList.remove('idle-hint');
+                updateCaptureInterim('');
+                syncCaptureTranscript();
+                state.lastEndTime = Date.now();
+            }, REALTIME_FINAL_COMMIT_DELAY_MS);
     }
 
     function flushPendingRealtimeSegment(force = false) {
@@ -2375,6 +2538,51 @@ qdrant => Qdrant"></textarea>
         captureHelpCopy.innerHTML = cards.map(card => `<div class="capture-help-card"><h4>${card.title}</h4><p>${card.body}</p></div>`).join('');
     }
 
+    function getCaptureStatusLabel() {
+        const sel = captureSourceSelect || document.querySelector('select[id*="capture"]');
+        const value = String(sel?.value || '').toLowerCase();
+        if (value.includes('tab')) return 'CAPTURING TAB AUDIO';
+        if (value.includes('screen')) return 'CAPTURING SCREEN';
+        if (value.includes('external')) return 'CAPTURING EXTERNAL';
+        return 'CAPTURING';
+    }
+
+    function setCaptureOrbActive(isActive) {
+        if (!captureOrbStage) return;
+        captureRecOrbCard?.classList.toggle('recording', !!isActive);
+        captureOrbStage.classList.toggle('recording', !!isActive);
+        captureOrbStage.classList.toggle('ready', !isActive);
+        captureOrbStage.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        if (isActive) {
+            if (captureOrbStatus) {
+                captureOrbStatus.textContent = getCaptureStatusLabel();
+                captureOrbStatus.classList.add('rec-active');
+            }
+            return;
+        }
+        if (captureOrbStatus) captureOrbStatus.classList.remove('rec-active');
+        updateCaptureOrbStatus();
+    }
+
+    function updateCaptureOrbStatus() {
+        if (!captureOrbStatus || state.isRecording) return;
+        captureOrbStatus.textContent = normalizeUiText(getReadyStatusForCurrentState(state.mode, state.captureSource).main);
+    }
+
+    function syncCaptureTranscriptHost() {
+        if (!captureTranscriptHost || !transcriptPanelCard) return;
+        if (state.workspaceView === 'capture') captureTranscriptHost.appendChild(transcriptPanelCard);
+    }
+
+    function syncCaptureTranscript() {
+        syncCaptureTranscriptHost();
+    }
+
+    function updateCaptureInterim(_text) {
+        if (!captureInterimEl) return;
+        captureInterimEl.textContent = interimEl?.textContent || '';
+    }
+
     function renderCaptureUi() {
         if (!captureSourceSelect) return;
         captureSourceSelect.value = state.captureSource;
@@ -2389,6 +2597,10 @@ qdrant => Qdrant"></textarea>
         if (captureCapabilityNote) captureCapabilityNote.textContent = getCaptureCapabilitySummary();
         renderCaptureHelp();
         setCaptureHelpOpen(state.captureHelpOpen);
+        updateCaptureOrbStatus();
+        setCaptureOrbActive(!!state.isRecording && state.mode !== 'file' && state.captureSource !== 'external-help');
+        updateCaptureInterim();
+        syncCaptureTranscriptHost();
         if (modeRealtimeBtn) {
             modeRealtimeBtn.disabled = !runtimeCapabilities.hasSpeechRecognition;
             modeRealtimeBtn.classList.toggle('disabled', !runtimeCapabilities.hasSpeechRecognition);
@@ -2519,10 +2731,14 @@ qdrant => Qdrant"></textarea>
                 const sep = state.confirmedText && !state.confirmedText.endsWith('\n') ? ' ' : '';
                 transcript.value = state.confirmedText + sep + interim;
                 transcript.scrollTop = transcript.scrollHeight;
+                updateCaptureInterim(interim);
+                syncCaptureTranscript();
             }
             if (!interim && state.realtimePendingSegment?.text) {
                 const sep = state.confirmedText && !state.confirmedText.endsWith('\n') ? ' ' : '';
                 transcript.value = `${state.confirmedText}${sep}${state.realtimePendingSegment.text}`.trim();
+                updateCaptureInterim('');
+                syncCaptureTranscript();
             }
             setNoSpeechTimer();
         };
@@ -3289,6 +3505,7 @@ qdrant => Qdrant"></textarea>
             updateStats();
         }
         transcript.scrollTop = 0;
+        syncCaptureTranscript();
         refreshTopDownloadAction();
         queueTranslationBackfill({ immediate: true });
         scheduleWorkspaceSave();
@@ -3714,6 +3931,8 @@ qdrant => Qdrant"></textarea>
         if (!state.sessionStart) return;
         timerEl.textContent = fmtTime(Date.now() - state.sessionStart);
         if (orbTimerDisplay) orbTimerDisplay.textContent = timerEl.textContent;
+        if (captureOrbTimerDisplay) captureOrbTimerDisplay.textContent = timerEl.textContent;
+        if (captureTimerDisplay) captureTimerDisplay.textContent = timerEl.textContent;
     }
 
     function fmtTime(ms) {
@@ -3759,6 +3978,8 @@ qdrant => Qdrant"></textarea>
         state.lastInterimAlternatives = [];
         interimEl.textContent = '';
         interimEl.classList.remove('idle-hint');
+        updateCaptureInterim('');
+        syncCaptureTranscript();
         state.lastEndTime = Date.now();
         return true;
     }
@@ -3921,6 +4142,7 @@ qdrant => Qdrant"></textarea>
         }
         transcript.value += sep + text;
         transcript.scrollTop = transcript.scrollHeight;
+        syncCaptureTranscript();
         updateStats();
     }
 
@@ -3931,6 +4153,8 @@ qdrant => Qdrant"></textarea>
         state.correctionHistory = [];
         state.correctionQueue = [];
         state.correctionBusy = false;
+        syncCaptureTranscript();
+        updateCaptureInterim('');
         state.correctionCache = {};
         persistCorrectionCache();
         state.detectedLanguage = '';
@@ -3942,6 +4166,8 @@ qdrant => Qdrant"></textarea>
         durStat.textContent = '0:00 duration';
         timerEl.textContent = '00:00';
         if (orbTimerDisplay) orbTimerDisplay.textContent = '00:00';
+        if (captureOrbTimerDisplay) captureOrbTimerDisplay.textContent = '00:00';
+        if (captureTimerDisplay) captureTimerDisplay.textContent = '00:00';
         detectedLangBadge.style.display = 'none';
         renderSegments();
         resetTranslationSession({ keepSettings: true });
@@ -3968,6 +4194,7 @@ qdrant => Qdrant"></textarea>
         wordPill.classList.toggle('active', words > 0);
         charPill.classList.toggle('active', chars > 0);
         sessionStorage.setItem('vt_ai_output', aiOutput?.value || '');
+        syncCaptureTranscript();
         refreshExportCards();
         syncStatusBar();
     }
@@ -4054,6 +4281,9 @@ qdrant => Qdrant"></textarea>
         statusMain.textContent = normalizeUiText(main);
         statusSub.textContent = normalizeUiText(sub);
         if (orbStatusMain) orbStatusMain.textContent = normalizeUiText(main);
+        if (captureOrbStatus && !state.isRecording) captureOrbStatus.textContent = normalizeUiText(main);
+        if (captureStatusMain) captureStatusMain.textContent = normalizeUiText(main);
+        if (captureStatusSub) captureStatusSub.textContent = normalizeUiText(sub);
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -7881,6 +8111,15 @@ Preferred answer style:
             toggleRecordingFromUi();
         }
     });
+    captureOrbStage?.addEventListener('click', () => {
+        toggleRecordingFromUi();
+    });
+    captureOrbStage?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleRecordingFromUi();
+        }
+    });
 
     assistantLauncher?.addEventListener('click', () => {
         setAssistantOpen(!state.assistant.isOpen);
@@ -8241,6 +8480,7 @@ Preferred answer style:
     // Transcript input
     transcript.addEventListener('input', () => {
         state.confirmedText = transcript.value;
+        syncCaptureTranscript();
         updateStats();
         refreshExportCards();
         scheduleWorkspaceSave();
@@ -8960,6 +9200,7 @@ Preferred answer style:
 
     captureSourceSelect?.addEventListener('change', () => {
         setCaptureSource(captureSourceSelect.value);
+        if (!state.isRecording) updateCaptureOrbStatus();
     });
 
     captureHelpToggle?.addEventListener('click', () => {
@@ -9073,6 +9314,8 @@ Preferred answer style:
                     toast('API key required for Quality mode transcription', 'warning');
                     interimEl.textContent = 'Interim transcription appears here as you speak...';
                     interimEl.classList.add('idle-hint');
+                    updateCaptureInterim('');
+                    setCaptureOrbActive(false);
                     const ready = getReadyStatusForCurrentState();
                     setStatus(ready.main, ready.sub);
                     return;
@@ -9081,6 +9324,8 @@ Preferred answer style:
                 setStatus('Processing recording...', 'Sending captured audio to speech-to-text');
                 interimEl.textContent = 'Transcribing your recording...';
                 interimEl.classList.remove('idle-hint');
+                updateCaptureInterim('Transcribing your recording...');
+                setCaptureOrbActive(false);
 
                 try {
                     const arrayBuf = await blob.arrayBuffer();
@@ -9111,6 +9356,7 @@ Preferred answer style:
 
                 interimEl.textContent = 'Interim transcription appears here as you speak...';
                 interimEl.classList.add('idle-hint');
+                updateCaptureInterim('');
                 orbTrigger?.setAttribute('aria-pressed', 'false');
                 const ready = getReadyStatusForCurrentState();
                 setStatus(ready.main, ready.sub);
@@ -9121,6 +9367,7 @@ Preferred answer style:
             state.isRecording = true;
             recPanel.classList.add('recording');
             micOuter?.classList.add('recording');
+            setCaptureOrbActive(true);
             orbTrigger?.setAttribute('aria-pressed', 'true');
             const active = getActiveStatusForCurrentState('quality', state.captureSource);
             setStatus(active.main, active.sub);
@@ -9128,6 +9375,7 @@ Preferred answer style:
                 ? 'Recording audio for quality transcription...'
                 : `Recording ${getCaptureSourceLabel(state.captureSource).toLowerCase()} for transcription...`;
             interimEl.classList.remove('idle-hint');
+            updateCaptureInterim(interimEl.textContent);
             startTimer();
             startAudioVisualizer(stream);
         }).catch(err => {
@@ -9144,7 +9392,9 @@ Preferred answer style:
         state.isRecording = false;
         recPanel.classList.remove('recording');
         micOuter?.classList.remove('recording');
+        setCaptureOrbActive(false);
         orbTrigger?.setAttribute('aria-pressed', 'false');
+        updateCaptureInterim('');
         stopTimer();
         stopAudio();
     }
@@ -9243,11 +9493,13 @@ Preferred answer style:
         state.isRecording = true;
         recPanel.classList.add('recording');
         micOuter?.classList.add('recording');
+        setCaptureOrbActive(true);
         orbTrigger?.setAttribute('aria-pressed', 'true');
         const active = getActiveStatusForCurrentState('realtime', 'mic');
         setStatus(active.main, active.sub);
         interimEl.classList.remove('idle-hint');
         interimEl.textContent = '';
+        updateCaptureInterim('');
         startTimer();
         startAudioFromMic();
         startRealtimeAudioBuffer().catch(() => {
@@ -9279,9 +9531,11 @@ Preferred answer style:
         }
         recPanel.classList.remove('recording');
         micOuter?.classList.remove('recording');
+        setCaptureOrbActive(false);
         orbTrigger?.setAttribute('aria-pressed', 'false');
         interimEl.textContent = 'Interim transcription appears here as you speak...';
         interimEl.classList.add('idle-hint');
+        updateCaptureInterim('');
         const ready = getReadyStatusForCurrentState();
         setStatus(ready.main, ready.sub);
         stopTimer();
@@ -9303,6 +9557,7 @@ Preferred answer style:
         }
         recPanel.classList.remove('recording');
         micOuter?.classList.remove('recording');
+        setCaptureOrbActive(false);
         orbTrigger?.setAttribute('aria-pressed', 'false');
         stopTimer();
         stopAudio();
