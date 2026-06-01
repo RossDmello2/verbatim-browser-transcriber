@@ -18,9 +18,9 @@ The banner above is conceptual artwork with deterministic text overlay. The scre
 
 Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
 
-| Recording workspace | Transcript workflow | Mobile layout |
+| Recording workspace | Transcript workflow | Assistant workflow |
 |---|---|---|
-| ![Verbatim recording workspace](production%20ready/docs/assets/screenshots/home.png) | ![Verbatim transcript workflow with demo text](production%20ready/docs/assets/screenshots/main-workflow.png) | ![Verbatim mobile recording layout](production%20ready/docs/assets/screenshots/mobile.png) |
+| ![Verbatim recording workspace](production%20ready/docs/assets/screenshots/home.png) | ![Verbatim transcript workflow with demo text](production%20ready/docs/assets/screenshots/main-workflow.png) | ![Verbatim assistant workflow with demo conversation](production%20ready/docs/assets/screenshots/assistant-workflow.png) |
 
 ## Quick Start
 

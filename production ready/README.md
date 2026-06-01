@@ -22,9 +22,9 @@ Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Tr
 |---|---|---|
 | ![Verbatim recording workspace](docs/assets/screenshots/home.png) | ![Verbatim transcript workflow with demo text](docs/assets/screenshots/main-workflow.png) | ![Verbatim API configuration panel with empty key fields](docs/assets/screenshots/settings.png) |
 
-| Mobile layout | Export tools |
+| Assistant workflow | Export tools |
 |---|---|
-| ![Verbatim mobile recording layout](docs/assets/screenshots/mobile.png) | ![Verbatim export tools](docs/mobile-ui/screenshots/1920x1080-export.png) |
+| ![Verbatim assistant workflow with demo conversation](docs/assets/screenshots/assistant-workflow.png) | ![Verbatim export tools](docs/mobile-ui/screenshots/1920x1080-export.png) |
 
 More verified desktop, tablet, and phone screenshots are listed in [docs/mobile-ui/SCREENSHOT_MANIFEST.md](docs/mobile-ui/SCREENSHOT_MANIFEST.md).
 
