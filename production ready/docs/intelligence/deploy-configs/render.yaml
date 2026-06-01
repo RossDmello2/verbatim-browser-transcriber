@@ -1,0 +1,9 @@
+# Review copy only. Place at repository root only if deploying this package
+# as a Render Static Site.
+services:
+  - type: web
+    name: verbatim
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    envVars: []

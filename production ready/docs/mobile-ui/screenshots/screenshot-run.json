@@ -1,0 +1,1299 @@
+{
+  "generatedAt": "2026-05-17T06:47:21.009Z",
+  "manifest": [
+    {
+      "viewport": "320x568",
+      "state": "record",
+      "file": "320x568-record.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "sidebar-open",
+      "file": "320x568-sidebar-open.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": true,
+        "sidebarRight": 240,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "controls-drawer-open",
+      "file": "320x568-controls-drawer-open.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": true,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "api-panel-open",
+      "file": "320x568-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "transcript",
+      "file": "320x568-transcript.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "transcript-input-focus",
+      "file": "320x568-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "translation",
+      "file": "320x568-translation.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "export",
+      "file": "320x568-export.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "assistant-open",
+      "file": "320x568-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "320x568",
+      "state": "assistant-input-focus",
+      "file": "320x568-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 320,
+        "documentScrollWidth": 320,
+        "bodyClientWidth": 320,
+        "bodyScrollWidth": 320,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "record",
+      "file": "360x800-record.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "sidebar-open",
+      "file": "360x800-sidebar-open.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": true,
+        "sidebarRight": 240,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "controls-drawer-open",
+      "file": "360x800-controls-drawer-open.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": true,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "api-panel-open",
+      "file": "360x800-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "transcript",
+      "file": "360x800-transcript.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "transcript-input-focus",
+      "file": "360x800-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "translation",
+      "file": "360x800-translation.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "export",
+      "file": "360x800-export.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "assistant-open",
+      "file": "360x800-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "360x800",
+      "state": "assistant-input-focus",
+      "file": "360x800-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 360,
+        "documentScrollWidth": 360,
+        "bodyClientWidth": 360,
+        "bodyScrollWidth": 360,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "record",
+      "file": "412x915-record.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "sidebar-open",
+      "file": "412x915-sidebar-open.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": true,
+        "sidebarRight": 240,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "controls-drawer-open",
+      "file": "412x915-controls-drawer-open.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": true,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "api-panel-open",
+      "file": "412x915-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "transcript",
+      "file": "412x915-transcript.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "transcript-input-focus",
+      "file": "412x915-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "translation",
+      "file": "412x915-translation.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "export",
+      "file": "412x915-export.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "assistant-open",
+      "file": "412x915-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "412x915",
+      "state": "assistant-input-focus",
+      "file": "412x915-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 412,
+        "documentScrollWidth": 412,
+        "bodyClientWidth": 412,
+        "bodyScrollWidth": 412,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "record",
+      "file": "667x375-record.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "sidebar-open",
+      "file": "667x375-sidebar-open.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": true,
+        "sidebarRight": 240,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "controls-drawer-open",
+      "file": "667x375-controls-drawer-open.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": true,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "api-panel-open",
+      "file": "667x375-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "transcript",
+      "file": "667x375-transcript.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "transcript-input-focus",
+      "file": "667x375-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "translation",
+      "file": "667x375-translation.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "export",
+      "file": "667x375-export.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "assistant-open",
+      "file": "667x375-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "667x375",
+      "state": "assistant-input-focus",
+      "file": "667x375-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 667,
+        "documentScrollWidth": 667,
+        "bodyClientWidth": 667,
+        "bodyScrollWidth": 667,
+        "sidebarOpen": false,
+        "sidebarRight": 0,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "record",
+      "file": "768x1024-record.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "sidebar-static-controls-inline",
+      "file": "768x1024-sidebar-static-controls-inline.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "api-panel-open",
+      "file": "768x1024-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "transcript",
+      "file": "768x1024-transcript.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "transcript-input-focus",
+      "file": "768x1024-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "translation",
+      "file": "768x1024-translation.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "export",
+      "file": "768x1024-export.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "assistant-open",
+      "file": "768x1024-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "state": "assistant-input-focus",
+      "file": "768x1024-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 768,
+        "documentScrollWidth": 768,
+        "bodyClientWidth": 768,
+        "bodyScrollWidth": 768,
+        "sidebarOpen": false,
+        "sidebarRight": 180,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "record",
+      "file": "1024x768-record.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "sidebar-static-controls-inline",
+      "file": "1024x768-sidebar-static-controls-inline.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "api-panel-open",
+      "file": "1024x768-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "transcript",
+      "file": "1024x768-transcript.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "transcript-input-focus",
+      "file": "1024x768-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "translation",
+      "file": "1024x768-translation.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "export",
+      "file": "1024x768-export.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "assistant-open",
+      "file": "1024x768-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1024x768",
+      "state": "assistant-input-focus",
+      "file": "1024x768-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1024,
+        "documentScrollWidth": 1024,
+        "bodyClientWidth": 1024,
+        "bodyScrollWidth": 1024,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "record",
+      "file": "1366x768-record.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "sidebar-static-controls-inline",
+      "file": "1366x768-sidebar-static-controls-inline.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "api-panel-open",
+      "file": "1366x768-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "transcript",
+      "file": "1366x768-transcript.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "transcript-input-focus",
+      "file": "1366x768-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "translation",
+      "file": "1366x768-translation.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "export",
+      "file": "1366x768-export.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "assistant-open",
+      "file": "1366x768-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1366x768",
+      "state": "assistant-input-focus",
+      "file": "1366x768-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1366,
+        "documentScrollWidth": 1366,
+        "bodyClientWidth": 1366,
+        "bodyScrollWidth": 1366,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "record",
+      "file": "1920x1080-record.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "sidebar-static-controls-inline",
+      "file": "1920x1080-sidebar-static-controls-inline.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "api-panel-open",
+      "file": "1920x1080-api-panel-open.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": true,
+        "assistantOpen": false,
+        "activeView": "record"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "transcript",
+      "file": "1920x1080-transcript.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "transcript-input-focus",
+      "file": "1920x1080-transcript-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "transcript"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "translation",
+      "file": "1920x1080-translation.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "translation"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "export",
+      "file": "1920x1080-export.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": false,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "assistant-open",
+      "file": "1920x1080-assistant-open.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "state": "assistant-input-focus",
+      "file": "1920x1080-assistant-input-focus.png",
+      "metrics": {
+        "documentClientWidth": 1920,
+        "documentScrollWidth": 1920,
+        "bodyClientWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "sidebarOpen": false,
+        "sidebarRight": 220,
+        "controlsOpen": false,
+        "apiOpen": false,
+        "assistantOpen": true,
+        "activeView": "tools"
+      }
+    }
+  ],
+  "consoleEvents": [],
+  "stateIssues": []
+}

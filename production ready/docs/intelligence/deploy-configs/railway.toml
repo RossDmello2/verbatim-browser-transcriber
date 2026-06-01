@@ -1,0 +1,10 @@
+# Review copy only. Railway is not the recommended target for this static app.
+# If used, configure a service that serves this package root over HTTPS.
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "python -m http.server $PORT"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

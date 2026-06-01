@@ -1,0 +1,66 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in Verbatim.
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Include exact steps, mode, and any sample/demo input used.
+      placeholder: "1. Open...\n2. Click...\n3. Observe..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: Include console errors if relevant. Do not paste secrets or private transcript data.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and Version
+      placeholder: "Chrome 125, Edge 125, Safari 17..."
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: "Windows 11, macOS 14, Ubuntu 22.04..."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Recording
+        - Capture
+        - File transcription
+        - Provider/API configuration
+        - Translation
+        - Assistant
+        - Workspace import/export
+        - Export formats
+        - Mobile shell
+        - Documentation/tooling
+        - Other
+    validations:
+      required: true

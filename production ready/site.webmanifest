@@ -1,0 +1,14 @@
+{
+  "name": "Verbatim",
+  "short_name": "Verbatim",
+  "description": "Static browser transcription workspace for live capture, AI transcription, translation, assistant workflows, diagnostics, and exports.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "verbatim-static-workspace",
+  "version": "1.0.0",
+  "description": "Static browser transcription workspace with live capture, file transcription, translation, assistant tools, and export support.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "author": "Ross Dmello",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RossDmello2/Verba-Transcriber.git",
+    "directory": "production ready"
+  },
+  "bugs": {
+    "url": "https://github.com/RossDmello2/Verba-Transcriber/issues"
+  },
+  "homepage": "https://github.com/RossDmello2/Verba-Transcriber#readme",
+  "keywords": [
+    "transcription",
+    "speech-to-text",
+    "browser-transcription",
+    "ai-transcription",
+    "groq",
+    "openai",
+    "gemini",
+    "static-web-app",
+    "verbatim",
+    "transcript-workspace"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "npm run check && npm run test:unit",
+    "check": "npm run check:static",
+    "check:static": "npm run check:js && npm run check:json && npm run check:html-links && npm run check:placeholders && npm run check:secrets",
+    "check:js": "node scripts/check-js-syntax.mjs",
+    "check:json": "node scripts/check-json.mjs",
+    "check:html-links": "node scripts/check-html-links.mjs",
+    "check:placeholders": "node scripts/check-placeholders.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:web:smoke": "playwright test tests/web",
+    "test:all": "npm test && npm run test:web:smoke",
+    "check:mobile": "npm --prefix apps/mobile run check",
+    "serve": "python -m http.server 8080"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

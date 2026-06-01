@@ -1,0 +1,39 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in Verbatim.
+title: "[BUG] "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: "1. Open...\n2. Click...\n3. Observe..."
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: Include console errors if relevant. Do not paste secrets or private transcript data.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and Version
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+    validations:
+      required: true

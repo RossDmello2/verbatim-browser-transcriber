@@ -1,0 +1,98 @@
+# Runtime secrets and local environment
+.env
+.env.*
+!.env.example
+!.env.example.*
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.p8
+
+# Browser/local exports that may contain sensitive transcript data
+workspace-*.json
+transcript-*.txt
+transcript-*.md
+transcript-*.csv
+transcript-*.docx
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.mp4
+
+# Dependency folders
+node_modules/
+production ready/node_modules/
+production ready/apps/mobile/node_modules/
+
+# Build, cache, and test artifacts
+dist/
+build/
+.next/
+out/
+.cache/
+.expo/
+.vite/
+.turbo/
+coverage/
+test-results/
+playwright-report/
+production ready/test-results/
+production ready/playwright-report/
+production ready/apps/mobile/.expo/
+*.tsbuildinfo
+
+# Local databases and generated data
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+*.db-*
+*.duckdb
+*.parquet
+*.pkl
+*.pickle
+*.jsonl
+
+# Python helper/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+ENV/
+
+# Local tool/editor state
+.qoder/
+.kilo/
+.opencode/
+production ready/.qoder/
+production ready/.vscode/
+production ready/apps/mobile/.claude/
+
+# Archives and local reports
+*.zip
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+
+# OS and editors
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+*~
