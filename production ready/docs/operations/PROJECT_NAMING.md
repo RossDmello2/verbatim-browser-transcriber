@@ -26,6 +26,8 @@ Open-source browser transcription workspace
 Repository: RossDmello2/Verba-Transcriber
 ```
 
+The SEO audit recommends `verbatim-browser-transcriber` as the clearest future slug if the owner explicitly approves a repository rename. Do not rename the repository without approval because clone URLs, GitHub Pages URLs, and downstream links would change. See `docs/intelligence/NAMING_SEO_STRATEGY.md`.
+
 ## Internal Package Names
 
 | Package | Name | Reason |
@@ -41,14 +43,19 @@ Use these terms naturally in docs and metadata:
 
 - browser transcription workspace
 - static speech-to-text app
+- browser speech-to-text workspace
+- voice-to-text app
+- Web Speech API transcription
 - AI transcription workspace
 - live speech capture
 - file transcription
 - transcript translation
+- transcript editor
+- transcript export
+- bring-your-own-key transcription
 - Groq transcription
 - OpenAI-compatible transcription
 - Gemini assistant file analysis
-- transcript export
-- local-first transcript workspace
+- local browser storage transcript workspace
 
 Do not keyword-stuff the UI or docs. The README and metadata should describe the real product accurately.

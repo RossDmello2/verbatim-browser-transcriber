@@ -34,6 +34,7 @@ Use this index when reviewing the project or planning a contribution.
 | `api/provider-integrations.md` | Groq/OpenAI-compatible/Gemini endpoint inventory and failure behavior. |
 | `../TROUBLESHOOTING.md` | First-run, browser, provider, mobile, and audit troubleshooting. |
 | `deployment.md` | Static-host deployment settings and caveats. |
+| `intelligence/NAMING_SEO_STRATEGY.md` | Source-backed naming, SEO, topic, audience, and visual strategy. |
 
 ## Security and Operations
 

@@ -4,15 +4,19 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Static App](https://img.shields.io/badge/app-static%20HTML%2FCSS%2FJS-green.svg)](index.html)
 
-Verbatim is an open-source browser transcription workspace for speech-to-text capture, file transcription, translation, assistant workflows, diagnostics, and transcript export. It is built as a static HTML/CSS/JavaScript app, so it can run from static hosting without a custom backend.
+**Static browser speech-to-text workspace for live/file transcription, translation, bring-your-own-key assistant workflows, and transcript export.**
 
-It is for students, developers, researchers, and maintainers who want an inspectable local-first transcript workspace. Provider-backed features use user-owned Groq/OpenAI-compatible or Gemini keys entered in the app UI.
+Verbatim is an open-source browser transcription workspace for voice-to-text capture, audio/video file transcription, translation, assistant workflows, diagnostics, and subtitle-ready exports. It is built as a static HTML/CSS/JavaScript app, so it can run from static hosting without a custom backend.
+
+It is for students, developers, researchers, and maintainers who want an inspectable transcript workspace that keeps setup simple. Provider-backed features use bring-your-own-key (BYOK) Groq/OpenAI-compatible or Gemini credentials entered in the app UI.
 
 ## Preview
 
-![Conceptual Verbatim workflow banner](docs/assets/brand/hero.png)
+![Verbatim social preview showing a conceptual browser transcription workflow](docs/assets/brand/social-preview.png)
 
-The banner above is conceptual artwork, not a screenshot. The screenshots below were captured from the real local app with default/demo data.
+The banner above is conceptual artwork with deterministic text overlay, not a screenshot. The screenshots below were captured from the real local app with default/demo data.
+
+Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
 
 | Recording workspace | Transcript workflow | API configuration |
 |---|---|---|
@@ -42,7 +46,7 @@ Known gaps:
 - `npm --prefix apps/mobile audit --audit-level=moderate` reports 13 moderate transitive advisories through the Expo dependency chain. `npm audit fix --force` proposes a breaking Expo upgrade, so it was not applied in this documentation/publishing pass.
 - Live provider success calls require owner/user API keys and were not run.
 - Real microphone, tab audio, screen capture permissions, and physical Expo Go/device behavior require local browser/device interaction and are not claimed as fully verified here.
-- There is no deployed production URL in this repository yet.
+- The GitHub Pages preview is verified at the nested package path, but there is no custom production domain.
 
 ## What It Does
 
@@ -235,7 +239,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for port conflicts, blank page chec
 
 ## Naming
 
-The canonical product name is **Verbatim**. **Verba Assistant** is the in-app assistant name. The current GitHub repository slug is `RossDmello2/Verba-Transcriber`; root and mobile npm package names are private tooling names. See [docs/operations/PROJECT_NAMING.md](docs/operations/PROJECT_NAMING.md).
+The canonical product name is **Verbatim**. **Verba Assistant** is the in-app assistant name. The current GitHub repository slug is `RossDmello2/Verba-Transcriber`; a clearer future slug would be `verbatim-browser-transcriber`, but a repository rename requires owner approval. Root and mobile npm package names are private tooling names. See [docs/intelligence/NAMING_SEO_STRATEGY.md](docs/intelligence/NAMING_SEO_STRATEGY.md) and [docs/operations/PROJECT_NAMING.md](docs/operations/PROJECT_NAMING.md).
 
 ## Contributing
 
