@@ -1,6 +1,6 @@
 # Verbatim
 
-[![CI](https://github.com/RossDmello2/Verba-Transcriber/actions/workflows/ci.yml/badge.svg)](https://github.com/RossDmello2/Verba-Transcriber/actions/workflows/ci.yml)
+[![CI](https://github.com/RossDmello2/verbatim-browser-transcriber/actions/workflows/ci.yml/badge.svg)](https://github.com/RossDmello2/verbatim-browser-transcriber/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Static App](https://img.shields.io/badge/app-static%20HTML%2FCSS%2FJS-green.svg)](production%20ready/index.html)
 
@@ -16,7 +16,7 @@ The maintained package lives in [`production ready/`](production%20ready/). That
 
 The banner above is conceptual artwork with deterministic text overlay. The screenshots below are captured from the real local app with demo/default data.
 
-Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
+Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/verbatim-browser-transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
 
 | Recording workspace | Transcript workflow | Assistant workflow |
 |---|---|---|
@@ -25,8 +25,8 @@ Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Tr
 ## Quick Start
 
 ```powershell
-git clone https://github.com/RossDmello2/Verba-Transcriber.git
-cd Verba-Transcriber
+git clone https://github.com/RossDmello2/verbatim-browser-transcriber.git
+cd verbatim-browser-transcriber
 cd "production ready"
 npm ci
 python -m http.server 8080

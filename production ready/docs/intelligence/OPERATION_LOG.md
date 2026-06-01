@@ -27,7 +27,7 @@ Mode: current codebase intelligence refresh plus deployment readiness
 | `git` | Available | Parent worktree and remote inspection. |
 | `node` / `npm` | Available | Static checks, unit tests, Playwright, audits. |
 | `python` | Available | Static file server used by Playwright config. |
-| GitHub plugin | Available | Confirmed public repository metadata for `RossDmello2/Verba-Transcriber`. |
+| GitHub plugin | Available | Confirmed public repository metadata for `RossDmello2/verbatim-browser-transcriber`. |
 | Browser control | Available through local Playwright tests | Used via project `npm run test:web:smoke` gate. |
 
 ## Current Critical Flags

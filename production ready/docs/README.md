@@ -65,4 +65,4 @@ Use this index when reviewing the project or planning a contribution.
 
 ## Repository-Root Note
 
-This package currently lives under `production ready/` inside the existing `Verba-Transcriber` repository. Root-level community files and workflows mirror the package docs so GitHub can display the project correctly while the app package remains nested.
+This package currently lives under `production ready/` inside the existing `verbatim-browser-transcriber` repository. Root-level community files and workflows mirror the package docs so GitHub can display the project correctly while the app package remains nested.

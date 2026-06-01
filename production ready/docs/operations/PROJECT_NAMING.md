@@ -16,17 +16,17 @@ Use **Verbatim** in:
 
 ## Repository Slug
 
-The current GitHub repository slug is `RossDmello2/Verba-Transcriber`.
+The current GitHub repository slug is `RossDmello2/verbatim-browser-transcriber`.
 
-This slug can remain as a discoverable historical repository name, but public docs should consistently introduce the project as:
+It was renamed from `RossDmello2/Verba-Transcriber` after owner approval on 2026-06-01. Public docs should consistently introduce the project as:
 
 ```text
 Verbatim
 Open-source browser transcription workspace
-Repository: RossDmello2/Verba-Transcriber
+Repository: RossDmello2/verbatim-browser-transcriber
 ```
 
-The SEO audit recommends `verbatim-browser-transcriber` as the clearest future slug if the owner explicitly approves a repository rename. Do not rename the repository without approval because clone URLs, GitHub Pages URLs, and downstream links would change. See `docs/intelligence/NAMING_SEO_STRATEGY.md`.
+The SEO audit recommended `verbatim-browser-transcriber` as the clearest slug. That rename is now complete; clone URLs, GitHub Pages URLs, and downstream links should use the current slug. See `docs/intelligence/NAMING_SEO_STRATEGY.md`.
 
 ## Internal Package Names
 

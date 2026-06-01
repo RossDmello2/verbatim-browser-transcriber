@@ -1,6 +1,6 @@
 # Verbatim
 
-[![CI](https://github.com/RossDmello2/Verba-Transcriber/actions/workflows/ci.yml/badge.svg)](https://github.com/RossDmello2/Verba-Transcriber/actions/workflows/ci.yml)
+[![CI](https://github.com/RossDmello2/verbatim-browser-transcriber/actions/workflows/ci.yml/badge.svg)](https://github.com/RossDmello2/verbatim-browser-transcriber/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Static App](https://img.shields.io/badge/app-static%20HTML%2FCSS%2FJS-green.svg)](index.html)
 
@@ -16,7 +16,7 @@ It is for students, developers, researchers, and maintainers who want an inspect
 
 The banner above is conceptual artwork with deterministic text overlay, not a screenshot. The screenshots below were captured from the real local app with default/demo data.
 
-Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/Verba-Transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
+Live package preview: [GitHub Pages demo](https://rossdmello2.github.io/verbatim-browser-transcriber/production%20ready/). Provider-backed calls still require user-owned API keys.
 
 | Recording workspace | Transcript workflow | API configuration |
 |---|---|---|
@@ -115,7 +115,7 @@ production ready/
 `-- .github/                Package-level CI, Dependabot, and contribution templates
 ```
 
-Repository-root note: this package is nested under `production ready/` in the existing `RossDmello2/Verba-Transcriber` repository. Root-level README/community/CI files are included in the repository so GitHub can present and verify the project while preserving the original repository history.
+Repository-root note: this package is nested under `production ready/` in the existing `RossDmello2/verbatim-browser-transcriber` repository. Root-level README/community/CI files are included in the repository so GitHub can present and verify the project while preserving the original repository history.
 
 ## Quick Start
 
@@ -127,8 +127,8 @@ Prerequisites:
 - Provider API keys only if you want Groq, OpenAI-compatible, or Gemini-backed features.
 
 ```powershell
-git clone https://github.com/RossDmello2/Verba-Transcriber.git
-cd Verba-Transcriber
+git clone https://github.com/RossDmello2/verbatim-browser-transcriber.git
+cd verbatim-browser-transcriber
 cd "production ready"
 npm ci
 python -m http.server 8080
@@ -239,7 +239,7 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for port conflicts, blank page chec
 
 ## Naming
 
-The canonical product name is **Verbatim**. **Verba Assistant** is the in-app assistant name. The current GitHub repository slug is `RossDmello2/Verba-Transcriber`; a clearer future slug would be `verbatim-browser-transcriber`, but a repository rename requires owner approval. Root and mobile npm package names are private tooling names. See [docs/intelligence/NAMING_SEO_STRATEGY.md](docs/intelligence/NAMING_SEO_STRATEGY.md) and [docs/operations/PROJECT_NAMING.md](docs/operations/PROJECT_NAMING.md).
+The canonical product name is **Verbatim**. **Verba Assistant** is the in-app assistant name. The GitHub repository slug is `RossDmello2/verbatim-browser-transcriber`, renamed from `RossDmello2/Verba-Transcriber` after owner approval on 2026-06-01. Root and mobile npm package names are private tooling names. See [docs/intelligence/NAMING_SEO_STRATEGY.md](docs/intelligence/NAMING_SEO_STRATEGY.md) and [docs/operations/PROJECT_NAMING.md](docs/operations/PROJECT_NAMING.md).
 
 ## Contributing
 

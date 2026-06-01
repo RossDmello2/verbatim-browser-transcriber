@@ -31,7 +31,7 @@ For a repository where this folder remains nested, set the Netlify base director
 
 ## GitHub Pages
 
-GitHub Pages can serve static files, but this repository currently keeps the maintained app under `production ready/`. The maintained package preview is available at `https://rossdmello2.github.io/Verba-Transcriber/production%20ready/`. Do not use the repository root Pages URL as package proof unless the root files are deliberately aligned with the maintained package.
+GitHub Pages can serve static files, but this repository currently keeps the maintained app under `production ready/`. The maintained package preview is available at `https://rossdmello2.github.io/verbatim-browser-transcriber/production%20ready/`. Do not use the repository root Pages URL as package proof unless the root files are deliberately aligned with the maintained package.
 
 ## Vercel
 

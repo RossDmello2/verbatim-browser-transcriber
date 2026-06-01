@@ -6,7 +6,7 @@ Generated: 2026-06-01
 
 Verbatim is an open-source static browser transcription workspace. It supports live capture, file transcription, translation, assistant workflows, memory packs, diagnostics, and export formats without a custom backend.
 
-Canonical public name: Verbatim. Current repository slug: `RossDmello2/Verba-Transcriber`. Private tooling package names: `verbatim-static-workspace` and `verbatim-mobile-shell`.
+Canonical public name: Verbatim. Current repository slug: `RossDmello2/verbatim-browser-transcriber`. Private tooling package names: `verbatim-static-workspace` and `verbatim-mobile-shell`.
 
 ## How It Works
 

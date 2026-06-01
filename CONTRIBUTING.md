@@ -5,8 +5,8 @@ Thanks for considering a contribution.
 The maintained app package lives in `production ready/`. Run commands from that folder unless a workflow explicitly says otherwise.
 
 ```powershell
-git clone https://github.com/RossDmello2/Verba-Transcriber.git
-cd Verba-Transcriber
+git clone https://github.com/RossDmello2/verbatim-browser-transcriber.git
+cd verbatim-browser-transcriber
 cd "production ready"
 npm ci
 python -m http.server 8080

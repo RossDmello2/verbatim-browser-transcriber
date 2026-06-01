@@ -8,7 +8,7 @@ Generated: 2026-06-01
 |---|---|
 | Project root | `C:\Users\rossd\Dropbox\PC\Downloads\git-hub\claude\production ready` |
 | Parent git root | `C:\Users\rossd\Dropbox\PC\Downloads\git-hub\claude` |
-| Remote | `https://github.com/RossDmello2/Verba-Transcriber.git` |
+| Remote | `https://github.com/RossDmello2/verbatim-browser-transcriber.git` |
 | Current branch | `codex/verbatim-open-source-restructure` |
 | Package state | Nested package currently appears as untracked from the parent git root. |
 

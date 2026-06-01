@@ -123,7 +123,7 @@ Markdown references to moved documentation files were updated to the new `docs/a
 ## Current Open-Source Metadata
 
 - Project: Verbatim
-- Repository: `RossDmello2/Verba-Transcriber`
+- Repository: `RossDmello2/verbatim-browser-transcriber`
 - License: MIT
 - Author: Ross Dmello
 - Security contact: `184658540+RossDmello2@users.noreply.github.com`

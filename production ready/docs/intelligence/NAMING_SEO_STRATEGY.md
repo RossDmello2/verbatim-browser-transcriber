@@ -2,19 +2,19 @@
 
 Generated: 2026-06-01
 
-This report is source-grounded for the current `production ready/` package and public GitHub repository. It recommends identity, naming, topic, README, and visual changes without renaming the repository or changing application runtime code.
+This report is source-grounded for the current `production ready/` package and public GitHub repository. It records the owner-approved repository rename to `RossDmello2/verbatim-browser-transcriber` and recommends identity, topic, README, and visual changes without changing application runtime code.
 
 ## 1. Current Identity Audit
 
 | Area | Current state | Evidence | Assessment |
 |---|---|---|---|
-| GitHub repository | `RossDmello2/Verba-Transcriber` | GitHub CLI repo view, 2026-06-01 | Searchable enough, but "Verba" and "Verbatim" are inconsistent. |
+| GitHub repository | `RossDmello2/verbatim-browser-transcriber` | GitHub CLI repo view, 2026-06-01 | Matches the public product name and adds the browser transcription category cue. |
 | Public display name | `Verbatim` | `README.md:1`, `index.html:31` | Strong and memorable, but generic enough to need a category cue. |
 | Package name | `verbatim-static-workspace` | `package.json:2` | Accurate private tooling name; not a public npm identity. |
 | Current package description | Static browser transcription workspace with live capture, file transcription, translation, assistant tools, and export support. | `package.json:4` | Accurate and source-backed. |
 | Runtime shape | Static HTML/CSS/JavaScript browser app | `index.html:56`, `assets/js/main.js:1`, `assets/js/main.js:2` | This should stay central in the README and topics. |
 | Visual proof | Real screenshots plus conceptual banner | `docs/assets/screenshots/screenshot-run.json`, `docs/assets/brand/hero.png` | Real screenshots build trust; generated art must remain clearly labeled. |
-| Homepage metadata | GitHub Pages nested app path is live | `https://rossdmello2.github.io/Verba-Transcriber/production%20ready/` returned HTTP 200 with the maintained package title | Use the nested package URL, not the repository root URL, for the maintained app preview. |
+| Homepage metadata | GitHub Pages nested app path is live | `https://rossdmello2.github.io/verbatim-browser-transcriber/production%20ready/` returned HTTP 200 with the maintained package title | Use the nested package URL, not the repository root URL, for the maintained app preview. |
 
 What is working:
 
@@ -24,7 +24,7 @@ What is working:
 
 What is weak:
 
-- The repository slug `Verba-Transcriber` does not exactly match the display name and is less searchable than a category-cued slug.
+- The previous repository slug `Verba-Transcriber` did not exactly match the display name and was less searchable than the current category-cued slug.
 - The README opening can carry stronger search language earlier: `browser speech-to-text`, `voice-to-text`, `transcript export`, and `bring-your-own-key`.
 - The previous homepage URL pointed at the repository root, which serves older root files; the maintained package is available at `/production%20ready/`.
 - `html`, `css`, and `local-first` are truthful but lower-intent or ambiguous topics compared with `browser-transcription`, `transcript-editor`, and `bring-your-own-key`.
@@ -113,7 +113,7 @@ Scores are 1-10. "Slug" is a recommendation only; actual repository rename requi
 
 | Candidate | Slug | Clarity | Memorability | Searchability | Honesty | Domain fit | Beginner appeal | Pro credibility | Uniqueness | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| Verbatim | `Verba-Transcriber` current | 7 | 9 | 6 | 9 | 8 | 8 | 8 | 5 | Best display name, but current slug has mismatch. |
+| Verbatim | `verbatim-browser-transcriber` current | 7 | 9 | 9 | 9 | 9 | 8 | 8 | 7 | Best display name; the current slug adds the needed category cue. |
 | Verbatim Browser Transcriber | `verbatim-browser-transcriber` | 10 | 8 | 10 | 10 | 10 | 9 | 9 | 7 | Best future slug: brand plus exact category. |
 | Verbatim Transcript Workspace | `verbatim-transcript-workspace` | 9 | 8 | 9 | 10 | 10 | 8 | 9 | 7 | Strong for professional workflow positioning. |
 | Verbatim Speech Workspace | `verbatim-speech-workspace` | 8 | 8 | 8 | 9 | 8 | 8 | 8 | 7 | Good, but less explicit about transcription. |
@@ -168,20 +168,20 @@ Rejected names:
 
 ## 7. Final Recommendation
 
-Keep the actual GitHub repository name unchanged until the owner explicitly approves a rename. Recommended future rename:
+Owner-approved rename completed on 2026-06-01:
 
 ```text
 RossDmello2/verbatim-browser-transcriber
 ```
 
-Owner approval is required because a rename changes clone URLs, GitHub Pages URLs, existing links, local remotes, and downstream references. If approved later, the safe sequence is:
+The rename changed clone URLs, GitHub Pages URLs, local remotes, and downstream links. The command sequence used was:
 
 ```powershell
 gh repo rename verbatim-browser-transcriber --repo RossDmello2/Verba-Transcriber
 git remote set-url origin https://github.com/RossDmello2/verbatim-browser-transcriber.git
 ```
 
-Current no-rename strategy:
+Current strategy:
 
 - Keep display name: **Verbatim**.
 - Use category-rich tagline in README and GitHub description.
