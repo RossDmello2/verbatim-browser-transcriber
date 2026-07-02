@@ -7993,6 +7993,7 @@ z-index: 200;
         padding: 12px 12px 16px;
         display: none;
         flex-direction: column;
+        flex-wrap: nowrap;
         gap: 10px;
         overflow-y: auto;
         overflow-x: hidden;
@@ -8006,6 +8007,18 @@ z-index: 200;
 
     #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer.open {
         display: flex;
+    }
+
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer > .lang-wrap,
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer > .translator-wrap,
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer > .btn-toggle,
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer > .toggle-btn,
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer > .topbar-right-actions {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        align-self: stretch;
     }
 
     #topbarMobileDrawer .lang-wrap,
@@ -8071,8 +8084,7 @@ z-index: 200;
         position: static;
     }
 
-    #topbarMobileDrawer .topbar-right-actions > #apiHeader,
-    #topbarMobileDrawer .topbar-right-actions > #apiPanel {
+    #topbarMobileDrawer .topbar-right-actions > #apiHeader {
         display: block;
     }
 
@@ -8090,6 +8102,7 @@ z-index: 200;
     }
 
     #topbarMobileDrawer #apiPanel {
+        display: none;
         position: static;
         top: auto;
         right: auto;
@@ -8112,6 +8125,7 @@ z-index: 200;
     }
 
     #topbarMobileDrawer #apiPanel.open {
+        display: block;
         overflow: visible;
     }
 

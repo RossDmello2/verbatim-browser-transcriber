@@ -36,6 +36,9 @@ async function loadWorkspace(page, viewport) {
     await page.goto('/');
     await page.locator('#workspaceStatus').waitFor({ state: 'attached' });
     await expect(page.locator('#mainContent')).toContainText('Recording workspace');
+    const activeView = page.locator('.workspace-view.is-active');
+    await expect(activeView).toBeVisible();
+    await waitForWorkspaceViewSettled(page, await activeView.getAttribute('data-workspace-view'));
 }
 
 async function expectNoDocumentHorizontalOverflow(page, label) {
@@ -203,6 +206,18 @@ async function waitForSidebarSettled(page, expectedOpen) {
     }, expectedOpen, { timeout: 3000 });
 }
 
+async function waitForWorkspaceViewSettled(page, view) {
+    const activeView = page.locator(`[data-workspace-view="${view}"]`);
+    await expect(activeView).toBeVisible();
+    await activeView.evaluate(async (element) => {
+        const animatedChildren = Array.from(element.querySelectorAll('.workspace-view-body > *'));
+        const finiteAnimations = animatedChildren
+            .flatMap((child) => child.getAnimations())
+            .filter((animation) => animation.effect?.getTiming().iterations !== Infinity);
+        await Promise.all(finiteAnimations.map((animation) => animation.finished.catch(() => undefined)));
+    });
+}
+
 async function selectWorkspaceView(page, view, viewport) {
     const navButton = page.locator(`.workspace-nav-btn[data-view="${view}"]`);
     if (viewport.width <= 767) {
@@ -210,12 +225,14 @@ async function selectWorkspaceView(page, view, viewport) {
         await expect(page.locator('body')).toHaveClass(/sidebar-mobile-open/);
         await waitForSidebarSettled(page, true);
         await navButton.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
-        await navButton.click({ force: true });
+        await navButton.evaluate((el) => el.click());
         await expect(page.locator('body')).not.toHaveClass(/sidebar-mobile-open/);
         await waitForSidebarSettled(page, false);
+        await waitForWorkspaceViewSettled(page, view);
         return;
     }
     await navButton.click();
+    await waitForWorkspaceViewSettled(page, view);
 }
 
 test.beforeEach(async ({ page }) => {
