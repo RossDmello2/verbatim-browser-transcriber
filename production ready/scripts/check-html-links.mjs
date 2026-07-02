@@ -17,7 +17,8 @@ while ((match = refPattern.exec(html)) !== null) {
 const failures = [];
 
 for (const ref of assetRefs) {
-    const resolved = normalize(join(dirname(htmlPath), ref));
+    const assetPath = ref.split(/[?#]/, 1)[0];
+    const resolved = normalize(join(dirname(htmlPath), assetPath));
     if (!resolved.startsWith(root)) {
         failures.push(`${ref}: resolves outside project root`);
         continue;
