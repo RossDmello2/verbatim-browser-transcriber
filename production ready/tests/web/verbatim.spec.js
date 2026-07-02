@@ -21,10 +21,12 @@ const validWorkspace = {
 const responsiveViewports = [
     { name: 'small-phone', width: 320, height: 568 },
     { name: 'phone', width: 360, height: 800 },
+    { name: 'design-phone', width: 390, height: 844 },
     { name: 'large-phone', width: 412, height: 915 },
     { name: 'phone-landscape', width: 667, height: 375 },
     { name: 'tablet-portrait', width: 768, height: 1024 },
     { name: 'tablet-landscape', width: 1024, height: 768 },
+    { name: 'compact-desktop', width: 1280, height: 720 },
     { name: 'desktop', width: 1366, height: 768 },
     { name: 'wide-desktop', width: 1920, height: 1080 }
 ];
@@ -34,6 +36,9 @@ async function loadWorkspace(page, viewport) {
     await page.goto('/');
     await page.locator('#workspaceStatus').waitFor({ state: 'attached' });
     await expect(page.locator('#mainContent')).toContainText('Recording workspace');
+    const activeView = page.locator('.workspace-view.is-active');
+    await expect(activeView).toBeVisible();
+    await waitForWorkspaceViewSettled(page, await activeView.getAttribute('data-workspace-view'));
 }
 
 async function expectNoDocumentHorizontalOverflow(page, label) {
@@ -101,6 +106,67 @@ async function expectVisibleContentWithinViewport(page, label) {
     expect(offenders, `${label} visible horizontal offenders`).toEqual([]);
 }
 
+async function expectActiveViewVerticallyReachable(page, label) {
+    const metrics = await page.evaluate(() => {
+        const activeView = document.querySelector('.workspace-view.is-active');
+        const owner = window.innerWidth <= 767
+            ? activeView?.querySelector('.workspace-view-body')
+            : document.querySelector('.workspace-view-stage');
+        if (!activeView || !owner) return { error: 'active view or scroll owner missing' };
+
+        const isRendered = (el) => {
+            const style = getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden' || el.hidden || el.closest('[hidden]')) return false;
+            const rect = el.getBoundingClientRect();
+            return rect.width > 0 && rect.height > 0;
+        };
+        const viewBody = activeView.querySelector('.workspace-view-body');
+        const rendered = Array.from(viewBody?.children || []).filter(isRendered);
+        const finalChild = rendered.reduce((last, el) => {
+            if (!last) return el;
+            return el.getBoundingClientRect().bottom >= last.getBoundingClientRect().bottom ? el : last;
+        }, null);
+        const before = owner.scrollTop;
+        const maxScroll = Math.max(0, owner.scrollHeight - owner.clientHeight);
+        const previousScrollBehavior = owner.style.scrollBehavior;
+        owner.style.scrollBehavior = 'auto';
+        owner.scrollTop = maxScroll;
+        void owner.offsetHeight;
+        const ownerRect = owner.getBoundingClientRect();
+        const finalRect = finalChild?.getBoundingClientRect();
+        const overflowY = getComputedStyle(owner).overflowY;
+        const hiddenAncestors = [];
+        let ancestor = finalChild?.parentElement;
+        while (ancestor && ancestor !== owner && ancestor !== document.body) {
+            const style = getComputedStyle(ancestor);
+            if ((style.overflowY === 'hidden' || style.overflow === 'hidden')
+                && ancestor.scrollHeight > ancestor.clientHeight + 1) {
+                hiddenAncestors.push(ancestor.id || ancestor.className || ancestor.tagName);
+            }
+            ancestor = ancestor.parentElement;
+        }
+        const result = {
+            overflowY,
+            clientHeight: owner.clientHeight,
+            scrollHeight: owner.scrollHeight,
+            maxScroll,
+            reachedBottom: !finalRect || finalRect.bottom <= ownerRect.bottom + 1,
+            hiddenAncestors
+        };
+        owner.scrollTop = before;
+        owner.style.scrollBehavior = previousScrollBehavior;
+        return result;
+    });
+
+    expect(metrics.error, `${label}: ${JSON.stringify(metrics)}`).toBeUndefined();
+    if (metrics.scrollHeight > metrics.clientHeight + 1) {
+        expect(['auto', 'scroll'], `${label} scroll owner: ${JSON.stringify(metrics)}`).toContain(metrics.overflowY);
+        expect(metrics.maxScroll, `${label} operational scroll range: ${JSON.stringify(metrics)}`).toBeGreaterThan(0);
+    }
+    expect(metrics.reachedBottom, `${label} final child reachability: ${JSON.stringify(metrics)}`).toBe(true);
+    expect(metrics.hiddenAncestors, `${label} clipping ancestors`).toEqual([]);
+}
+
 async function expectCoreTouchTargets(page, selectors, label) {
     const issues = await page.evaluate((targetSelectors) => {
         const isRendered = (el) => {
@@ -140,6 +206,18 @@ async function waitForSidebarSettled(page, expectedOpen) {
     }, expectedOpen, { timeout: 3000 });
 }
 
+async function waitForWorkspaceViewSettled(page, view) {
+    const activeView = page.locator(`[data-workspace-view="${view}"]`);
+    await expect(activeView).toBeVisible();
+    await activeView.evaluate(async (element) => {
+        const animatedChildren = Array.from(element.querySelectorAll('.workspace-view-body > *'));
+        const finiteAnimations = animatedChildren
+            .flatMap((child) => child.getAnimations())
+            .filter((animation) => animation.effect?.getTiming().iterations !== Infinity);
+        await Promise.all(finiteAnimations.map((animation) => animation.finished.catch(() => undefined)));
+    });
+}
+
 async function selectWorkspaceView(page, view, viewport) {
     const navButton = page.locator(`.workspace-nav-btn[data-view="${view}"]`);
     if (viewport.width <= 767) {
@@ -147,12 +225,14 @@ async function selectWorkspaceView(page, view, viewport) {
         await expect(page.locator('body')).toHaveClass(/sidebar-mobile-open/);
         await waitForSidebarSettled(page, true);
         await navButton.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
-        await navButton.click({ force: true });
+        await navButton.evaluate((el) => el.click());
         await expect(page.locator('body')).not.toHaveClass(/sidebar-mobile-open/);
         await waitForSidebarSettled(page, false);
+        await waitForWorkspaceViewSettled(page, view);
         return;
     }
     await navButton.click();
+    await waitForWorkspaceViewSettled(page, view);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -220,6 +300,7 @@ test('keeps responsive layouts contained across supported viewport matrix', asyn
         await loadWorkspace(page, viewport);
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} initial`);
         await expectVisibleContentWithinViewport(page, `${viewport.name} initial`);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} initial`);
 
         if (viewport.width <= 767) {
             await page.locator('#workspaceSidebarBtn').click();
@@ -239,27 +320,216 @@ test('keeps responsive layouts contained across supported viewport matrix', asyn
             await expect(page.locator('#topbarMobileDrawer')).not.toHaveClass(/open/);
         }
 
-        await page.locator('#apiHeader').click();
+        if (viewport.width <= 767) {
+            await page.locator('#topbarControlsBtn').click();
+            await expect(page.locator('#topbarMobileDrawer')).toHaveClass(/open/);
+            await page.locator('#apiHeader').evaluate((header) => header.scrollIntoView({ block: 'center' }));
+        }
+        await page.locator('#apiHeader').click({ force: viewport.width <= 767 });
         await expect(page.locator('#apiPanel')).toHaveClass(/open/);
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} api panel`);
         await expectVisibleContentWithinViewport(page, `${viewport.name} api panel`);
         await page.locator('#apiHeader').click();
+        if (viewport.width <= 767) {
+            await page.locator('#topbarControlsBtn').evaluate((button) => button.click());
+            await expect(page.locator('#topbarMobileDrawer')).not.toHaveClass(/open/);
+        }
 
         await selectWorkspaceView(page, 'transcript', viewport);
         await expect(page.locator('[data-workspace-view="transcript"]')).toBeVisible();
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} transcript`);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} transcript`);
         await page.locator('#transcript').focus();
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} transcript focus`);
+
+        await selectWorkspaceView(page, 'voice', viewport);
+        await expect(page.locator('[data-workspace-view="voice"]')).toBeVisible();
+        await expectNoDocumentHorizontalOverflow(page, `${viewport.name} voice`);
+        await expectVisibleContentWithinViewport(page, `${viewport.name} voice`);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} voice`);
 
         await selectWorkspaceView(page, 'translation', viewport);
         await expect(page.locator('[data-workspace-view="translation"]')).toBeVisible();
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} translation`);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} translation`);
 
         await selectWorkspaceView(page, 'tools', viewport);
         await expect(page.locator('[data-workspace-view="tools"]')).toBeVisible();
         await expectNoDocumentHorizontalOverflow(page, `${viewport.name} export`);
         await expectVisibleContentWithinViewport(page, `${viewport.name} export`);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} export`);
     }
+});
+
+test('desktop workspace alignment remains stable at target viewports', async ({ page }) => {
+    test.setTimeout(120000);
+    const targets = [
+        { name: 'wide-desktop', width: 1920, height: 1080 },
+        { name: 'desktop', width: 1366, height: 768 },
+        { name: 'compact-desktop', width: 1280, height: 720 }
+    ];
+
+    for (const viewport of targets) {
+        await loadWorkspace(page, viewport);
+        await selectWorkspaceView(page, 'voice', viewport);
+        await page.waitForTimeout(350);
+
+        const voiceMetrics = await page.evaluate(() => {
+            const rect = (selector) => {
+                const value = document.querySelector(selector)?.getBoundingClientRect();
+                return value && {
+                    left: value.left,
+                    right: value.right,
+                    top: value.top,
+                    bottom: value.bottom,
+                    width: value.width,
+                    height: value.height
+                };
+            };
+            const stage = rect('.workspace-view-stage');
+            const content = [
+                rect('.voice-primary-column'),
+                rect('.voice-context-column')
+            ].filter(Boolean);
+            const api = rect('#apiHeader');
+            const topbarControls = Array.from(document.querySelectorAll(
+                '.topbar-secondary-controls .lang-wrap, .topbar-secondary-controls .toggle-btn'
+            )).filter((el) => getComputedStyle(el).display !== 'none').map((el) => {
+                const box = el.getBoundingClientRect();
+                return {
+                    left: box.left,
+                    right: box.right,
+                    top: box.top,
+                    bottom: box.bottom,
+                    clipped: el.scrollWidth > el.clientWidth + 1
+                };
+            });
+            const intersects = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+            return {
+                stage,
+                contentBottom: Math.max(...content.map((item) => item.bottom)),
+                requiredCardsVisible: [
+                    '.voice-prime-card',
+                    '.voice-memory-card',
+                    '.voice-transcript-card'
+                ].every((selector) => {
+                    const box = rect(selector);
+                    return box && box.top >= stage.top - 1 && box.bottom <= stage.bottom + 1;
+                }),
+                apiClipped: document.querySelector('#apiHeader').scrollWidth > document.querySelector('#apiHeader').clientWidth + 1,
+                topbarClipped: topbarControls.some((item) => item.clipped),
+                apiOverlap: topbarControls.some((item) => intersects(api, item)),
+                sidebarBottom: rect('.workspace-sidebar-card').bottom,
+                shellBottom: rect('.workspace-shell').bottom
+            };
+        });
+
+        expect(voiceMetrics.contentBottom, `${viewport.name} Voice content bottom`).toBeLessThanOrEqual(voiceMetrics.stage.bottom + 1);
+        expect(voiceMetrics.requiredCardsVisible, `${viewport.name} required Voice cards`).toBe(true);
+        expect(voiceMetrics.apiClipped, `${viewport.name} API label`).toBe(false);
+        expect(voiceMetrics.topbarClipped, `${viewport.name} topbar labels`).toBe(false);
+        expect(voiceMetrics.apiOverlap, `${viewport.name} API overlap`).toBe(false);
+        expect(Math.abs(voiceMetrics.sidebarBottom - voiceMetrics.shellBottom), `${viewport.name} sidebar height`).toBeLessThanOrEqual(1);
+
+        const iconGeometry = await page.locator('.workspace-nav-btn .workspace-nav-icon').evaluateAll((icons) => icons.map((icon) => {
+            const box = icon.getBoundingClientRect();
+            return { left: Math.round(box.left), width: Math.round(box.width) };
+        }));
+        expect(new Set(iconGeometry.map((item) => item.left)).size, `${viewport.name} nav icon left offsets`).toBe(1);
+        expect(new Set(iconGeometry.map((item) => item.width)).size, `${viewport.name} nav icon widths`).toBe(1);
+
+        await selectWorkspaceView(page, 'capture', viewport);
+        await page.waitForTimeout(350);
+        const captureOverlap = await page.evaluate(() => {
+            const orb = document.querySelector('.rec-orb-stage')?.getBoundingClientRect();
+            const header = document.querySelector('.transcript-panel .tp-header')?.getBoundingClientRect();
+            return !!orb && !!header
+                && orb.left < header.right && orb.right > header.left
+                && orb.top < header.bottom && orb.bottom > header.top;
+        });
+        expect(captureOverlap, `${viewport.name} Capture overlap`).toBe(false);
+
+        await selectWorkspaceView(page, 'memory', viewport);
+        await page.waitForTimeout(350);
+        const memoryMetrics = await page.evaluate(() => {
+            const pills = Array.from(document.querySelectorAll('[data-workspace-view="memory"] .pill-btn'))
+                .filter((el) => {
+                    const box = el.getBoundingClientRect();
+                    return box.width > 0 && box.height > 0;
+                })
+                .map((el) => {
+                    const box = el.getBoundingClientRect();
+                    return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, height: box.height };
+                });
+            const intersections = pills.flatMap((first, index) => pills.slice(index + 1)
+                .filter((second) => first.left < second.right && first.right > second.left
+                    && first.top < second.bottom && first.bottom > second.top));
+            return { pills, intersections: intersections.length };
+        });
+        expect(memoryMetrics.intersections, `${viewport.name} Memory pill intersections`).toBe(0);
+        expect(memoryMetrics.pills.every((pill) => Math.abs(pill.height - 28) <= 1), `${viewport.name} Memory pill heights`).toBe(true);
+        await expectActiveViewVerticallyReachable(page, `${viewport.name} Memory reachability`);
+    }
+});
+
+test('expanded desktop states remain scrollable without clipping', async ({ page }) => {
+    const viewport = { name: 'compact-desktop', width: 1280, height: 720 };
+    await loadWorkspace(page, viewport);
+    await selectWorkspaceView(page, 'voice', viewport);
+    await page.waitForTimeout(350);
+
+    await page.evaluate(() => {
+        const prompt = document.querySelector('#voicePrimePrompt');
+        const progress = document.querySelector('#voicePrimeProgress');
+        if (prompt) prompt.hidden = false;
+        if (progress) progress.hidden = false;
+        const longText = 'Long Voice transcript content. '.repeat(180);
+        document.querySelector('#voiceUser').textContent = longText;
+        document.querySelector('#voiceReply').textContent = longText;
+    });
+    await expectActiveViewVerticallyReachable(page, 'compact-desktop expanded Voice');
+
+    const scrollMetrics = await page.locator('.workspace-view-stage').evaluate((stage) => ({
+        clientHeight: stage.clientHeight,
+        scrollHeight: stage.scrollHeight,
+        overflowY: getComputedStyle(stage).overflowY
+    }));
+    expect(scrollMetrics.scrollHeight).toBeGreaterThan(scrollMetrics.clientHeight);
+    expect(['auto', 'scroll']).toContain(scrollMetrics.overflowY);
+
+    await page.locator('#apiHeader').click();
+    await expect(page.locator('#apiPanel')).toHaveClass(/open/);
+    const apiMetrics = await page.locator('#apiPanel').evaluate((panel) => {
+        const box = panel.getBoundingClientRect();
+        return {
+            left: box.left,
+            right: box.right,
+            top: box.top,
+            bottom: box.bottom,
+            overflowY: getComputedStyle(panel).overflowY,
+            scrollHeight: panel.scrollHeight,
+            clientHeight: panel.clientHeight
+        };
+    });
+    expect(apiMetrics.left).toBeGreaterThanOrEqual(0);
+    expect(apiMetrics.right).toBeLessThanOrEqual(viewport.width + 1);
+    expect(apiMetrics.top).toBeGreaterThanOrEqual(0);
+    expect(apiMetrics.bottom).toBeLessThanOrEqual(viewport.height + 1);
+    if (apiMetrics.scrollHeight > apiMetrics.clientHeight + 1) {
+        expect(['auto', 'scroll']).toContain(apiMetrics.overflowY);
+    }
+    await page.locator('#apiHeader').click();
+
+    await page.locator('#workspaceSidebarCollapseBtn').click();
+    await expect(page.locator('body')).toHaveClass(/sidebar-collapsed/);
+    await expectNoDocumentHorizontalOverflow(page, 'compact-desktop collapsed sidebar');
+    await expectActiveViewVerticallyReachable(page, 'compact-desktop collapsed sidebar');
+
+    await page.locator('#assistantLauncher').click();
+    await expect(page.locator('#assistantShell')).toHaveClass(/open/);
+    await expect(page.locator('#assistantPanel')).toBeVisible();
+    await expectNoDocumentHorizontalOverflow(page, 'compact-desktop assistant open');
+    await expectActiveViewVerticallyReachable(page, 'compact-desktop assistant open');
 });
 
 test('mobile drawers, assistant, and primary controls meet touch requirements', async ({ page }) => {
