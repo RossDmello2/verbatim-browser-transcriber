@@ -7,6 +7,7 @@ import '../../../assets/css/10-core.css';
 import '../../../assets/css/20-assistant.css';
 import '../../../assets/css/30-workspace.css';
 import '../../../assets/css/40-overrides.css';
+import '../../../assets/css/50-voice.css';
 
 type VerbatimDomProps = {
   dom?: import('expo/dom').DOMProps;

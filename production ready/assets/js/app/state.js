@@ -24,6 +24,11 @@ export const STORAGE_KEYS = {
     speakerMode: 'vt_speaker_mode',
     translationEnabled: 'vt_translation_enabled',
     translationTarget: 'vt_translation_target',
+    voiceTtsEngine: 'vt_voice_tts_engine',
+    voiceBrowserVoice: 'vt_voice_browser_voice',
+    voiceOrpheusVoiceEn: 'vt_voice_orpheus_voice_en',
+    voiceOrpheusVoiceAr: 'vt_voice_orpheus_voice_ar',
+    voiceMemoryGrounding: 'vt_voice_memory_grounding_enabled',
     assistantModel: 'vt_assistant_model',
     assistantCurrent: 'vt_assistant_current',
     assistantConversations: 'vt_assistant_conversations',
@@ -47,6 +52,7 @@ export const STATE_DOMAIN_GUIDE = [
     'providers/models: provider choice, keys, audio/chat/gemini model selections',
     'transcript: confirmed text, segments, undo, history, correction queues',
     'translation: target language, cached segment results, stats, pending work',
+    'voice: half-duplex phase, TTS engine/persona preferences, optional auto-interrupt and memory-grounding settings, session-only conversation history',
     'assistant: conversations, messages, draft, attachment, unread/UI state',
     'memory/workspace: imported memory, memory packs, autosave, restore payloads'
 ];

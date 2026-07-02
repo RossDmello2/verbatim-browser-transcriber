@@ -11,6 +11,7 @@ export const UI_SHELL_SCOPE = [
     'syncWorkspaceViewUi',
     'setWorkspaceView',
     'navigateToWorkspaceView',
+    'mountVoiceView',
     'setApiPanelOpen',
     'openHelpModal',
     'closeHelpModal',

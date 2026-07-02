@@ -12,6 +12,29 @@
 import { SR, mainContent, runtimeCapabilities } from '../runtime/capabilities.js';
 import { fetchWithTimeout, getProviderTimeoutMs, isAbortError, isRequestTimeoutError } from '../runtime/request-timeout.js';
 import { DEFAULT_MAX_WORKSPACE_BYTES, WorkspaceValidationError, parseWorkspacePayload, validateWorkspacePayload } from '../runtime/workspace-validation.js';
+import { sanitizeForSpeech } from '../runtime/voice/speech-sanitizer.js';
+import { createProfile, extractFrameFeatures } from '../runtime/voice/speaker-profile.js';
+import { describeBrowserVoice, selectBrowserVoice, speakBrowser, synthOrpheus } from '../runtime/voice/tts-engine.js';
+import { VoiceTurnManager } from '../runtime/voice/turn-manager.js';
+
+function isPrimeSpeakerProfile(profile) {
+    return profile?.version === 1
+        && Number.isFinite(profile.f0Mean)
+        && Number.isFinite(profile.centroidMean)
+        && Array.isArray(profile.mfccMean)
+        && Array.isArray(profile.mfccStd)
+        && profile.mfccMean.length === 8
+        && profile.mfccStd.length === 8;
+}
+
+function readPrimeSpeakerProfile() {
+    try {
+        const profile = JSON.parse(localStorage.getItem('vt_voice_prime_profile') || 'null');
+        return isPrimeSpeakerProfile(profile) ? profile : null;
+    } catch (error) {
+        return null;
+    }
+}
 
 function buildApp() {
     mainContent.innerHTML = `
@@ -378,6 +401,12 @@ function buildApp() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
               </span>
               <span class="workspace-nav-label nav-label">Transcript</span>
+            </button>
+            <button class="workspace-nav-btn nav-item" type="button" data-view="voice" title="Voice">
+              <span class="workspace-nav-icon nav-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"></path><path d="M19 10a7 7 0 0 1-14 0"></path><path d="M12 19v3"></path><path d="M8 22h8"></path></svg>
+              </span>
+              <span class="workspace-nav-label nav-label">Voice</span>
             </button>
             <button class="workspace-nav-btn nav-item" type="button" data-view="translation" title="Translation">
               <span class="workspace-nav-icon nav-icon" aria-hidden="true">
@@ -1023,6 +1052,16 @@ qdrant => Qdrant"></textarea>
     </button>
   `;
 
+    // Keep API configuration in the responsive topbar flow while preserving
+    // the existing IDs and event bindings.
+    const topbarControlsHost = mainContent.querySelector('.workspace-command-deck.topbar .topbar-secondary-controls');
+    const topbarApiActions = mainContent.querySelector('.topbar-right-actions');
+    const topbarApiPanel = mainContent.querySelector('#apiPanel');
+    if (topbarControlsHost && topbarApiActions) {
+        if (topbarApiPanel) topbarApiActions.appendChild(topbarApiPanel);
+        topbarControlsHost.appendChild(topbarApiActions);
+    }
+
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // STATE
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -1120,6 +1159,37 @@ qdrant => Qdrant"></textarea>
             enabled: localStorage.getItem('vt_translation_enabled') === '1',
             targetLanguage: localStorage.getItem('vt_translation_target') || 'en'
         }),
+        voice: {
+            phase: 'idle',
+            engine: localStorage.getItem('vt_voice_tts_engine') || 'browser',
+            browserVoiceUri: localStorage.getItem('vt_voice_browser_voice') || '',
+            orpheusVoiceEn: localStorage.getItem('vt_voice_orpheus_voice_en') || 'autumn',
+            orpheusVoiceAr: localStorage.getItem('vt_voice_orpheus_voice_ar') || 'noura',
+            responseStyle: (() => {
+                const saved = localStorage.getItem('vt_voice_response_style') || 'balanced';
+                return ['balanced', 'concise', 'explanatory', 'professional'].includes(saved) ? saved : 'balanced';
+            })(),
+            speechRate: (() => {
+                const saved = Number(localStorage.getItem('vt_voice_speech_rate'));
+                if (!Number.isFinite(saved) || saved < 0.75 || saved > 1.5) return 1;
+                return Math.round(saved * 20) / 20;
+            })(),
+            memoryGroundingEnabled: localStorage.getItem('vt_voice_memory_grounding_enabled') === '1',
+            autoBargeIn: localStorage.getItem('vt_voice_auto_barge_in') === '1',
+            bargeInSensitivity: (() => {
+                const saved = localStorage.getItem('vt_voice_barge_sensitivity') || 'balanced';
+                return ['low', 'balanced', 'high'].includes(saved) ? saved : 'balanced';
+            })(),
+            primeProfile: readPrimeSpeakerProfile(),
+            primeLockEnabled: localStorage.getItem('vt_voice_prime_lock_enabled') === '1',
+            primeMatchThreshold: (() => {
+                const saved = Number(localStorage.getItem('vt_voice_prime_match_threshold'));
+                return Number.isFinite(saved) && saved >= 0 && saved <= 1 ? saved : 0.62;
+            })(),
+            enrollmentStop: null,
+            refreshMemoryUi: null,
+            manager: null
+        },
         aiBusy: false,
         aiOutput: sessionStorage.getItem('vt_ai_output') || '',
         capabilities: runtimeCapabilities,
@@ -1668,6 +1738,7 @@ qdrant => Qdrant"></textarea>
             record: createWorkspaceView('record', 'Session', 'Recording workspace', 'Runtime status and live session summary for the current capture.'),
             capture: createWorkspaceView('capture', 'Input', 'Capture setup', 'Choose the source, verify compatibility, and review capture guidance.'),
             transcript: createWorkspaceView('transcript', 'Transcript', 'Verbatim transcript', 'Edit the transcript directly and switch between plain and timestamped reading.'),
+            voice: createWorkspaceView('voice', 'Voice', 'Live voice assistant', 'Talk hands-free and hear streamed spoken replies without leaving the workspace.'),
             translation: createWorkspaceView('translation', 'Translation', 'Translated output', 'Monitor translated text, sentiment, and language output in one focused panel.'),
             'ai-output': createWorkspaceView('ai-output', 'AI', 'AI output', 'Run AI cleanups, summaries, actions, and transcript Q&A without leaving the workspace.'),
             memory: createWorkspaceView('memory', 'Memory', 'Imported memory', 'Manage memory packs, imports, and workspace grounding tools.'),
@@ -1773,6 +1844,1009 @@ qdrant => Qdrant"></textarea>
         workspaceRightRail?.remove();
     }
 
+    function mountVoiceView() {
+        const body = document.querySelector('[data-workspace-view="voice"] .workspace-view-body');
+        if (!body || body.dataset.mounted === '1') return;
+        body.dataset.mounted = '1';
+        body.innerHTML = `
+          <div class="voice-panel" data-phase="idle">
+            <div class="voice-primary-column">
+              <div class="voice-launch-row">
+                <div class="voice-status" id="voiceStatus" aria-live="polite">Idle</div>
+                <button class="voice-mic-btn" id="voiceToggle" type="button">Start talking</button>
+              </div>
+              <div class="voice-controls">
+                <label class="voice-control" for="voiceEngine">
+                  <span>Voice engine</span>
+                  <select id="voiceEngine">
+                    <option value="browser">Browser voice (free, instant)</option>
+                    <option value="orpheus">Groq Orpheus (preview)</option>
+                  </select>
+                </label>
+                <label class="voice-control" for="voicePersona">
+                  <span id="voicePersonaLabel">Browser voice</span>
+                  <select id="voicePersona"></select>
+                </label>
+              </div>
+              <section class="voice-preferences" aria-label="Voice personalization">
+              <div class="voice-preference-heading">
+                <div>
+                  <div class="voice-preference-label" id="voiceResponseStyleLabel">Response style</div>
+                  <div class="voice-preference-note">Choose how the assistant shapes its next answer.</div>
+                </div>
+              </div>
+              <div class="voice-style-options" role="group" aria-label="Voice response style">
+                <button class="voice-style-btn" type="button" data-voice-response-style="balanced" aria-pressed="false">
+                  <span>Balanced</span>
+                  <small>Clear and conversational</small>
+                </button>
+                <button class="voice-style-btn" type="button" data-voice-response-style="concise" aria-pressed="false">
+                  <span>Concise</span>
+                  <small>Precise and crisp</small>
+                </button>
+                <button class="voice-style-btn" type="button" data-voice-response-style="explanatory" aria-pressed="false">
+                  <span>Explanatory</span>
+                  <small>More reasoning and context</small>
+                </button>
+                <button class="voice-style-btn" type="button" data-voice-response-style="professional" aria-pressed="false">
+                  <span>Professional</span>
+                  <small>Polished and formal</small>
+                </button>
+              </div>
+              <div class="voice-speed-control">
+                <div class="voice-preference-heading voice-speed-heading">
+                  <div>
+                    <div class="voice-preference-label" id="voiceSpeechRateLabel">Speech speed</div>
+                    <div class="voice-preference-note">Changes audio delivery without changing the answer.</div>
+                  </div>
+                  <output class="voice-speed-output" id="voiceSpeechRateOutput" for="voiceSpeechRate">1.00×</output>
+                </div>
+                <div class="voice-speed-wave" id="voiceSpeedWave" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <input class="voice-speed-range" id="voiceSpeechRate" type="range"
+                  min="0.75" max="1.50" step="0.05" value="1.00"
+                  aria-labelledby="voiceSpeechRateLabel">
+                <div class="voice-speed-scale">
+                  <span>Slow</span>
+                  <button class="voice-speed-reset" id="voiceSpeechRateReset" type="button">Natural</button>
+                  <span>Fast</span>
+                </div>
+              </div>
+              </section>
+              <div class="voice-action-row">
+                <button class="voice-preview-btn" id="voicePreview" type="button">Preview voice</button>
+                <div class="voice-barge-settings">
+                  <label class="voice-barge-toggle" for="voiceAutoBarge">
+                    <input id="voiceAutoBarge" type="checkbox">
+                    <span>Enable automatic interruption while assistant speaks</span>
+                  </label>
+                  <label class="voice-barge-sensitivity" for="voiceBargeSensitivity">
+                    <span>Sensitivity</span>
+                    <select id="voiceBargeSensitivity">
+                      <option value="low">Low</option>
+                      <option value="balanced">Balanced</option>
+                      <option value="high">High</option>
+                    </select>
+                  </label>
+                  <span class="voice-barge-status" id="voiceBargeStatus" aria-live="polite">Automatic interruption is off.</span>
+                </div>
+              </div>
+            </div>
+            <div class="voice-context-column">
+              <section class="voice-prime-card" aria-labelledby="voicePrimeLabel">
+              <div class="voice-prime-heading">
+                <div>
+                  <div class="voice-preference-label" id="voicePrimeLabel">Prime-speaker lock</div>
+                  <div class="voice-preference-note">Best-effort local voice matching for input and interruption.</div>
+                </div>
+                <label class="voice-prime-toggle" for="voicePrimeLock">
+                  <input id="voicePrimeLock" type="checkbox">
+                  <span>Lock to my voice</span>
+                </label>
+              </div>
+              <div class="voice-prime-prompt" id="voicePrimePrompt" hidden>
+                Read aloud: “My voice guides this assistant. Please listen only when I speak and ignore other voices around me.”
+              </div>
+              <progress class="voice-prime-progress" id="voicePrimeProgress" max="7000" value="0" hidden></progress>
+              <div class="voice-prime-actions">
+                <button class="voice-preview-btn" id="voicePrimeCalibrate" type="button">Calibrate my voice</button>
+                <button class="voice-prime-reset" id="voicePrimeReset" type="button">Reset calibration</button>
+              </div>
+              <div class="voice-prime-status" id="voicePrimeStatus" aria-live="polite">Not calibrated.</div>
+              <div class="voice-prime-caveat">The voice profile stays in this browser and is never sent to Groq. Similar voices may still require the optional future model-based upgrade.</div>
+              </section>
+              <section class="voice-memory-card" aria-labelledby="voiceMemoryLabel">
+              <div class="voice-memory-heading">
+                <div>
+                  <div class="voice-preference-label" id="voiceMemoryLabel">Memory grounding</div>
+                  <div class="voice-preference-note">Use the active Memory pack as long-term background for Voice replies.</div>
+                </div>
+                <label class="voice-memory-toggle" for="voiceMemoryGrounding">
+                  <input id="voiceMemoryGrounding" type="checkbox">
+                  <span>Use memory</span>
+                </label>
+              </div>
+              <div class="voice-memory-status" id="voiceMemoryStatus" aria-live="polite">Memory grounding is off.</div>
+              <div class="voice-memory-caveat">When grounding is on, your active memory text is sent to Groq with each Voice reply. Turn it off to keep memory out of Voice requests. Import or switch packs in the Memory tab.</div>
+              </section>
+              <div class="voice-source" id="voiceSource" aria-live="polite">No voice selected yet.</div>
+              <div class="voice-transcript-grid">
+                <section class="voice-transcript-card" aria-labelledby="voiceUserLabel">
+                  <div class="voice-transcript-label" id="voiceUserLabel">You</div>
+                  <div class="voice-live" id="voiceUser" aria-live="polite">Your speech will appear here.</div>
+                </section>
+                <section class="voice-transcript-card" aria-labelledby="voiceReplyLabel">
+                  <div class="voice-transcript-label" id="voiceReplyLabel">Voice assistant</div>
+                  <div class="voice-reply" id="voiceReply" aria-live="polite">Spoken replies will appear here.</div>
+                </section>
+              </div>
+              <div class="voice-hint" id="voiceHint" aria-live="polite"></div>
+            </div>
+          </div>
+        `;
+
+        const panel = body.querySelector('.voice-panel');
+        const statusEl = body.querySelector('#voiceStatus');
+        const toggle = body.querySelector('#voiceToggle');
+        const engineSelect = body.querySelector('#voiceEngine');
+        const personaSelect = body.querySelector('#voicePersona');
+        const personaLabel = body.querySelector('#voicePersonaLabel');
+        const responseStyleButtons = Array.from(body.querySelectorAll('[data-voice-response-style]'));
+        const speechRateInput = body.querySelector('#voiceSpeechRate');
+        const speechRateOutput = body.querySelector('#voiceSpeechRateOutput');
+        const speechRateReset = body.querySelector('#voiceSpeechRateReset');
+        const speedWave = body.querySelector('#voiceSpeedWave');
+        const previewBtn = body.querySelector('#voicePreview');
+        const autoBargeToggle = body.querySelector('#voiceAutoBarge');
+        const bargeSensitivitySelect = body.querySelector('#voiceBargeSensitivity');
+        const bargeStatus = body.querySelector('#voiceBargeStatus');
+        const primeLockToggle = body.querySelector('#voicePrimeLock');
+        const primeCalibrateBtn = body.querySelector('#voicePrimeCalibrate');
+        const primeResetBtn = body.querySelector('#voicePrimeReset');
+        const primePrompt = body.querySelector('#voicePrimePrompt');
+        const primeProgress = body.querySelector('#voicePrimeProgress');
+        const primeStatus = body.querySelector('#voicePrimeStatus');
+        const memoryGroundingToggle = body.querySelector('#voiceMemoryGrounding');
+        const memoryStatus = body.querySelector('#voiceMemoryStatus');
+        const sourceEl = body.querySelector('#voiceSource');
+        const userText = body.querySelector('#voiceUser');
+        const replyText = body.querySelector('#voiceReply');
+        const hint = body.querySelector('#voiceHint');
+        const orpheusOption = engineSelect.querySelector('option[value="orpheus"]');
+
+        const ENGLISH_ORPHEUS_VOICES = [
+            ['autumn', 'Autumn'],
+            ['diana', 'Diana'],
+            ['hannah', 'Hannah'],
+            ['austin', 'Austin'],
+            ['daniel', 'Daniel'],
+            ['troy', 'Troy']
+        ];
+        const ARABIC_ORPHEUS_VOICES = [
+            ['abdullah', 'Abdullah'],
+            ['fahad', 'Fahad'],
+            ['sultan', 'Sultan'],
+            ['lulwa', 'Lulwa'],
+            ['noura', 'Noura'],
+            ['aisha', 'Aisha']
+        ];
+        const VOICE_BASE_SYSTEM_PROMPT = 'You are a concise, friendly voice assistant. Your replies are spoken aloud by a text-to-speech engine. Respond in plain, natural spoken sentences only. Do not use markdown, asterisks, underscores, backticks, headings, bullet points, numbered lists, tables, code blocks, emoji, or decorative symbols. Write symbols as words when they are meaningful, such as twenty percent or five dollars.';
+        const VOICE_RESPONSE_STYLES = {
+            balanced: {
+                label: 'Balanced',
+                instruction: 'Give a clear conversational answer with enough context to be useful. Usually use three to six sentences.'
+            },
+            concise: {
+                label: 'Concise',
+                instruction: 'Give the direct answer first. Use one to three short sentences and omit optional detail.'
+            },
+            explanatory: {
+                label: 'Explanatory',
+                instruction: 'Explain the answer in a clear sequence with useful context or a short example. Avoid repetition and remain conversational.'
+            },
+            professional: {
+                label: 'Professional',
+                instruction: 'Use polished, precise, calm professional language. Lead with the conclusion, then provide relevant reasoning or actions.'
+            }
+        };
+
+        function getVoiceLocale() {
+            return getLiveRecognitionLang() || navigator.language || 'en-US';
+        }
+
+        function setVoiceHint(message = '', isError = false) {
+            hint.textContent = String(message || '');
+            hint.classList.toggle('is-error', !!isError);
+        }
+
+        function normalizeVoiceResponseStyle(style = '') {
+            return Object.hasOwn(VOICE_RESPONSE_STYLES, style) ? style : 'balanced';
+        }
+
+        function normalizeVoiceSpeechRate(value) {
+            const numeric = Number(value);
+            if (!Number.isFinite(numeric)) return 1;
+            return Math.min(1.5, Math.max(0.75, Math.round(numeric * 20) / 20));
+        }
+
+        let speedAnimationTimer = null;
+
+        function setVoiceSpeechRate(value, { announce = true, animate = false } = {}) {
+            const rate = normalizeVoiceSpeechRate(value);
+            state.voice.speechRate = rate;
+            localStorage.setItem('vt_voice_speech_rate', rate.toFixed(2));
+            speechRateInput.value = rate.toFixed(2);
+            speechRateInput.setAttribute('aria-valuetext', `${rate.toFixed(2)} times natural speed`);
+            speechRateOutput.value = `${rate.toFixed(2)}×`;
+            speechRateOutput.textContent = `${rate.toFixed(2)}×`;
+            const fill = ((rate - 0.75) / 0.75) * 100;
+            speechRateInput.style.setProperty('--voice-speed-fill', `${fill}%`);
+            speedWave.style.setProperty('--voice-wave-duration', `${(0.9 / rate).toFixed(2)}s`);
+            if (animate) {
+                speedWave.classList.add('is-adjusting');
+                if (speedAnimationTimer) clearTimeout(speedAnimationTimer);
+                speedAnimationTimer = setTimeout(() => {
+                    speedWave.classList.remove('is-adjusting');
+                    speedAnimationTimer = null;
+                }, 420);
+            }
+            if (announce) setVoiceHint(`Speech speed: ${rate.toFixed(2)}×.`);
+        }
+
+        function primeThresholdForSensitivity(sensitivity = state.voice.bargeInSensitivity) {
+            return sensitivity === 'low' ? 0.7 : 0.62;
+        }
+
+        function persistPrimeSpeaker() {
+            if (isPrimeSpeakerProfile(state.voice.primeProfile)) {
+                localStorage.setItem('vt_voice_prime_profile', JSON.stringify(state.voice.primeProfile));
+            } else {
+                localStorage.removeItem('vt_voice_prime_profile');
+            }
+            localStorage.setItem(
+                'vt_voice_prime_lock_enabled',
+                state.voice.primeLockEnabled && !!state.voice.primeProfile ? '1' : '0'
+            );
+            localStorage.setItem(
+                'vt_voice_prime_match_threshold',
+                Number(state.voice.primeMatchThreshold || 0.62).toFixed(2)
+            );
+        }
+
+        function getVoiceMemoryGrounding() {
+            const memory = getActiveMemoryContext({ maxChars: 7000, consumer: 'voice' });
+            return {
+                enabled: !!state.voice.memoryGroundingEnabled && !memory.empty,
+                packId: memory.packId,
+                packName: memory.packName,
+                content: memory.content,
+                includedChars: memory.includedChars,
+                rawChars: memory.rawChars,
+                truncated: memory.truncated,
+                empty: memory.empty
+            };
+        }
+
+        function refreshVoiceMemoryUi({ announce = false } = {}) {
+            const memory = getActiveMemoryContext({ maxChars: 7000, consumer: 'voice' });
+            const enabled = !!state.voice.memoryGroundingEnabled && !memory.empty;
+            memoryGroundingToggle.checked = !!state.voice.memoryGroundingEnabled;
+            const parts = [
+                `${memory.packName || 'Primary'} pack`,
+                state.voice.memoryGroundingEnabled ? 'grounding on' : 'grounding off'
+            ];
+            if (memory.empty) {
+                parts.push('active pack is empty');
+            } else {
+                parts.push(`${memory.includedChars.toLocaleString()} characters included`);
+                if (memory.truncated) parts.push('truncated');
+            }
+            memoryStatus.textContent = parts.join(' · ');
+            if (announce) {
+                setVoiceHint(enabled
+                    ? `Memory grounding enabled for ${memory.packName || 'Primary'}.`
+                    : 'Memory grounding disabled for Voice.');
+            }
+            state.voice.manager?.updateConfig({ getMemoryGrounding: getVoiceMemoryGrounding });
+        }
+
+        let primeEnrollment = null;
+
+        function syncVoiceControlAvailability() {
+            const phase = state.voice.manager?.phase || state.voice.phase || 'idle';
+            const phaseBusy = phase !== 'idle';
+            const enrolling = !!primeEnrollment;
+            const controlsBusy = phaseBusy || enrolling;
+            toggle.disabled = enrolling || !runtimeCapabilities.hasSpeechRecognition;
+            engineSelect.disabled = controlsBusy;
+            personaSelect.disabled = controlsBusy;
+            responseStyleButtons.forEach(button => {
+                button.disabled = controlsBusy;
+            });
+            speechRateInput.disabled = controlsBusy;
+            speechRateReset.disabled = controlsBusy;
+            previewBtn.disabled = controlsBusy;
+            autoBargeToggle.disabled = controlsBusy;
+            bargeSensitivitySelect.disabled = controlsBusy || !state.voice.autoBargeIn;
+            primeLockToggle.disabled = controlsBusy || !state.voice.primeProfile;
+            primeResetBtn.disabled = controlsBusy || !state.voice.primeProfile;
+            primeCalibrateBtn.disabled = phaseBusy;
+            memoryGroundingToggle.disabled = controlsBusy;
+        }
+
+        function refreshPrimeSpeakerUi() {
+            if (primeEnrollment) return;
+            const calibrated = isPrimeSpeakerProfile(state.voice.primeProfile);
+            if (!calibrated) state.voice.primeLockEnabled = false;
+            primeLockToggle.checked = calibrated && state.voice.primeLockEnabled;
+            primeCalibrateBtn.textContent = calibrated ? 'Re-calibrate my voice' : 'Calibrate my voice';
+            primeResetBtn.disabled = !calibrated;
+            primePrompt.hidden = true;
+            primeProgress.hidden = true;
+            primeProgress.value = 0;
+            primeStatus.textContent = calibrated
+                ? `Calibrated ✓ · ${state.voice.primeLockEnabled ? 'Lock enabled' : 'Lock disabled'}`
+                : 'Not calibrated.';
+            syncVoiceControlAvailability();
+        }
+
+        function cleanupPrimeEnrollment(session) {
+            if (!session) return;
+            session.cancelled = true;
+            if (session.timer) clearInterval(session.timer);
+            try { session.source?.disconnect?.(); } catch (error) {}
+            try { session.analyser?.disconnect?.(); } catch (error) {}
+            for (const track of session.stream?.getTracks?.() || []) {
+                try { track.stop(); } catch (error) {}
+            }
+            try { void session.context?.close?.(); } catch (error) {}
+            if (primeEnrollment === session) primeEnrollment = null;
+            primePrompt.hidden = true;
+            primeProgress.hidden = true;
+            primeProgress.value = 0;
+            syncVoiceControlAvailability();
+        }
+
+        function stopPrimeEnrollment(message = 'Voice calibration cancelled.') {
+            if (!primeEnrollment) return;
+            const session = primeEnrollment;
+            cleanupPrimeEnrollment(session);
+            primeStatus.textContent = message;
+            refreshPrimeSpeakerUi();
+            if (message) primeStatus.textContent = message;
+        }
+
+        async function startPrimeEnrollment() {
+            if (primeEnrollment) {
+                stopPrimeEnrollment();
+                return;
+            }
+            if (state.voice.manager?.phase && state.voice.manager.phase !== 'idle') {
+                setVoiceHint('Stop Voice before calibrating your speaker profile.', true);
+                return;
+            }
+            const AudioContextCtor = globalThis.AudioContext || globalThis.webkitAudioContext;
+            if (!AudioContextCtor || !globalThis.navigator?.mediaDevices?.getUserMedia) {
+                primeStatus.textContent = 'Voice calibration is unavailable in this browser.';
+                return;
+            }
+
+            const session = {
+                cancelled: false,
+                context: null,
+                stream: null,
+                source: null,
+                analyser: null,
+                timer: null,
+                frames: [],
+                startedAt: 0
+            };
+            primeEnrollment = session;
+            primeCalibrateBtn.textContent = 'Cancel calibration';
+            primePrompt.hidden = false;
+            primeProgress.hidden = false;
+            primeProgress.value = 0;
+            primeStatus.textContent = 'Opening the microphone...';
+            syncVoiceControlAvailability();
+
+            try {
+                session.context = new AudioContextCtor();
+                if (session.context.state === 'suspended') await session.context.resume();
+                session.stream = await globalThis.navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: false
+                    },
+                    video: false
+                });
+                if (session.cancelled || primeEnrollment !== session) {
+                    cleanupPrimeEnrollment(session);
+                    return;
+                }
+                session.analyser = session.context.createAnalyser();
+                session.analyser.fftSize = 2048;
+                session.analyser.smoothingTimeConstant = 0.2;
+                session.source = session.context.createMediaStreamSource(session.stream);
+                session.source.connect(session.analyser);
+                const timeData = new Float32Array(session.analyser.fftSize);
+                const freqData = new Float32Array(session.analyser.frequencyBinCount);
+                session.startedAt = Date.now();
+                primeStatus.textContent = 'Listening for your calibration sentence...';
+                session.timer = setInterval(() => {
+                    if (session.cancelled || primeEnrollment !== session) return;
+                    const elapsed = Date.now() - session.startedAt;
+                    primeProgress.value = Math.min(7000, elapsed);
+                    session.analyser.getFloatTimeDomainData(timeData);
+                    session.analyser.getFloatFrequencyData(freqData);
+                    const features = extractFrameFeatures(
+                        timeData,
+                        freqData,
+                        session.context.sampleRate
+                    );
+                    if (features) session.frames.push(features);
+                    if (elapsed < 7000) return;
+
+                    const frames = session.frames.slice();
+                    cleanupPrimeEnrollment(session);
+                    if (frames.length < 120) {
+                        refreshPrimeSpeakerUi();
+                        primeStatus.textContent = 'Too quiet or too short — please try calibration again.';
+                        return;
+                    }
+                    try {
+                        state.voice.primeProfile = createProfile(frames);
+                        state.voice.primeLockEnabled = true;
+                        state.voice.primeMatchThreshold = primeThresholdForSensitivity();
+                        persistPrimeSpeaker();
+                        refreshPrimeSpeakerUi();
+                        setVoiceHint('Prime-speaker lock calibrated and enabled.');
+                    } catch (error) {
+                        refreshPrimeSpeakerUi();
+                        primeStatus.textContent = 'Calibration could not build a stable voice profile. Please try again.';
+                    }
+                }, 35);
+            } catch (error) {
+                cleanupPrimeEnrollment(session);
+                refreshPrimeSpeakerUi();
+                primeStatus.textContent = error?.name === 'NotAllowedError'
+                    ? 'Microphone permission was denied. Allow access and try again.'
+                    : 'Voice calibration could not access the microphone.';
+            }
+        }
+
+        function getVoiceSystemPrompt() {
+            const selected = VOICE_RESPONSE_STYLES[normalizeVoiceResponseStyle(state.voice.responseStyle)];
+            return `${VOICE_BASE_SYSTEM_PROMPT} ${selected.instruction}`;
+        }
+
+        function setVoiceResponseStyle(style, { announce = true } = {}) {
+            const normalized = normalizeVoiceResponseStyle(style);
+            state.voice.responseStyle = normalized;
+            localStorage.setItem('vt_voice_response_style', normalized);
+            responseStyleButtons.forEach((button) => {
+                button.setAttribute('aria-pressed', button.dataset.voiceResponseStyle === normalized ? 'true' : 'false');
+            });
+            state.voice.manager?.updateConfig({ systemPrompt: getVoiceSystemPrompt() });
+            if (announce) {
+                setVoiceHint(`Response style: ${VOICE_RESPONSE_STYLES[normalized].label}.`);
+            }
+        }
+
+        function persistVoiceSelection() {
+            localStorage.setItem('vt_voice_tts_engine', state.voice.engine);
+            localStorage.setItem('vt_voice_browser_voice', state.voice.browserVoiceUri);
+            localStorage.setItem('vt_voice_orpheus_voice_en', state.voice.orpheusVoiceEn);
+            localStorage.setItem('vt_voice_orpheus_voice_ar', state.voice.orpheusVoiceAr);
+            localStorage.setItem('vt_voice_response_style', normalizeVoiceResponseStyle(state.voice.responseStyle));
+            localStorage.setItem('vt_voice_speech_rate', normalizeVoiceSpeechRate(state.voice.speechRate).toFixed(2));
+            localStorage.setItem('vt_voice_auto_barge_in', state.voice.autoBargeIn ? '1' : '0');
+            localStorage.setItem('vt_voice_barge_sensitivity', state.voice.bargeInSensitivity);
+        }
+
+        function appendVoiceOption(value, label) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            personaSelect.appendChild(option);
+        }
+
+        function refreshVoiceOptions({ announceFallback = false } = {}) {
+            const locale = getVoiceLocale().toLowerCase();
+            const language = locale.split('-')[0];
+            const supportsOrpheus = language === 'en' || locale === 'ar-sa';
+            orpheusOption.disabled = !supportsOrpheus;
+            if (state.voice.engine === 'orpheus' && !supportsOrpheus) {
+                state.voice.engine = 'browser';
+                engineSelect.value = 'browser';
+                persistVoiceSelection();
+                if (announceFallback) {
+                    setVoiceHint('Orpheus supports English and Saudi Arabic here; using the browser voice.');
+                }
+            }
+
+            personaSelect.replaceChildren();
+            if (state.voice.engine === 'orpheus') {
+                personaLabel.textContent = 'Orpheus persona';
+                const voices = locale === 'ar-sa' ? ARABIC_ORPHEUS_VOICES : ENGLISH_ORPHEUS_VOICES;
+                voices.forEach(([value, label]) => appendVoiceOption(value, label));
+                const selected = locale === 'ar-sa' ? state.voice.orpheusVoiceAr : state.voice.orpheusVoiceEn;
+                personaSelect.value = voices.some(([value]) => value === selected) ? selected : voices[0][0];
+                sourceEl.textContent = `Selected Orpheus persona: ${getOrpheusVoiceLabel(personaSelect.value)}.`;
+                return;
+            }
+
+            personaLabel.textContent = 'Browser voice';
+            appendVoiceOption('', 'System default');
+            const languagePrefix = language;
+            const allVoices = Array.from(globalThis.speechSynthesis?.getVoices?.() || []);
+            if (!allVoices.length) {
+                appendVoiceOption('', 'Loading browser voices...');
+                if (state.voice.engine === 'browser') {
+                    sourceEl.textContent = 'Browser voices are still loading. Chrome may populate them after a moment.';
+                }
+                setTimeout(() => {
+                    if (state.voice.engine === 'browser' && state.voice.manager?.phase !== 'speaking') {
+                        refreshVoiceOptions();
+                    }
+                }, 400);
+                return;
+            }
+            const matching = allVoices.filter(voice => {
+                const voiceLocale = String(voice.lang || '').toLowerCase();
+                return voiceLocale === locale || voiceLocale.startsWith(`${languagePrefix}-`);
+            });
+            (matching.length ? matching : allVoices).forEach((voice) => {
+                appendVoiceOption(voice.voiceURI, `${voice.name} (${voice.lang || 'unknown'})`);
+            });
+            personaSelect.value = Array.from(personaSelect.options)
+                .some(option => option.value === state.voice.browserVoiceUri)
+                ? state.voice.browserVoiceUri
+                : '';
+            if (state.voice.browserVoiceUri && !personaSelect.value && announceFallback) {
+                setVoiceHint('Saved browser voice is unavailable here; using the closest available browser voice.');
+            }
+            const selectedVoice = selectBrowserVoice(allVoices, personaSelect.value, getVoiceLocale());
+            sourceEl.textContent = `Selected browser voice: ${describeBrowserVoice(selectedVoice)}.`;
+        }
+
+        function getOrpheusVoiceLabel(value) {
+            const locale = getVoiceLocale().toLowerCase();
+            const voices = locale === 'ar-sa' ? ARABIC_ORPHEUS_VOICES : ENGLISH_ORPHEUS_VOICES;
+            return voices.find(([voiceValue]) => voiceValue === value)?.[1] || value || 'default';
+        }
+
+        function getEffectiveTtsConfig() {
+            const locale = getVoiceLocale();
+            const normalizedLocale = locale.toLowerCase();
+            const language = normalizedLocale.split('-')[0];
+            const isSaudiArabic = normalizedLocale === 'ar-sa';
+            const orpheusSupported = language === 'en' || isSaudiArabic;
+            return {
+                engine: state.voice.engine === 'orpheus' && orpheusSupported ? 'orpheus' : 'browser',
+                locale,
+                browserVoiceUri: state.voice.browserVoiceUri,
+                orpheusModel: isSaudiArabic
+                    ? 'canopylabs/orpheus-arabic-saudi'
+                    : 'canopylabs/orpheus-v1-english',
+                orpheusVoice: isSaudiArabic ? state.voice.orpheusVoiceAr : state.voice.orpheusVoiceEn,
+                orpheusLabel: getOrpheusVoiceLabel(isSaudiArabic ? state.voice.orpheusVoiceAr : state.voice.orpheusVoiceEn),
+                speechRate: normalizeVoiceSpeechRate(state.voice.speechRate),
+                autoBargeIn: state.voice.autoBargeIn,
+                bargeInSensitivity: state.voice.bargeInSensitivity
+            };
+        }
+
+        function getSelectedBrowserVoice() {
+            return selectBrowserVoice(
+                globalThis.speechSynthesis?.getVoices?.() || [],
+                state.voice.browserVoiceUri,
+                getVoiceLocale()
+            );
+        }
+
+        function ensureVoiceManager() {
+            if (state.voice.manager) return state.voice.manager;
+            state.voice.manager = new VoiceTurnManager({
+                getGroqKeys: () => getProviderKeys('groq'),
+                getLocale: getVoiceLocale,
+                getChatModel: () => {
+                    if (state.apiProvider !== 'groq') return defaultChatModel('groq');
+                    return remapDeprecatedGroqModel(state.chatModel || defaultChatModel('groq'));
+                },
+                getTtsConfig: getEffectiveTtsConfig,
+                getPrimeSpeakerConfig: () => ({
+                    enabled: state.voice.primeLockEnabled && !!state.voice.primeProfile,
+                    profile: state.voice.primeProfile,
+                    frameMatchMin: state.voice.primeMatchThreshold,
+                    utteranceMatchFraction: 0.6
+                }),
+                getMemoryGrounding: getVoiceMemoryGrounding,
+                chatEndpoint: getChatEndpoint('groq'),
+                systemPrompt: getVoiceSystemPrompt(),
+                transcribeFallback: async ({ blob, signal }) => {
+                    const whisperLanguage = getWhisperLang();
+                    const mimeType = String(blob?.type || '').toLowerCase();
+                    const extension = mimeType.includes('ogg')
+                        ? 'ogg'
+                        : mimeType.includes('wav')
+                            ? 'wav'
+                            : mimeType.includes('mp4')
+                                ? 'm4a'
+                                : 'webm';
+                    const result = await requestWithProvider({
+                        provider: 'groq',
+                        url: getAudioEndpoint('transcriptions', 'groq'),
+                        responseType: 'json',
+                        signal,
+                        purpose: 'voice-fallback-transcription',
+                        maxRetries: 1,
+                        syncPrimaryKey: false,
+                        buildBody: () => {
+                            const body = new FormData();
+                            body.append('file', blob, `voice-recovery.${extension}`);
+                            body.append('model', 'whisper-large-v3-turbo');
+                            body.append('response_format', 'json');
+                            if (whisperLanguage) body.append('language', whisperLanguage);
+                            return body;
+                        }
+                    });
+                    return cleanTranscriptLocal(result?.text || '');
+                },
+                onRecognitionDiagnostic: (details = {}) => {
+                    updateDiagnostics({
+                        voiceRecognitionError: String(details.error || ''),
+                        voiceRecognitionMessage: String(details.message || ''),
+                        voiceRecognitionLocale: String(details.locale || ''),
+                        voiceRecognitionRetry: Number(details.retry || 0),
+                        voiceRecognitionOutcome: String(details.outcome || ''),
+                        voiceRecognitionHadSpeech: !!details.hadSpeech,
+                        voiceRecognitionHadInterim: !!details.hadInterim,
+                        voiceRecognitionHadFinal: !!details.hadFinal,
+                        voiceRecoveryAudioBytes: Number(details.audioBytes || 0),
+                        voiceRecoveryAudioDurationMs: Number(details.audioDurationMs || 0),
+                        voiceRecognitionPhase: String(details.phase || ''),
+                        voiceRecognitionAt: String(details.timestamp || '')
+                    }, `Voice recognition: ${details.outcome || details.error || 'update'}`);
+                },
+                hooks: {
+                    onState: (phase) => {
+                        state.voice.phase = phase;
+                        panel.dataset.phase = phase;
+                        statusEl.textContent = phase.charAt(0).toUpperCase() + phase.slice(1);
+                        toggle.textContent = phase === 'idle' ? 'Start talking' : 'Stop';
+                        if (phase === 'speaking') toggle.textContent = 'Interrupt';
+                        syncVoiceControlAvailability();
+                    },
+                    onUserText: (text) => {
+                        userText.textContent = text || 'Listening...';
+                    },
+                    onAssistantText: (text) => {
+                        replyText.textContent = text || 'Thinking...';
+                    },
+                    onStatus: (message) => setVoiceHint(message, false),
+                    onError: (message) => setVoiceHint(message, true),
+                    onTtsSource: (source, detail) => {
+                        if (source === 'orpheus') {
+                            sourceEl.textContent = `Speaking with Orpheus: ${detail}.`;
+                        } else if (source === 'fallback-browser') {
+                            sourceEl.textContent = `Orpheus unavailable; using browser voice: ${detail}.`;
+                        } else if (source === 'browser') {
+                            sourceEl.textContent = `Speaking with browser voice: ${detail}.`;
+                        } else {
+                            sourceEl.textContent = state.voice.engine === 'orpheus'
+                                ? `Selected Orpheus persona: ${getOrpheusVoiceLabel(getEffectiveTtsConfig().orpheusVoice)}.`
+                                : `Selected browser voice: ${describeBrowserVoice(getSelectedBrowserVoice())}.`;
+                        }
+                    },
+                    onProviderError: (error) => {
+                        if (error?.code === 'model_terms_required') {
+                            setVoiceHint('Accept Orpheus preview model terms in Groq Console, then retry.', true);
+                        }
+                    },
+                    onInterrupt: () => {
+                        setVoiceHint('Interrupted. Listening for your correction.');
+                    },
+                    onBargeInStatus: ({ state: monitorState, sensitivity }) => {
+                        const sensitivityLabel = sensitivity
+                            ? `${sensitivity.charAt(0).toUpperCase()}${sensitivity.slice(1)}`
+                            : 'Balanced';
+                        const messages = {
+                            starting: 'Opening interruption microphone...',
+                            calibrating: `Calibrating interruption monitor (${sensitivityLabel})...`,
+                            monitoring: `Listening for interruption (${sensitivityLabel} sensitivity).`,
+                            triggered: 'Interruption detected.',
+                            unavailable: 'Automatic interruption microphone is unavailable.',
+                            inactive: state.voice.autoBargeIn
+                                ? `Automatic interruption ready (${sensitivityLabel} sensitivity).`
+                                : 'Automatic interruption is off.'
+                        };
+                        bargeStatus.textContent = messages[monitorState] || '';
+                    },
+                    onPrimeSpeakerGate: ({ context, accepted, reason, matchFraction, voicedFrames }) => {
+                        if (accepted && reason === 'analysis-unavailable') {
+                            primeStatus.textContent = 'Prime-speaker analysis unavailable for this turn; normal input was used.';
+                            return;
+                        }
+                        if (!accepted) {
+                            primeStatus.textContent = reason === 'insufficient-voice'
+                                ? 'Prime-speaker check rejected a quiet or unclear utterance.'
+                                : 'Different speaker ignored.';
+                            return;
+                        }
+                        if (context !== 'barge-in') {
+                            const percent = Math.round(Number(matchFraction || 0) * 100);
+                            primeStatus.textContent = `Prime speaker matched (${percent}% across ${voicedFrames || 0} voiced frames).`;
+                        }
+                    },
+                    onMemoryGrounding: (details = {}) => {
+                        const packName = String(details.packName || 'Primary');
+                        const includedChars = Number(details.includedChars || 0);
+                        const enabled = !!details.enabled;
+                        const empty = !!details.empty;
+                        const truncated = !!details.truncated;
+                        const pieces = [
+                            `${packName} pack`,
+                            enabled ? 'grounding on' : 'grounding off'
+                        ];
+                        if (empty) {
+                            pieces.push('active pack is empty');
+                        } else if (includedChars) {
+                            pieces.push(`${includedChars.toLocaleString()} characters included`);
+                            if (truncated) pieces.push('truncated');
+                        }
+                        memoryStatus.textContent = pieces.join(' · ');
+                        updateDiagnostics({
+                            voiceMemoryGroundingEnabled: enabled,
+                            voiceMemoryPackId: String(details.packId || ''),
+                            voiceMemoryPackName: packName,
+                            voiceMemoryIncludedChars: includedChars,
+                            voiceMemoryTruncated: truncated,
+                            voiceMemoryEmpty: empty,
+                            voiceMessageRoleOrder: Array.isArray(details.messageRoleOrder)
+                                ? details.messageRoleOrder.join('>')
+                                : '',
+                            voiceMessagesContainProviderKey: false
+                        }, 'Voice memory grounding metadata updated');
+                    }
+                }
+            });
+            return state.voice.manager;
+        }
+
+        if (localStorage.getItem('vt_voice_memory_grounding_enabled') === null) {
+            state.voice.memoryGroundingEnabled = !getActiveMemoryContext({ maxChars: 7000, consumer: 'voice' }).empty;
+            localStorage.setItem('vt_voice_memory_grounding_enabled', state.voice.memoryGroundingEnabled ? '1' : '0');
+        }
+        engineSelect.value = state.voice.engine === 'orpheus' ? 'orpheus' : 'browser';
+        state.voice.engine = engineSelect.value;
+        memoryGroundingToggle.checked = !!state.voice.memoryGroundingEnabled;
+        autoBargeToggle.checked = state.voice.autoBargeIn;
+        bargeSensitivitySelect.value = state.voice.bargeInSensitivity;
+        bargeSensitivitySelect.disabled = !state.voice.autoBargeIn;
+        bargeStatus.textContent = state.voice.autoBargeIn
+            ? `Automatic interruption ready (${state.voice.bargeInSensitivity[0].toUpperCase()}${state.voice.bargeInSensitivity.slice(1)} sensitivity).`
+            : 'Automatic interruption is off.';
+        state.voice.primeMatchThreshold = primeThresholdForSensitivity(state.voice.bargeInSensitivity);
+        if (state.voice.primeProfile) persistPrimeSpeaker();
+        refreshPrimeSpeakerUi();
+        state.voice.enrollmentStop = () => stopPrimeEnrollment('Voice calibration cancelled.');
+        state.voice.refreshMemoryUi = () => refreshVoiceMemoryUi();
+        refreshVoiceOptions();
+        setVoiceResponseStyle(state.voice.responseStyle, { announce: false });
+        setVoiceSpeechRate(state.voice.speechRate, { announce: false });
+        refreshVoiceMemoryUi();
+
+        if (!runtimeCapabilities.hasSpeechRecognition) {
+            toggle.disabled = true;
+            setVoiceHint('Voice mode needs Chrome or Edge on desktop.', true);
+        }
+
+        engineSelect.addEventListener('change', () => {
+            state.voice.engine = engineSelect.value === 'orpheus' ? 'orpheus' : 'browser';
+            persistVoiceSelection();
+            refreshVoiceOptions({ announceFallback: true });
+            if (state.voice.engine === 'orpheus') {
+                sourceEl.textContent = `Selected Orpheus persona: ${getOrpheusVoiceLabel(getEffectiveTtsConfig().orpheusVoice)}.`;
+            }
+        });
+
+        personaSelect.addEventListener('change', () => {
+            const locale = getVoiceLocale().toLowerCase();
+            if (state.voice.engine === 'orpheus') {
+                if (locale === 'ar-sa') state.voice.orpheusVoiceAr = personaSelect.value;
+                else state.voice.orpheusVoiceEn = personaSelect.value;
+            } else {
+                state.voice.browserVoiceUri = personaSelect.value;
+            }
+            persistVoiceSelection();
+            refreshVoiceOptions();
+        });
+
+        responseStyleButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                setVoiceResponseStyle(button.dataset.voiceResponseStyle);
+            });
+        });
+
+        speechRateInput.addEventListener('input', () => {
+            setVoiceSpeechRate(speechRateInput.value, { announce: false, animate: true });
+        });
+
+        speechRateInput.addEventListener('change', () => {
+            setVoiceSpeechRate(speechRateInput.value);
+        });
+
+        speechRateReset.addEventListener('click', () => {
+            setVoiceSpeechRate(1, { animate: true });
+            speechRateInput.focus();
+        });
+
+        autoBargeToggle.addEventListener('change', () => {
+            state.voice.autoBargeIn = autoBargeToggle.checked;
+            bargeSensitivitySelect.disabled = !state.voice.autoBargeIn;
+            persistVoiceSelection();
+            bargeStatus.textContent = state.voice.autoBargeIn
+                ? `Automatic interruption ready (${state.voice.bargeInSensitivity[0].toUpperCase()}${state.voice.bargeInSensitivity.slice(1)} sensitivity).`
+                : 'Automatic interruption is off.';
+            setVoiceHint(state.voice.autoBargeIn
+                ? 'Automatic interruption is enabled. If speaker echo triggers it, turn this off and use the Interrupt button.'
+                : '');
+        });
+
+        bargeSensitivitySelect.addEventListener('change', () => {
+            const selected = bargeSensitivitySelect.value;
+            state.voice.bargeInSensitivity = ['low', 'balanced', 'high'].includes(selected)
+                ? selected
+                : 'balanced';
+            state.voice.primeMatchThreshold = primeThresholdForSensitivity(state.voice.bargeInSensitivity);
+            persistVoiceSelection();
+            persistPrimeSpeaker();
+            const label = `${state.voice.bargeInSensitivity[0].toUpperCase()}${state.voice.bargeInSensitivity.slice(1)}`;
+            bargeStatus.textContent = `Automatic interruption ready (${label} sensitivity).`;
+            setVoiceHint(`Automatic interruption sensitivity: ${label}.`);
+        });
+
+        memoryGroundingToggle.addEventListener('change', () => {
+            state.voice.memoryGroundingEnabled = !!memoryGroundingToggle.checked;
+            localStorage.setItem('vt_voice_memory_grounding_enabled', state.voice.memoryGroundingEnabled ? '1' : '0');
+            refreshVoiceMemoryUi({ announce: true });
+        });
+
+        primeCalibrateBtn.addEventListener('click', () => {
+            void startPrimeEnrollment();
+        });
+
+        primeLockToggle.addEventListener('change', () => {
+            if (!state.voice.primeProfile) {
+                state.voice.primeLockEnabled = false;
+                primeLockToggle.checked = false;
+                primeStatus.textContent = 'Calibrate your voice before enabling the lock.';
+                return;
+            }
+            state.voice.primeLockEnabled = primeLockToggle.checked;
+            persistPrimeSpeaker();
+            refreshPrimeSpeakerUi();
+            setVoiceHint(state.voice.primeLockEnabled
+                ? 'Prime-speaker lock enabled. Input filtering is best-effort.'
+                : 'Prime-speaker lock disabled; Voice is using normal input behavior.');
+        });
+
+        primeResetBtn.addEventListener('click', () => {
+            state.voice.primeProfile = null;
+            state.voice.primeLockEnabled = false;
+            localStorage.removeItem('vt_voice_prime_profile');
+            localStorage.setItem('vt_voice_prime_lock_enabled', '0');
+            refreshPrimeSpeakerUi();
+            setVoiceHint('Prime-speaker calibration reset. Normal Voice behavior restored.');
+        });
+
+        previewBtn.addEventListener('click', async () => {
+            previewBtn.disabled = true;
+            const sample = sanitizeForSpeech('This is a preview of the selected voice.');
+            try {
+                if (!sample) {
+                    setVoiceHint('Nothing speakable to preview.');
+                    return;
+                }
+                const ttsConfig = getEffectiveTtsConfig();
+                if (ttsConfig.engine === 'orpheus') {
+                    const key = getProviderKeys('groq')[0];
+                    if (!key) {
+                        setVoiceHint('Add a Groq key before previewing Orpheus.', true);
+                        return;
+                    }
+                    try {
+                        const AudioContextCtor = globalThis.AudioContext || globalThis.webkitAudioContext;
+                        const context = AudioContextCtor ? new AudioContextCtor() : null;
+                        if (context?.state === 'suspended') await context.resume();
+                        const encoded = await synthOrpheus({
+                            text: sample,
+                            apiKey: key,
+                            model: ttsConfig.orpheusModel,
+                            voice: ttsConfig.orpheusVoice,
+                            speed: ttsConfig.speechRate
+                        });
+                        if (!context) throw new Error('Web Audio is unavailable for Orpheus preview');
+                        const buffer = await context.decodeAudioData(encoded.slice(0));
+                        const source = context.createBufferSource();
+                        source.buffer = buffer;
+                        source.connect(context.destination);
+                        source.start();
+                        sourceEl.textContent = `Previewing Orpheus: ${getOrpheusVoiceLabel(ttsConfig.orpheusVoice)}.`;
+                        setVoiceHint('');
+                        return;
+                    } catch (error) {
+                        const message = error?.code === 'model_terms_required'
+                            ? 'Accept Orpheus preview model terms in Groq Console, then retry.'
+                            : `Orpheus preview failed: ${error?.message || 'unknown error'}. Playing browser fallback.`;
+                        setVoiceHint(message, error?.code === 'model_terms_required');
+                    }
+                }
+                const voice = getSelectedBrowserVoice();
+                sourceEl.textContent = `Previewing browser voice: ${describeBrowserVoice(voice)}.`;
+                await speakBrowser(sample, {
+                    voice,
+                    rate: ttsConfig.speechRate
+                });
+            } finally {
+                previewBtn.disabled = !!state.voice.manager && state.voice.manager.phase !== 'idle';
+            }
+        });
+
+        toggle.addEventListener('click', async () => {
+            const manager = ensureVoiceManager();
+            if (manager.phase === 'speaking') {
+                manager.interrupt('user interrupted Voice');
+                return;
+            }
+            if (manager.phase !== 'idle') {
+                manager.stop('user stopped Voice');
+                return;
+            }
+            if (state.isRecording) {
+                setVoiceHint('Stop the current recording before starting Voice.', true);
+                return;
+            }
+            if (state.isProcessing) {
+                setVoiceHint('Wait for the current transcription or AI task to finish before starting Voice.', true);
+                return;
+            }
+            if (state.assistant?.isListening) {
+                setVoiceHint('Stop Verba voice input before starting Voice.', true);
+                return;
+            }
+            if (!getProviderKeys('groq').length) {
+                setVoiceHint('Add a Groq key in API Configuration before starting Voice.', true);
+                return;
+            }
+            setVoiceHint('');
+            userText.textContent = 'Listening...';
+            replyText.textContent = 'Waiting for your first question.';
+            toggle.disabled = true;
+            try {
+                await manager.start();
+            } finally {
+                toggle.disabled = !runtimeCapabilities.hasSpeechRecognition;
+            }
+        });
+
+        langSelect.addEventListener('change', () => {
+            state.voice.enrollmentStop?.();
+            if (state.voice.manager && state.voice.manager.phase !== 'idle') {
+                state.voice.manager.stop('Voice language changed');
+            }
+            refreshVoiceOptions({ announceFallback: true });
+        });
+
+        globalThis.speechSynthesis?.addEventListener?.('voiceschanged', () => {
+            if (state.voice.engine === 'browser' && state.voice.manager?.phase === 'idle') {
+                refreshVoiceOptions();
+            }
+        });
+    }
+
     function syncWorkspaceViewUi() {
         const active = String(state.workspaceView || 'transcript');
         document.querySelectorAll('.workspace-view').forEach((view) => {
@@ -1854,6 +2928,7 @@ qdrant => Qdrant"></textarea>
             record: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"></path><path d="M19 10a7 7 0 0 1-14 0"></path><path d="M12 19v3"></path><path d="M8 22h8"></path></svg>',
             capture: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7Z"></path><path d="m22 8-6 4 6 4V8Z"></path></svg>',
             transcript: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h16"></path></svg>',
+            voice: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"></path><path d="M19 10a7 7 0 0 1-14 0"></path><path d="M12 19v3"></path><path d="M8 22h8"></path></svg>',
             translation: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"></path></svg>',
             'ai-output': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.8L19 9.7l-4 3.2 1.2 5.1L12 15.8 7.8 18l1.2-5.1-4-3.2 5.1-1.9L12 3Z"></path></svg>',
             memory: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v14c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"></path></svg>',
@@ -1897,8 +2972,13 @@ qdrant => Qdrant"></textarea>
     }
 
     function setWorkspaceView(view, { persist = true, closeMobile = true, animate = true } = {}) {
-        const allowed = new Set(['record', 'capture', 'transcript', 'translation', 'ai-output', 'memory', 'tools', 'settings']);
-        state.workspaceView = allowed.has(view) ? view : 'transcript';
+        const allowed = new Set(['record', 'capture', 'transcript', 'voice', 'translation', 'ai-output', 'memory', 'tools', 'settings']);
+        const nextView = allowed.has(view) ? view : 'transcript';
+        if (state.workspaceView === 'voice' && nextView !== 'voice') {
+            state.voice?.enrollmentStop?.();
+            state.voice?.manager?.stop('left Voice view');
+        }
+        state.workspaceView = nextView;
         if (persist) localStorage.setItem('vt_workspace_view', state.workspaceView);
         const recordStageHost = $('recordStageHost');
         const recordTranscriptHost = $('recordTranscriptHost');
@@ -2307,6 +3387,7 @@ qdrant => Qdrant"></textarea>
         syncActiveMemoryPackState();
         persistMemoryPacksStore();
         renderMemoryUi();
+        state.voice?.refreshMemoryUi?.();
         renderAssistantMessages();
         scheduleWorkspaceSave();
     }
@@ -2323,6 +3404,7 @@ qdrant => Qdrant"></textarea>
         syncActiveMemoryPackState();
         persistMemoryPacksStore();
         renderMemoryUi();
+        state.voice?.refreshMemoryUi?.();
         renderAssistantMessages();
         scheduleWorkspaceSave();
         if (memoryPackNameInput) memoryPackNameInput.value = '';
@@ -2338,6 +3420,7 @@ qdrant => Qdrant"></textarea>
             syncActiveMemoryPackState();
             persistMemoryPacksStore();
             renderMemoryUi();
+            state.voice?.refreshMemoryUi?.();
             renderAssistantMessages();
             scheduleWorkspaceSave();
             toast('Primary memory pack cleared', 'info');
@@ -2348,6 +3431,7 @@ qdrant => Qdrant"></textarea>
         syncActiveMemoryPackState();
         persistMemoryPacksStore();
         renderMemoryUi();
+        state.voice?.refreshMemoryUi?.();
         renderAssistantMessages();
         scheduleWorkspaceSave();
         toast('Memory pack deleted', 'info');
@@ -2385,18 +3469,36 @@ qdrant => Qdrant"></textarea>
         return `${diffDay}d ago`;
     }
 
-    function getImportedMemoryContext({ maxChars = 9000 } = {}) {
-        const raw = normalizeImportedMemory(state.memoryRaw || '');
-        if (!raw) return '';
-        const compact = raw.length > maxChars
-            ? `${raw.slice(0, maxChars).trim()}\n\n[Imported memory truncated for token control]`
+    function getActiveMemoryContext({ maxChars = 7000, consumer = 'voice' } = {}) {
+        ensureMemoryPackStore();
+        const activePack = getActiveMemoryPack();
+        const raw = normalizeImportedMemory(activePack ? activePack.raw : state.memoryRaw || '');
+        const limit = Math.max(0, Number(maxChars) || 0);
+        const truncated = limit > 0 && raw.length > limit;
+        const content = truncated
+            ? `${raw.slice(0, limit).trim()}\n\n[Imported memory truncated for token control]`
             : raw;
+        return {
+            consumer: String(consumer || 'voice'),
+            packId: String(activePack?.id || state.activeMemoryPackId || ''),
+            packName: String(activePack?.name || 'Primary'),
+            rawChars: raw.length,
+            includedChars: content.length,
+            truncated,
+            empty: !raw.trim(),
+            content
+        };
+    }
+
+    function getImportedMemoryContext({ maxChars = 9000 } = {}) {
+        const memory = getActiveMemoryContext({ maxChars, consumer: 'shared' });
+        if (memory.empty) return '';
         return [
             'Imported user memory and long-term context:',
             'Use this for preferences, ongoing projects, terminology, and stable background context.',
             'If transcript or runtime state conflicts with memory, trust the transcript/runtime state first.',
             '',
-            compact
+            memory.content
         ].join('\n');
     }
 
@@ -6710,19 +7812,14 @@ qdrant => Qdrant"></textarea>
     }
 
     function getImportedMemoryContext({ maxChars = 9000 } = {}) {
-        ensureMemoryPackStore();
-        const raw = normalizeImportedMemory(state.memoryRaw || '');
-        if (!raw) return '';
-        const compact = raw.length > maxChars
-            ? `${raw.slice(0, maxChars).trim()}\n\n[Imported memory truncated for token control]`
-            : raw;
-        const activePack = getActiveMemoryPack();
+        const memory = getActiveMemoryContext({ maxChars, consumer: 'shared' });
+        if (memory.empty) return '';
         return [
-            `Imported user memory from pack: ${activePack?.name || 'Primary'}`,
+            `Imported user memory from pack: ${memory.packName || 'Primary'}`,
             'Use this for preferences, ongoing projects, terminology, and stable background context.',
             'If transcript or runtime state conflicts with memory, trust the transcript/runtime state first.',
             '',
-            compact
+            memory.content
         ].join('\n');
     }
 
@@ -6771,6 +7868,7 @@ qdrant => Qdrant"></textarea>
         syncActiveMemoryPackState();
         persistMemoryStore();
         renderMemoryUi();
+        state.voice?.refreshMemoryUi?.();
         renderAssistantMessages();
         scheduleWorkspaceSave();
         if (announce) {
@@ -9915,6 +11013,7 @@ Preferred answer style:
 
     // â”€â”€â”€ Init State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     buildWorkspaceViews();
+    mountVoiceView();
     applyWorkspaceNavIcons();
     document.body.classList.add('app-shell-mounted');
     requestAnimationFrame(() => document.body.classList.add('app-ready'));

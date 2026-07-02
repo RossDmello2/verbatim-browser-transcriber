@@ -130,7 +130,7 @@
 .workspace-record-split {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: 430px 168px;
+    grid-template-rows: minmax(360px, 1fr) minmax(140px, auto);
     gap: 18px;
     align-items: stretch;
 }
@@ -3893,9 +3893,9 @@ body.sidebar-collapsed .workspace-nav-btn:hover::after {
 .verba-mascot {
     position: fixed;
     right: 12px;
-    bottom: 12px;
+    bottom: 24px;
     z-index: 9998;
-    animation: mascotFloat 2.8s ease-in-out infinite;
+    animation: mascotFloat 3.2s ease-in-out infinite;
     transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
     will-change: transform;
 }
@@ -3924,7 +3924,7 @@ body.sidebar-collapsed .workspace-nav-btn:hover::after {
 
 @keyframes mascotFloat {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    50% { transform: translateY(-3px); }
 }
 
 @keyframes mascotBounce {
@@ -7560,5 +7560,586 @@ textarea:focus-visible,
         height: auto !important;
         max-height: none !important;
         border-radius: 12px !important;
+    }
+}
+
+/* === Verbatim alignment corrections === */
+.workspace-command-deck.topbar,
+.workspace-command-deck.topbar .controls {
+    align-items: center;
+}
+
+[data-workspace-view="memory"] .pill-btn {
+    height: 28px;
+    min-height: 28px;
+}
+
+[data-workspace-view="memory"] .pill-row,
+[data-workspace-view="memory"] .inline-actions,
+[data-workspace-view="memory"] .toggle-row {
+    gap: 8px;
+}
+
+.verba-input-bottom {
+    align-items: center;
+}
+
+.verba-input-bottom .studio-select,
+.verba-input-bottom .btn,
+.verba-input-bottom select,
+.verba-input-bottom button {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.assistant-toolbar.verba-tabs {
+    gap: 4px;
+}
+
+.assistant-toolbar.verba-tabs .verba-tab {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+#statusBarMode.is-flashing,
+#statusBarWords.is-flashing,
+#statusBarChars.is-flashing,
+#wordPill.is-flashing,
+#charPill.is-flashing {
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.workspace-sidebar-toolbar {
+    align-items: center;
+}
+
+.sidebar-collapse-btn {
+    top: -3px;
+}
+
+.workspace-transcript-toolbar {
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .help-fab {
+        left: 232px;
+    }
+}
+
+.workspace-nav-btn {
+    align-items: center;
+}
+
+.workspace-nav-icon,
+.workspace-nav-btn.nav-item .workspace-nav-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transform: none;
+}
+
+.workspace-nav-btn.nav-item .workspace-nav-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+.workspace-nav-btn:hover .workspace-nav-icon {
+    transform: none;
+}
+
+.api-config-chevron,
+.api-chevron,
+.chevron,
+.dropdown-arrow {
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.translation-stat-pill,
+.translation-sentiment-badge,
+.translation-tone-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* === Responsive workspace architecture === */
+@media (min-width: 768px) {
+    .page {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .page > #mainContent {
+        display: flex;
+        flex: 1 1 0;
+        min-height: 0;
+        flex-direction: column;
+    }
+
+    .workspace-command-deck.topbar {
+        flex: 0 0 auto;
+        padding-right: 16px;
+    }
+
+    .workspace-command-deck.topbar .controls {
+        flex-wrap: wrap;
+        row-gap: 8px;
+        overflow: visible;
+    }
+
+    .topbar-right-actions {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        height: auto;
+        margin-left: auto;
+        padding: 0;
+        flex: 0 0 auto;
+z-index: 200;
+    }
+
+    .topbar-right-actions .api-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: min(520px, calc(100vw - 32px));
+        max-width: calc(100vw - 32px);
+        max-height: calc(100dvh - 160px);
+        margin: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    /* When the panel is open on desktop/tablet, anchor it to the viewport's
+       top-right instead of the (often narrow) topbar-right-actions card.
+       Without this, a 520px panel anchored with `right: 0` to a 260px parent
+       card can extend off-screen on compact-desktop layouts (1280x720). The
+       mobile drawer rule below has higher specificity and wins on phones. */
+    .topbar-right-actions .api-panel.open {
+        position: fixed;
+        top: 56px;
+        right: 12px;
+        left: auto;
+        bottom: auto;
+    }
+
+    .topbar-right-actions .api-body {
+        position: static;
+        width: 100%;
+    }
+
+    .workspace-shell.app-shell {
+        flex: 1 1 0;
+        height: auto;
+        min-height: 0;
+        overflow: hidden;
+        align-items: stretch;
+    }
+
+    .workspace-left-rail.sidebar {
+        height: 100%;
+        min-height: 0;
+        align-self: stretch;
+    }
+
+    .workspace-sidebar-card {
+        height: 100%;
+        min-height: 0;
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .workspace-sidebar-nav {
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    .workspace-main.main-area {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .workspace-view-stage {
+        flex: 1 1 0;
+        height: 0;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+
+    .workspace-view.is-active,
+    .workspace-view-body {
+        min-height: 100%;
+    }
+
+    .verba-input-bottom > .verba-model-dropdown,
+    .verba-input-bottom > .verba-attach-btn,
+    .verba-input-bottom > .verba-mic-btn,
+    .verba-input-bottom > .verba-send-btn {
+        height: 32px;
+        min-height: 32px;
+        margin-top: 0;
+        margin-bottom: 0;
+        align-self: center;
+    }
+
+    .verba-input-bottom > .verba-mic-btn,
+    .verba-input-bottom > .verba-send-btn {
+        width: 32px;
+        min-width: 32px;
+    }
+
+    .help-fab {
+        left: calc(var(--sidebar-width, 220px) + 12px);
+    }
+
+    body.sidebar-collapsed .help-fab {
+        left: calc(var(--sidebar-collapsed-width, 56px) + 12px);
+    }
+}
+
+.verba-mascot {
+    animation: none;
+}
+
+@media (max-width: 767px) {
+    .page > #mainContent {
+        display: flex;
+        height: 100%;
+        min-height: 0;
+        flex-direction: column;
+    }
+}
+
+/* === Responsive workspace architecture (final) ===
+   - Mobile topbar: one row at 56 px plus safe-area inset.
+   - Mobile controls drawer: position: fixed, scrolls internally, contains
+     language, target, toggles, API Configuration header, and API panel.
+   - Desktop topbar: preserves current wrapping with complete labels and
+     API header visibility. No behavior or color change.
+   - Preserves every existing ID, data attribute, event binding, and class.
+   The cascade from 50-voice.css / 40-overrides.css / 30-workspace.css is
+   inverted so these rules win. */
+
+.workspace-shell,
+.workspace-left-rail,
+.workspace-main,
+.workspace-view,
+.workspace-view-body,
+.workspace-view-stage {
+    min-width: 0;
+}
+
+@media (min-width: 768px) {
+    .workspace-command-deck.topbar .topbar-secondary-controls#topbarMobileDrawer {
+        position: static;
+        display: contents;
+    }
+}
+
+@media (max-width: 767px) {
+    /* ---- Workspace shell: pin below the topbar stacking context ----
+       The .workspace-view-stage creates a stacking context via transform
+       (see body.app-ready .workspace-view-stage above). When two stacking
+       contexts share a parent stacking context (here .page / #mainContent)
+       and both have z-index: auto, painting order falls back to DOM order.
+       Because .workspace-view-stage comes after .workspace-command-deck.topbar
+       in the DOM, the stage paints on top of the sticky topbar AND its mobile
+       controls drawer, intercepting clicks on the apiHeader / apiPanel.
+       Contain the workspace in its own SC at z-index 1 so the topbar (z=90)
+       and the mobile drawer (z=95) always win. */
+    .workspace-shell.app-shell {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ---- Topbar shell ---- */
+    .workspace-command-deck.topbar {
+        position: sticky;
+        top: 0;
+        z-index: 90;
+        padding: 0;
+        background: linear-gradient(180deg, rgba(236, 241, 248, 0.96), rgba(236, 241, 248, 0.82));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .workspace-command-deck.topbar .controls {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+        height: 56px;
+        min-height: 56px;
+        max-height: 56px;
+        padding: 0 10px;
+        overflow: hidden;
+    }
+
+    /* ---- Brand + sidebar button ---- */
+    .workspace-command-deck.topbar .app-brand {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .workspace-command-deck.topbar .app-brand-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .workspace-command-deck.topbar .app-brand-name {
+        display: none;
+    }
+
+    #workspaceSidebarBtn {
+        flex: 0 0 auto;
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0;
+        border-radius: 12px;
+    }
+
+    #workspaceSidebarBtn .topbar-menu-label {
+        display: none;
+    }
+
+    /* ---- Mode switcher (Live / Quality / File) ---- */
+    .workspace-command-deck.topbar .mode-toggle {
+        flex: 1 1 0;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        height: 44px;
+        min-height: 44px;
+    }
+
+    .workspace-command-deck.topbar .mode-btn {
+        min-height: 44px;
+        height: 44px;
+        padding: 0 6px;
+        min-width: 0;
+        font-size: 10px;
+    }
+
+    /* ---- Controls button (opens mobile drawer) ---- */
+    #topbarControlsBtn {
+        flex: 0 0 auto;
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0;
+        border-radius: 12px;
+    }
+
+    #topbarControlsBtn .topbar-menu-label {
+        display: none;
+    }
+
+    /* Topbar-right-spacer is unused on mobile but kept for compatibility. */
+    .workspace-command-deck.topbar .topbar-right-spacer {
+        flex: 0 0 0;
+    }
+
+    /* ---- Hide the inline API row (it lives inside the drawer now) ---- */
+    .workspace-command-deck.topbar .topbar-right-actions {
+        flex: 0 0 auto;
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+    }
+
+    /* When the inline topbar-right-actions block is inside the desktop
+       controls row, hide its inline apiHeader on mobile so the topbar
+       stays a single row. The apiHeader and apiPanel both live inside
+       #topbarMobileDrawer on mobile. */
+    .workspace-command-deck.topbar .topbar-right-actions > #apiHeader,
+    .workspace-command-deck.topbar .topbar-right-actions > #apiPanel {
+        display: none;
+    }
+
+    /* ---- Studio settings panel: hidden on mobile (h1 already omits it) ---- */
+    .workspace-command-deck.topbar .studio-settings {
+        display: none;
+    }
+
+    /* ---- Mobile controls drawer: fixed overlay ---- */
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer {
+        position: fixed;
+        top: calc(56px + env(safe-area-inset-top, 0));
+        left: 0;
+        right: 0;
+        max-height: calc(100dvh - 56px - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 12px 12px 16px;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.96));
+        border-top: 1px solid var(--border);
+        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.14);
+        z-index: 95;
+        overscroll-behavior: contain;
+    }
+
+    #topbarMobileDrawer.topbar-secondary-controls.topbar-mobile-drawer.open {
+        display: flex;
+    }
+
+    #topbarMobileDrawer .lang-wrap,
+    #topbarMobileDrawer .translator-wrap {
+        min-height: 44px;
+        height: 44px;
+    }
+
+    #topbarMobileDrawer .lang-wrap select,
+    #topbarMobileDrawer .translator-wrap select {
+        min-height: 44px;
+        height: 44px;
+    }
+
+    #topbarMobileDrawer .btn-toggle {
+        min-height: 44px;
+        height: 44px;
+    }
+
+    /* ---- Touch targets inside the mobile drawer ----
+       Every interactive control in the mobile drawer must be at least
+       44x44 px so the API Configuration, language, target, and provider
+       model controls remain reachable for thumb taps. */
+    #topbarMobileDrawer select,
+    #topbarMobileDrawer button {
+        min-height: 44px;
+    }
+
+    #topbarMobileDrawer .api-info-btn {
+        min-width: 44px;
+        width: 44px;
+        min-height: 44px;
+        height: 44px;
+        padding: 0;
+        flex: 0 0 auto;
+    }
+
+    #topbarMobileDrawer .api-key-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #topbarMobileDrawer .api-key-row .api-btn-sm {
+        min-height: 44px;
+        flex: 1 1 calc(50% - 4px);
+        min-width: 44px;
+    }
+
+    #topbarMobileDrawer .api-vault-textarea,
+    #topbarMobileDrawer .api-key-input,
+    #topbarMobileDrawer .api-model-input {
+        min-height: 44px;
+    }
+
+    /* ---- API header + panel inside the mobile drawer ---- */
+    #topbarMobileDrawer .topbar-right-actions {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        position: static;
+    }
+
+    #topbarMobileDrawer .topbar-right-actions > #apiHeader,
+    #topbarMobileDrawer .topbar-right-actions > #apiPanel {
+        display: block;
+    }
+
+    #topbarMobileDrawer #apiHeader {
+        width: 100%;
+        min-height: 44px;
+        height: 44px;
+        padding: 0 14px;
+        justify-content: flex-start;
+        gap: 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    #topbarMobileDrawer #apiPanel {
+        position: static;
+        top: auto;
+        right: auto;
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        margin: 0;
+        padding: 12px 14px 14px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.1);
+        overflow: visible;
+    }
+
+    #topbarMobileDrawer #apiPanel .api-body {
+        position: static;
+        width: 100%;
+        padding: 0;
+    }
+
+    #topbarMobileDrawer #apiPanel.open {
+        overflow: visible;
+    }
+
+    /* ---- Sidebar & active view scrollers ---- */
+    /* On phone widths, the .workspace-view-body owns vertical scroll so the
+       active view body can grow with the document while every long-content
+       child remains reachable. The stage stops clipping on mobile. */
+    .workspace-view-stage {
+        overflow: visible;
+        height: auto;
+        min-height: 0;
+    }
+
+    .workspace-view.is-active {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .workspace-view-body {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex: 1 1 0;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
     }
 }
